@@ -103,7 +103,7 @@ module Boxr
 
 					entries << body_json["entries"]
 				else
-					raise BoxException.new(res.status, res.body)
+					raise BoxrException.new(res.status, res.body, res.header)
 				end
 			end until offset - total_count >= 0
 
@@ -161,7 +161,7 @@ module Boxr
 		end
 
 		def check_response_status(res, success_codes)
-			raise BoxException.new(res.status, res.body) unless success_codes.include?(res.status)
+			raise BoxrException.new(res.status, res.body, res.header) unless success_codes.include?(res.status)
 		end
 
 		def processed_response(res)

@@ -3,6 +3,8 @@
 /Gemfile.lock
 /.ruby-version
 /.ruby-gemset
+/.env.test
+/.env
 /_yardoc/
 /coverage/
 /doc/

@@ -1,12 +1,13 @@
 module Boxr
 
-	class BoxException < Exception
+	class BoxrException < Exception
 
-		attr_reader :response_body, :type, :status, :code, :help_uri, :message, :request_id
+		attr_reader :response_body, :type, :status, :code, :help_uri, :box_message, :request_id
 
-		def initialize(status,body)
+		def initialize(status,body,header)
 			@status = status
 			@response_body = body
+			@header = header
 
 			body_json = Oj.load(body)
 			if body_json
@@ -14,15 +15,24 @@ module Boxr
 				@box_status = body_json["status"]
 				@code = body_json["code"]
 				@help_uri = body_json["help_uri"]
-				@message = body_json["message"]
+				@box_message = body_json["message"]
 				@request_id = body_json["request_id"]
+			end
+		end
+
+		def message
+			auth_header = @header['WWW-Authenticate']
+			if(auth_header)
+				"#{@status}: #{auth_header}"
+			elsif(!@box_message.blank?)
+				"#{@status}: #{@box_message}"
 			else
-				@message = status
+				"#{@status}: #{@response_body}"
 			end
 		end
 
 		def to_s
-			p @message
+			message
 		end
 	end
 

@@ -1,6 +1,6 @@
 # Boxr
 
-TODO: Write a gem description
+PLEASE NOTE: this is still a work in progress as I need to complete this README, complete the integration test suite, and add a few more convenience methods.  Feel free to try it out, but I will be pushing lots of updates over the next 7-10 days. Thanks!
 
 ## Installation
 

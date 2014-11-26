@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = Boxr::VERSION
   spec.authors       = ["Chad Burnette"]
   spec.email         = ["chadburnette@me.com"]
-  spec.summary       = "A Ruby client library for the Box V2 Content API"
+  spec.summary       = "A Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API."
   spec.description   = ""
   spec.homepage      = "https://github.com/cburnette/boxr"
   spec.license       = "MIT"

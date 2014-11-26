@@ -20,7 +20,22 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Super-fast instructions for now (much more to come):
+
+1. go to https://developers.box.com
+2. find or create your Box Content API app for testing
+3. click 'Edit Application'
+4. check the boxes for 'Read and write all files and folders' and 'Manage an enterprise'
+5. click 'Create a developer token'
+6. copy the token and use it in the code below in place of {BOX_DEVELOPER_TOKEN}
+
+```ruby
+require 'boxr'
+
+client = Boxr::Client.new({BOX_DEVELOPER_TOKEN})
+items = client.folder_items(Boxr::ROOT)
+items.each {|i| puts i.name}
+```
 
 ## Contributing
 

@@ -1,6 +1,19 @@
 module Boxr
 	class Client
 
+		def folder_id(path)
+			if(path.start_with?('/'))
+				path = path.slice(1..-1)
+			end
+
+			path_folders = path.split('/')
+
+			folder_id = path_folders.inject(Boxr::ROOT) do |parent_id, folder_name|
+				folders = folder_items(parent_id, fields: [:id, :name]).folders
+				folders.select{|f| f.name == folder_name}.first.id
+			end
+		end
+
 		def folder_items(folder_id, fields: [])
 			query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
 			uri = "#{FOLDERS_URI}/#{folder_id}/items"

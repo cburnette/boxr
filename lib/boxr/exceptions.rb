@@ -22,9 +22,9 @@ module Boxr
 
 		def message
 			auth_header = @header['WWW-Authenticate']
-			if(auth_header)
+			if(auth_header && auth_header != [])
 				"#{@status}: #{auth_header}"
-			elsif(!@box_message.blank?)
+			elsif(@box_message)
 				"#{@status}: #{@box_message}"
 			else
 				"#{@status}: #{@response_body}"

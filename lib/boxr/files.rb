@@ -1,6 +1,20 @@
 module Boxr
 	class Client
 
+		def file_id(path)
+			if(path.start_with?('/'))
+				path = path.slice(1..-1)
+			end
+
+			path_items = path.split('/')
+			file_name = path_items.slice!(-1)
+
+			folder_id = folder_id(path_items.join('/'))
+
+			files = folder_items(folder_id, fields: [:id, :name])
+			file_id = files.select{|f| f.name == file_name}.first.id
+		end
+
 		def file_info(file_id, fields: [])
 			uri = "#{FILES_URI}/#{file_id}"
 			query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)

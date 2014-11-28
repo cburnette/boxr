@@ -10,7 +10,12 @@ module Boxr
 
 			folder_id = path_folders.inject(Boxr::ROOT) do |parent_id, folder_name|
 				folders = folder_items(parent_id, fields: [:id, :name]).folders
-				folders.select{|f| f.name == folder_name}.first.id
+
+				begin
+					folders.select{|f| f.name == folder_name}.first.id
+				rescue
+					raise BoxrException.new(boxr_message: "Folder not found")
+				end
 			end
 		end
 
@@ -61,7 +66,7 @@ module Boxr
 			uri = "#{FOLDERS_URI}/#{folder_id}"
 			query = {:recursive => recursive}
 
-			result, response = delete uri, query, if_match: if_match
+			result, response = delete uri, query: query, if_match: if_match
 			result
 		end
 

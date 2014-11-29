@@ -16,6 +16,7 @@ describe Boxr do
 
 	TEST_FOLDER_NAME = 'Boxr_Test'
 	SUB_FOLDER_NAME = 'sub_folder_1'
+	SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
 
 	context 'A smoke test of all Boxr functionality against a real Box account' do
 
@@ -39,8 +40,26 @@ describe Boxr do
 			expect(test_folder_id).to be_a String 
 		end
 
+		sub_folder_id = nil
 		it 'creates a new sub-folder' do
 			new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, test_folder_id)
+			expect(new_folder).to be_a Hashie::Mash
+
+			sub_folder_id = new_folder.id
+		end
+
+		it "updates the sub-folder's description" do
+			updated_folder = BOX_CLIENT.update_folder_info(sub_folder_id, description: SUB_FOLDER_DESCRIPTION)
+			expect(updated_folder).to be_a Hashie::Mash
+		end
+
+		it "verifies the sub-folder's description" do
+			sub_folder_info = BOX_CLIENT.folder_info(sub_folder_id, fields: [:description])
+			expect(sub_folder_info.description).to eq(SUB_FOLDER_DESCRIPTION)
+		end
+
+		it "copies the sub-folder" do
+			new_folder = BOX_CLIENT.copy_folder(sub_folder_id,test_folder_id, name: 'copy of sub_folder_1')
 			expect(new_folder).to be_a Hashie::Mash
 		end
 

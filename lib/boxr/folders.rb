@@ -14,7 +14,7 @@ module Boxr
 				begin
 					folders.select{|f| f.name == folder_name}.first.id
 				rescue
-					raise BoxrException.new(boxr_message: "Folder not found")
+					raise BoxrException.new(boxr_message: "Folder not found: '#{folder_name}'")
 				end
 			end
 		end

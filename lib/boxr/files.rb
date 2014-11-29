@@ -12,7 +12,12 @@ module Boxr
 			folder_id = folder_id(path_items.join('/'))
 
 			files = folder_items(folder_id, fields: [:id, :name])
-			file_id = files.select{|f| f.name == file_name}.first.id
+
+			begin
+				files.select{|f| f.name == file_name}.first.id
+			rescue
+				raise BoxrException.new(boxr_message: "File not found: '#{file_name}'")
+			end
 		end
 
 		def file_info(file_id, fields: [])

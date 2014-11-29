@@ -18,50 +18,41 @@ describe Boxr do
 	SUB_FOLDER_NAME = 'sub_folder_1'
 	SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
 
-	context 'A smoke test of all Boxr functionality against a real Box account' do
+	it 'smoke tests all functionality against a real Box account' do
 
-		it 'deletes pre-existing test folder if found and creates a new test folder' do
-			#find any pre-existing 'Boxr_RSpec' folder and delete it
-			root_folders = BOX_CLIENT.folder_items(Boxr::ROOT).folders
-			test_folder = root_folders.select{|f| f.name == TEST_FOLDER_NAME}.first
-			
-			if(test_folder)
-				BOX_CLIENT.delete_folder(test_folder.id, recursive: true)
-			end
-
-			#create a new, empty test folder
-			new_folder = BOX_CLIENT.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
-			expect(new_folder).to be_a Hashie::Mash
+	  puts "delete pre-existing test folder if found and create a new test folder"
+		root_folders = BOX_CLIENT.folder_items(Boxr::ROOT).folders
+		test_folder = root_folders.select{|f| f.name == TEST_FOLDER_NAME}.first
+		if(test_folder)
+			BOX_CLIENT.delete_folder(test_folder.id, recursive: true)
 		end
+
+		puts "create a new, empty test folder"
+		new_folder = BOX_CLIENT.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
+		expect(new_folder).to be_a Hashie::Mash
 
 		test_folder_id = nil
-		it 'looks up test folder id' do
-			test_folder_id = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
-			expect(test_folder_id).to be_a String 
-		end
+		puts 'look up test folder id'
+		test_folder_id = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
+		expect(test_folder_id).to be_a String
 
 		sub_folder_id = nil
-		it 'creates a new sub-folder' do
-			new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, test_folder_id)
-			expect(new_folder).to be_a Hashie::Mash
+		puts 'create a new sub-folder'
+		new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, test_folder_id)
+		expect(new_folder).to be_a Hashie::Mash
+		sub_folder_id = new_folder.id
 
-			sub_folder_id = new_folder.id
-		end
+		puts "update the sub-folder's description"
+		updated_folder = BOX_CLIENT.update_folder_info(sub_folder_id, description: SUB_FOLDER_DESCRIPTION)
+		expect(updated_folder).to be_a Hashie::Mash
 
-		it "updates the sub-folder's description" do
-			updated_folder = BOX_CLIENT.update_folder_info(sub_folder_id, description: SUB_FOLDER_DESCRIPTION)
-			expect(updated_folder).to be_a Hashie::Mash
-		end
+		puts "verify the sub-folder's description"
+		sub_folder_info = BOX_CLIENT.folder_info(sub_folder_id, fields: [:description])
+		expect(sub_folder_info.description).to eq(SUB_FOLDER_DESCRIPTION)
 
-		it "verifies the sub-folder's description" do
-			sub_folder_info = BOX_CLIENT.folder_info(sub_folder_id, fields: [:description])
-			expect(sub_folder_info.description).to eq(SUB_FOLDER_DESCRIPTION)
-		end
-
-		it "copies the sub-folder" do
-			new_folder = BOX_CLIENT.copy_folder(sub_folder_id,test_folder_id, name: 'copy of sub_folder_1')
-			expect(new_folder).to be_a Hashie::Mash
-		end
+		puts "copy the sub-folder"
+		new_folder = BOX_CLIENT.copy_folder(sub_folder_id,test_folder_id, name: 'copy of sub_folder_1')
+		expect(new_folder).to be_a Hashie::Mash
 
 	end
 end

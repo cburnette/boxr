@@ -18,7 +18,7 @@ describe Boxr do
 	SUB_FOLDER_NAME = 'sub_folder_1'
 	SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
 
-	it 'smoke tests all functionality against a real Box account' do
+	it 'smoke tests the code base against a real Box account' do
 
 	  puts "delete pre-existing test folder if found and create a new test folder"
 		root_folders = BOX_CLIENT.folder_items(Boxr::ROOT).folders

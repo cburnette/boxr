@@ -5,6 +5,7 @@ require 'hashie'
 require "boxr/version"
 require 'boxr/exceptions'
 require 'boxr/client'
+require 'boxr/shared_items'
 require 'boxr/folders'
 require 'boxr/files'
 require 'boxr/comments'
@@ -13,7 +14,6 @@ require 'boxr/groups'
 require 'boxr/collaborations'
 require 'boxr/search'
 require 'boxr/tasks'
-require 'boxr/shared_items'
 require 'boxr/metadata'
 
 module Enumerable

@@ -11,7 +11,7 @@ describe Boxr do
 	#keep in mind it is only valid for 60 minutes
 	BOX_CLIENT = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'])
 	
-	#ncomment this line to see the HTTP request and response debug info in the rspec output
+	#uncomment this line to see the HTTP request and response debug info in the rspec output
 	#BOX_CLIENT.debug_device = STDOUT
 
 	TEST_FOLDER_NAME = 'Boxr_Test'
@@ -44,15 +44,20 @@ describe Boxr do
 
 		puts "update the sub-folder's description"
 		updated_folder = BOX_CLIENT.update_folder_info(sub_folder_id, description: SUB_FOLDER_DESCRIPTION)
-		expect(updated_folder).to be_a Hashie::Mash
-
-		puts "verify the sub-folder's description"
-		sub_folder_info = BOX_CLIENT.folder_info(sub_folder_id, fields: [:description])
-		expect(sub_folder_info.description).to eq(SUB_FOLDER_DESCRIPTION)
+		expect(updated_folder.description).to eq(SUB_FOLDER_DESCRIPTION)
 
 		puts "copy the sub-folder"
 		new_folder = BOX_CLIENT.copy_folder(sub_folder_id,test_folder_id, name: 'copy of sub_folder_1')
 		expect(new_folder).to be_a Hashie::Mash
+
+		puts "create shared link for folder"
+		updated_folder = BOX_CLIENT.create_shared_link_for_folder(test_folder_id)
+		expect(updated_folder.shared_link).to be_a Hashie::Mash
+
+		puts "disable shared link for folder"
+		updated_folder = BOX_CLIENT.disable_shared_link_for_folder(test_folder_id)
+		expect(updated_folder.shared_link).to be_nil
+
 
 	end
 end

@@ -104,8 +104,8 @@ module Boxr
 
 		def trashed_folder(folder_id)
 			uri = "#{FOLDERS_URI}/#{folder_id}/trash"
-			item, response = get uri
-			item
+			folder, response = get uri
+			folder
 		end
 
 		def delete_trashed_folder(folder_id)

@@ -181,8 +181,8 @@ module Boxr
 
 		def restore_trashed_item(uri, name, parent_id)
 			attributes = {}
-			attributes[:name] = name if name
-			attributes[:parent] = {id: parent_id} if parent_id
+			attributes[:name] = name unless name.nil?
+			attributes[:parent] = {id: parent_id} unless parent_id.nil?
 			
 			restored_item, response = post uri, attributes
 			restored_item

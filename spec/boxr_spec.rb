@@ -84,5 +84,10 @@ describe Boxr do
 		result = BOX_CLIENT.delete_trashed_folder(SUB_FOLDER_COPY_ID)
 		expect(result).to be_a Hashie::Mash
 
+		#TODO: still need to test folder collaborations
+
+		
+
+
 	end
 end

@@ -127,6 +127,26 @@ describe Boxr do
 		f.write(file)
 		f.close
 		expect(FileUtils.identical?("./spec/test_files/#{TEST_FILE_NAME}","./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")).to eq(true)
+		File.delete("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")
+
+		puts "upload new version of file"
+		new_version = BOX_CLIENT.upload_new_version_of_file("./spec/test_files/#{TEST_FILE_NAME}", test_file_id)
+		expect(new_version).to be_a Hashie::Mash
+
+		puts "inspect versions of file"
+		versions = BOX_CLIENT.versions_of_file(test_file_id)
+		expect(versions.count).to eq(1) #the reason this is 1 instead of 2 is that Box considers 'versions' to be a versions other than 'current'
+		v1_id = versions.first.id
+
+		puts "promote old version of file"
+		newer_version = BOX_CLIENT.promote_old_version_of_file(test_file_id, v1_id)
+		versions = BOX_CLIENT.versions_of_file(test_file_id)
+		expect(versions.count).to eq(2)
+
+		puts "delete old version of file"
+		result = BOX_CLIENT.delete_old_version_of_file(test_file_id,v1_id)
+		versions = BOX_CLIENT.versions_of_file(test_file_id)
+		expect(versions.count).to eq(2) #this is still 2 because with Box you can restore a trashed old version
 
 		
 

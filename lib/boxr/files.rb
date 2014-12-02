@@ -125,8 +125,8 @@ module Boxr
 
 		def delete_old_version_of_file(file_id, file_version_id, if_match: nil)
 			uri = "#{FILES_URI}/#{file_id}/versions/#{file_version_id}"
-			body_json, res = delete uri, if_match: if_match
-			body_json
+			result, response = delete uri, if_match: if_match
+			result
 		end
 
 		def copy_file(file_id, parent_id, name: nil)

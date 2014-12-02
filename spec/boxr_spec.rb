@@ -23,6 +23,8 @@ describe Boxr do
 	TEST_FOLDER_NAME = 'Boxr_Test'
 	SUB_FOLDER_NAME = 'sub_folder_1'
 	SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
+	TEST_FILE_NAME = 'test file.txt'
+	DOWNLOADED_TEST_FILE_NAME = 'downloaded test file.txt'
 
 	it 'smoke tests the code base against a real Box account' do
 
@@ -33,13 +35,21 @@ describe Boxr do
 			BOX_CLIENT.delete_folder(test_folder.id, recursive: true)
 		end
 
+
+		#############################################################################
+		# 																																					#
+		# Folder tests																															#
+		# 																																					#
+		#############################################################################
+
 		puts "create a new, empty test folder"
 		new_folder = BOX_CLIENT.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
 		expect(new_folder).to be_a Hashie::Mash
+		TEST_FOLDER_ID = new_folder.id
 
 		puts 'look up test folder id'
-		TEST_FOLDER_ID = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
-		expect(TEST_FOLDER_ID).to be_a String
+		folder_id = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
+		expect(TEST_FOLDER_ID).to eq(TEST_FOLDER_ID)
 
 		puts 'create a new sub-folder'
 		new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, TEST_FOLDER_ID)
@@ -87,7 +97,38 @@ describe Boxr do
 		#TODO: still need to test folder collaborations
 
 		
+		#############################################################################
+		# 																																					#
+		# File tests																																#
+		# 																																					#
+		#############################################################################
 
+		puts "upload a file"
+		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", TEST_FOLDER_ID)
+		expect(new_file).to be_a Hashie::Mash
+		test_file_id = new_file.id
+
+		puts "look up new file id"
+		file_id = BOX_CLIENT.file_id("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
+		expect(file_id).to eq(test_file_id)
+
+		puts "look up file info"
+		file_info = BOX_CLIENT.file_info(test_file_id)
+		expect(file_info.id).to eq(test_file_id)
+
+		puts "update file info"
+		new_description = 'this file is used to test Boxr'
+		updated_file_info = BOX_CLIENT.update_file_info(test_file_id, description: new_description)
+		expect(updated_file_info.description).to eq(new_description)
+
+		puts "download file"
+		file = BOX_CLIENT.download_file(test_file_id)
+		f = open("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}", 'w+')
+		f.write(file)
+		f.close
+		expect(FileUtils.identical?("./spec/test_files/#{TEST_FILE_NAME}","./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")).to eq(true)
+
+		
 
 	end
 end

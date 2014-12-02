@@ -60,6 +60,8 @@ module Boxr
 			file
 		end
 
+		#TODO: need to implement download_url
+
 		def upload_file(path_to_file, parent_id, content_created_at: nil, content_modified_at: nil, 
 										preflight_check: true, send_content_md5: true)
 

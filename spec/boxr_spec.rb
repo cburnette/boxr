@@ -148,7 +148,15 @@ describe Boxr do
 		versions = BOX_CLIENT.versions_of_file(test_file_id)
 		expect(versions.count).to eq(2) #this is still 2 because with Box you can restore a trashed old version
 
-		
+		puts "copy file"
+		new_file_name = "copy of #{TEST_FILE_NAME}"
+		new_file = BOX_CLIENT.copy_file(test_file_id, TEST_FOLDER_ID, name: new_file_name)
+		expect(new_file).to be_a(Hashie::Mash)
+		expect(new_file.name).to eq(new_file_name)
+
+		puts "get file thumbnail"
+		thumb = BOX_CLIENT.thumbnail(test_file_id)
+		expect(thumb).not_to be_nil
 
 	end
 end

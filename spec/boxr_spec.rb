@@ -47,7 +47,7 @@ describe Boxr do
 		expect(new_folder).to be_a Hashie::Mash
 		TEST_FOLDER_ID = new_folder.id
 
-		puts 'look up test folder id'
+		puts 'get folder id using path'
 		folder_id = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
 		expect(TEST_FOLDER_ID).to eq(TEST_FOLDER_ID)
 
@@ -66,8 +66,8 @@ describe Boxr do
 		SUB_FOLDER_COPY_ID = new_folder.id
 
 		puts "create shared link for folder"
-		updated_folder = BOX_CLIENT.create_shared_link_for_folder(TEST_FOLDER_ID)
-		expect(updated_folder.shared_link).to be_a Hashie::Mash
+		updated_folder = BOX_CLIENT.create_shared_link_for_folder(TEST_FOLDER_ID, access: :open)
+		expect(updated_folder.shared_link.access).to eq("open")
 
 		puts "disable shared link for folder"
 		updated_folder = BOX_CLIENT.disable_shared_link_for_folder(TEST_FOLDER_ID)
@@ -75,7 +75,7 @@ describe Boxr do
 
 		puts "delete folder"
 		result = BOX_CLIENT.delete_folder(SUB_FOLDER_COPY_ID, recursive: true)
-		expect(result).to be_a Hashie::Mash
+		expect(result).to eq ({})
 
 		puts "inspect the trash"
 		trash = BOX_CLIENT.trash()
@@ -83,16 +83,16 @@ describe Boxr do
 
 		puts "inspect the trashed sub folder copy"
 		trashed_folder = BOX_CLIENT.trashed_folder(SUB_FOLDER_COPY_ID)
-		expect(trashed_folder).to be_a Hashie::Mash
+		expect(trashed_folder.item_status).to eq("trashed")
 
 		puts "restore the trashed sub folder copy"
 		restored_folder = BOX_CLIENT.restore_trashed_folder(SUB_FOLDER_COPY_ID)
-		expect(restored_folder).to be_a Hashie::Mash
+		expect(restored_folder.item_status).to eq("active")
 
 		puts "trash and then permanently delete the sub folder copy"
 		BOX_CLIENT.delete_folder(SUB_FOLDER_COPY_ID, recursive: true)
 		result = BOX_CLIENT.delete_trashed_folder(SUB_FOLDER_COPY_ID)
-		expect(result).to be_a Hashie::Mash
+		expect(result).to eq({})
 
 		#TODO: still need to test folder collaborations
 
@@ -105,24 +105,28 @@ describe Boxr do
 
 		puts "upload a file"
 		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", TEST_FOLDER_ID)
-		expect(new_file).to be_a Hashie::Mash
-		test_file_id = new_file.id
+		expect(new_file.name).to eq(TEST_FILE_NAME)
+		TEST_FILE_ID = new_file.id
 
-		puts "look up new file id"
+		puts "get file id using path"
 		file_id = BOX_CLIENT.file_id("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
-		expect(file_id).to eq(test_file_id)
+		expect(file_id).to eq(TEST_FILE_ID)
 
-		puts "look up file info"
-		file_info = BOX_CLIENT.file_info(test_file_id)
-		expect(file_info.id).to eq(test_file_id)
+		puts "get file info"
+		file_info = BOX_CLIENT.file_info(TEST_FILE_ID)
+		expect(file_info.id).to eq(TEST_FILE_ID)
+
+		puts "get file download url"
+		download_url = BOX_CLIENT.download_url(TEST_FILE_ID)
+		expect(download_url).to start_with("https://")
 
 		puts "update file info"
 		new_description = 'this file is used to test Boxr'
-		updated_file_info = BOX_CLIENT.update_file_info(test_file_id, description: new_description)
+		updated_file_info = BOX_CLIENT.update_file_info(TEST_FILE_ID, description: new_description)
 		expect(updated_file_info.description).to eq(new_description)
 
 		puts "download file"
-		file = BOX_CLIENT.download_file(test_file_id)
+		file = BOX_CLIENT.download_file(TEST_FILE_ID)
 		f = open("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}", 'w+')
 		f.write(file)
 		f.close
@@ -130,33 +134,58 @@ describe Boxr do
 		File.delete("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")
 
 		puts "upload new version of file"
-		new_version = BOX_CLIENT.upload_new_version_of_file("./spec/test_files/#{TEST_FILE_NAME}", test_file_id)
-		expect(new_version).to be_a Hashie::Mash
+		new_version = BOX_CLIENT.upload_new_version_of_file("./spec/test_files/#{TEST_FILE_NAME}", TEST_FILE_ID)
+		expect(new_version.id).to eq(TEST_FILE_ID)
 
 		puts "inspect versions of file"
-		versions = BOX_CLIENT.versions_of_file(test_file_id)
+		versions = BOX_CLIENT.versions_of_file(TEST_FILE_ID)
 		expect(versions.count).to eq(1) #the reason this is 1 instead of 2 is that Box considers 'versions' to be a versions other than 'current'
 		v1_id = versions.first.id
 
 		puts "promote old version of file"
-		newer_version = BOX_CLIENT.promote_old_version_of_file(test_file_id, v1_id)
-		versions = BOX_CLIENT.versions_of_file(test_file_id)
+		newer_version = BOX_CLIENT.promote_old_version_of_file(TEST_FILE_ID, v1_id)
+		versions = BOX_CLIENT.versions_of_file(TEST_FILE_ID)
 		expect(versions.count).to eq(2)
 
 		puts "delete old version of file"
-		result = BOX_CLIENT.delete_old_version_of_file(test_file_id,v1_id)
-		versions = BOX_CLIENT.versions_of_file(test_file_id)
+		result = BOX_CLIENT.delete_old_version_of_file(TEST_FILE_ID,v1_id)
+		versions = BOX_CLIENT.versions_of_file(TEST_FILE_ID)
 		expect(versions.count).to eq(2) #this is still 2 because with Box you can restore a trashed old version
+
+		puts "get file thumbnail"
+		thumb = BOX_CLIENT.thumbnail(TEST_FILE_ID)
+		expect(thumb).not_to be_nil
+
+		puts "create shared link for file"
+		updated_file = BOX_CLIENT.create_shared_link_for_file(TEST_FILE_ID, access: :open)
+		expect(updated_file.shared_link.access).to eq("open")
+
+		puts "disable shared link for file"
+		updated_file = BOX_CLIENT.disable_shared_link_for_file(TEST_FILE_ID)
+		expect(updated_file.shared_link).to be_nil
 
 		puts "copy file"
 		new_file_name = "copy of #{TEST_FILE_NAME}"
-		new_file = BOX_CLIENT.copy_file(test_file_id, TEST_FOLDER_ID, name: new_file_name)
-		expect(new_file).to be_a(Hashie::Mash)
+		new_file = BOX_CLIENT.copy_file(TEST_FILE_ID, TEST_FOLDER_ID, name: new_file_name)
 		expect(new_file.name).to eq(new_file_name)
+		NEW_FILE_ID = new_file.id
 
-		puts "get file thumbnail"
-		thumb = BOX_CLIENT.thumbnail(test_file_id)
-		expect(thumb).not_to be_nil
+		puts "delete file"
+		result = BOX_CLIENT.delete_file(NEW_FILE_ID)
+		expect(result).to eq({})
+
+		puts "get trashed file info"
+		trashed_file = BOX_CLIENT.trashed_file(NEW_FILE_ID)
+		expect(trashed_file.item_status).to eq("trashed")
+
+		puts "restore trashed file"
+		restored_file = BOX_CLIENT.restore_trashed_file(NEW_FILE_ID)
+		expect(restored_file.item_status).to eq("active")
+
+		puts "trash and then permanently delete file"
+		BOX_CLIENT.delete_file(NEW_FILE_ID)
+		result = BOX_CLIENT.delete_trashed_file(NEW_FILE_ID)
+		expect(result).to eq({})
 
 	end
 end

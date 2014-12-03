@@ -1,6 +1,13 @@
 module Boxr
 	class Client
 
+		def file_comments(file_id, fields: [])
+			uri = "#{FILES_URI}/#{file_id}/comments"
+			query = build_fields_query(fields, COMMENT_FIELDS_QUERY)
+
+			comments = get_with_pagination uri, query: query
+		end
+
 		def add_comment_to_file(file_id, message: nil, tagged_message: nil)
 			add_comment(:file, file_id, message, tagged_message)
 		end

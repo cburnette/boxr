@@ -41,7 +41,7 @@ module Boxr
 			updated_file
 		end
 
-		def download_file(file_id, version: nil)
+		def download_file(file_id, version: nil, follow_redirect: true)
 			begin
 				uri = "#{FILES_URI}/#{file_id}/content"
 				query = {}
@@ -50,7 +50,12 @@ module Boxr
 
 				if(response.status==302)
 					location = response.header['Location'][0]
-					file, response = get location, process_response: false
+
+					if(follow_redirect)
+						file, response = get location, process_response: false
+					else
+						return location #simply return the url
+					end
 				elsif(response.status==202)
 					retry_after_seconds = response.header['Retry-After'][0]
 					sleep retry_after_seconds.to_i
@@ -60,7 +65,9 @@ module Boxr
 			file
 		end
 
-		#TODO: need to implement download_url
+		def download_url(file_id, version: nil)
+			download_file(file_id, version: version, follow_redirect: false)
+		end
 
 		def upload_file(path_to_file, parent_id, content_created_at: nil, content_modified_at: nil, 
 										preflight_check: true, send_content_md5: true)
@@ -110,10 +117,6 @@ module Boxr
 			uri = "#{FILES_URI}/#{file_id}/versions"
 			versions, response = get uri
 			versions["entries"]
-		end
-
-		def download_old_version_of_file
-
 		end
 
 		def promote_old_version_of_file(file_id, file_version_id)
@@ -166,9 +169,11 @@ module Boxr
 			disable_shared_link(uri, file_id)
 		end
 
-		def trashed_file(file_id)
+		def trashed_file(file_id, fields: [])
 			uri = "#{FILES_URI}/#{file_id}/trash"
-			trashed_file, response = get uri
+			query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
+
+			trashed_file, response = get uri, query: query
 			trashed_file
 		end
 
@@ -182,21 +187,6 @@ module Boxr
 		def restore_trashed_file(file_id, name: nil, parent_id: nil)
 			uri = "#{FILES_URI}/#{file_id}"
 			restore_trashed_item(uri, name, parent_id)
-		end
-
-		def file_comments(file_id, fields: [])
-			uri = "#{FILES_URI}/#{file_id}/comments"
-			query = build_fields_query(fields, COMMENT_FIELDS_QUERY)
-
-			comments = get_with_pagination uri, query: query
-		end
-
-		def file_tasks(file_id, fields: [])
-			uri = "#{FILES_URI}/#{file_id}/tasks"
-			query = build_fields_query(fields, TASK_FIELDS_QUERY)
-
-			tasks, response = get uri, query: query
-			tasks["entries"]
 		end
 
 

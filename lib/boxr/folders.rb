@@ -89,12 +89,6 @@ module Boxr
 			disable_shared_link(uri, folder_id)
 		end
 
-		def folder_collaborations(folder_id)
-			uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
-			collaborations, response = get uri
-			collaborations
-		end
-
 		def trash(fields: [])
 			uri = "#{FOLDERS_URI}/trash/items"
 			query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
@@ -102,9 +96,11 @@ module Boxr
 			items = get_with_pagination uri, query: query, limit: FOLDER_ITEMS_LIMIT
 		end
 
-		def trashed_folder(folder_id)
+		def trashed_folder(folder_id, fields: [])
 			uri = "#{FOLDERS_URI}/#{folder_id}/trash"
-			folder, response = get uri
+			query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
+			
+			folder, response = get uri, query: query
 			folder
 		end
 

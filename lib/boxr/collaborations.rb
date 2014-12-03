@@ -1,6 +1,12 @@
 module Boxr
 	class Client
 
+		def folder_collaborations(folder_id)
+			uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
+			collaborations, response = get uri
+			collaborations
+		end
+
 		#make sure 'role' value is a string as Box has role values with spaces and dashes; e.g. 'previewer uploader'
 		def add_collaboration(folder_id, accessible_by, role, fields: [], notify: nil)
 			query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)

@@ -1,6 +1,14 @@
 module Boxr
 	class Client
 
+		def file_tasks(file_id, fields: [])
+			uri = "#{FILES_URI}/#{file_id}/tasks"
+			query = build_fields_query(fields, TASK_FIELDS_QUERY)
+
+			tasks, response = get uri, query: query
+			tasks["entries"]
+		end
+
 		def create_task(file_id, action: :review, message: nil, due_at: nil)
 			attributes = {item: {type: :file, id: file_id}}
 			attributes[:action] = action unless action.nil?

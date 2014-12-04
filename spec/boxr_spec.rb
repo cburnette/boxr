@@ -186,10 +186,10 @@ describe Boxr::Client do
 
 	it "invokes comment operations" do 
 		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder_id)
-		TEST_FILE_ID = new_file.id
+		test_file_id = new_file.id
 
 		puts "add comment to file"
-		comment = BOX_CLIENT.add_comment_to_file(TEST_FILE_ID, message: COMMENT_MESSAGE)
+		comment = BOX_CLIENT.add_comment_to_file(test_file_id, message: COMMENT_MESSAGE)
 		expect(comment.message).to eq(COMMENT_MESSAGE)
 		COMMENT_ID = comment.id
 
@@ -198,7 +198,7 @@ describe Boxr::Client do
 		expect(reply.message).to eq(REPLY_MESSAGE)
 
 		puts "get file comments"
-		comments = BOX_CLIENT.file_comments(TEST_FILE_ID)
+		comments = BOX_CLIENT.file_comments(test_file_id)
 		expect(comments.count).to eq(2)
 
 		puts "update a comment"
@@ -211,6 +211,24 @@ describe Boxr::Client do
 
 		puts "delete comment"
 		result = BOX_CLIENT.delete_comment(COMMENT_ID)
+		expect(result).to eq({})
+	end
+
+	it "invokes metadata operations" do
+		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder_id)
+		test_file_id = new_file.id
+
+		puts "create metadata"
+		meta = {"a" => "hello", "b" => "world"}
+		metadata = BOX_CLIENT.create_metadata(test_file_id, meta)
+		expect(metadata.a).to eq("hello")
+
+		puts "update metadata"
+		metadata = BOX_CLIENT.update_metadata(test_file_id, [{op: :replace, path: "/b", value: "there"}])
+		expect(metadata.b).to eq("there")
+
+		puts "delete metadata"
+		result = BOX_CLIENT.delete_metadata(test_file_id)
 		expect(result).to eq({})
 	end
 end

@@ -34,7 +34,7 @@ module Boxr
 			created_folder
 		end
 
-		def folder_info(folder_id, fields: [])
+		def folder(folder_id, fields: [])
 			query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
 			uri = "#{FOLDERS_URI}/#{folder_id}"
 
@@ -42,7 +42,7 @@ module Boxr
 			folder
 		end
 
-		def update_folder_info(folder_id, name: nil, description: nil, parent_id: nil, shared_link: nil,
+		def update_folder(folder_id, name: nil, description: nil, parent_id: nil, shared_link: nil,
 													 folder_upload_email: nil, owned_by_id: nil, sync_state: nil, tags: nil,
 													 can_non_owners_invite: nil, if_match: nil)
 			uri = "#{FOLDERS_URI}/#{folder_id}"

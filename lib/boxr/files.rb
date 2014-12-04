@@ -20,14 +20,14 @@ module Boxr
 			end
 		end
 
-		def file_info(file_id, fields: [])
+		def file(file_id, fields: [])
 			uri = "#{FILES_URI}/#{file_id}"
 			query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
 			file, response = get uri, query: query
 			file
 		end
 
-		def update_file_info(file_id, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
+		def update_file(file_id, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
 			uri = "#{FILES_URI}/#{file_id}"
 
 			attributes = {}

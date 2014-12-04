@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Boxr do
+describe Boxr::Client do
 
 	#PLEASE NOTE 
 	#This test is intentionally NOT a series of unit tests.  The goal is to smoke test the entire code base
@@ -20,39 +20,32 @@ describe Boxr do
 	#uncomment this line to see the HTTP request and response debug info in the rspec output
 	#BOX_CLIENT.debug_device = STDOUT
 
-	TEST_FOLDER_NAME = 'Boxr_Test'
+	TEST_FOLDER_NAME = 'Boxr Test'
 	SUB_FOLDER_NAME = 'sub_folder_1'
 	SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
 	TEST_FILE_NAME = 'test file.txt'
 	DOWNLOADED_TEST_FILE_NAME = 'downloaded test file.txt'
 
-	it 'smoke tests the code base against a real Box account' do
-
-	  puts "delete pre-existing test folder if found and create a new test folder"
+	before(:each) do
+	  #delete pre-existing test folder if found and create a new test folder"
+	  sleep 3 #unfortunately we need to pause to make sure the Box servers return folders just created
 		root_folders = BOX_CLIENT.folder_items(Boxr::ROOT).folders
 		test_folder = root_folders.select{|f| f.name == TEST_FOLDER_NAME}.first
 		if(test_folder)
 			BOX_CLIENT.delete_folder(test_folder.id, recursive: true)
 		end
 
-
-		#############################################################################
-		# 																																					#
-		# Folder tests																															#
-		# 																																					#
-		#############################################################################
-
-		puts "create a new, empty test folder"
 		new_folder = BOX_CLIENT.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
-		expect(new_folder).to be_a Hashie::Mash
-		TEST_FOLDER_ID = new_folder.id
+		@test_folder_id = new_folder.id
+	end
 
-		puts 'get folder id using path'
+	it 'invokes folder operations' do
+		puts "get folder id using path"
 		folder_id = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
-		expect(TEST_FOLDER_ID).to eq(TEST_FOLDER_ID)
+		expect(folder_id).to eq(@test_folder_id)
 
-		puts 'create a new sub-folder'
-		new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, TEST_FOLDER_ID)
+		puts "create a new sub-folder"
+		new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, @test_folder_id)
 		expect(new_folder).to be_a Hashie::Mash
 		SUB_FOLDER_ID = new_folder.id
 
@@ -61,16 +54,16 @@ describe Boxr do
 		expect(updated_folder.description).to eq(SUB_FOLDER_DESCRIPTION)
 
 		puts "copy the sub-folder"
-		new_folder = BOX_CLIENT.copy_folder(SUB_FOLDER_ID,TEST_FOLDER_ID, name: 'copy of sub_folder_1')
+		new_folder = BOX_CLIENT.copy_folder(SUB_FOLDER_ID,@test_folder_id, name: 'copy of sub_folder_1')
 		expect(new_folder).to be_a Hashie::Mash
 		SUB_FOLDER_COPY_ID = new_folder.id
 
 		puts "create shared link for folder"
-		updated_folder = BOX_CLIENT.create_shared_link_for_folder(TEST_FOLDER_ID, access: :open)
+		updated_folder = BOX_CLIENT.create_shared_link_for_folder(@test_folder_id, access: :open)
 		expect(updated_folder.shared_link.access).to eq("open")
 
 		puts "disable shared link for folder"
-		updated_folder = BOX_CLIENT.disable_shared_link_for_folder(TEST_FOLDER_ID)
+		updated_folder = BOX_CLIENT.disable_shared_link_for_folder(@test_folder_id)
 		expect(updated_folder.shared_link).to be_nil
 
 		puts "delete folder"
@@ -94,17 +87,11 @@ describe Boxr do
 		result = BOX_CLIENT.delete_trashed_folder(SUB_FOLDER_COPY_ID)
 		expect(result).to eq({})
 
-		#TODO: still need to test folder collaborations
+	end
 
-		
-		#############################################################################
-		# 																																					#
-		# File tests																																#
-		# 																																					#
-		#############################################################################
-
+	it "invokes file operations" do
 		puts "upload a file"
-		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", TEST_FOLDER_ID)
+		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder_id)
 		expect(new_file.name).to eq(TEST_FILE_NAME)
 		TEST_FILE_ID = new_file.id
 
@@ -112,13 +99,13 @@ describe Boxr do
 		file_id = BOX_CLIENT.file_id("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
 		expect(file_id).to eq(TEST_FILE_ID)
 
-		puts "get file info"
-		file_info = BOX_CLIENT.file_info(TEST_FILE_ID)
-		expect(file_info.id).to eq(TEST_FILE_ID)
-
 		puts "get file download url"
 		download_url = BOX_CLIENT.download_url(TEST_FILE_ID)
 		expect(download_url).to start_with("https://")
+
+		puts "get file info"
+		file_info = BOX_CLIENT.file_info(TEST_FILE_ID)
+		expect(file_info.id).to eq(TEST_FILE_ID)
 
 		puts "update file info"
 		new_description = 'this file is used to test Boxr'
@@ -166,7 +153,7 @@ describe Boxr do
 
 		puts "copy file"
 		new_file_name = "copy of #{TEST_FILE_NAME}"
-		new_file = BOX_CLIENT.copy_file(TEST_FILE_ID, TEST_FOLDER_ID, name: new_file_name)
+		new_file = BOX_CLIENT.copy_file(TEST_FILE_ID, @test_folder_id, name: new_file_name)
 		expect(new_file.name).to eq(new_file_name)
 		NEW_FILE_ID = new_file.id
 
@@ -186,6 +173,5 @@ describe Boxr do
 		BOX_CLIENT.delete_file(NEW_FILE_ID)
 		result = BOX_CLIENT.delete_trashed_file(NEW_FILE_ID)
 		expect(result).to eq({})
-
 	end
 end

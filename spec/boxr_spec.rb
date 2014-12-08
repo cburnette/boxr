@@ -356,5 +356,12 @@ describe Boxr::Client do
 		expect(result).to eq({})
 	end
 
+	it "invokes search operations" do
+		#the issue with this test is the Box can take between 5-10 minutes to index any content uploaded; this is just a smoke test
+		puts "perform search"
+		results, count = BOX_CLIENT.search("sdlfjuwnsljsdfuqpoiqweouyvnnadsfkjhiuweruywerbjvhvkjlnasoifyukhenlwdflnsdvoiuawfydfjh")
+		expect(results).to eq([])
+		expect(count).to eq(0)
+	end
 
 end

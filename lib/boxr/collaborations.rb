@@ -4,7 +4,7 @@ module Boxr
 		def folder_collaborations(folder_id)
 			uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
 			collaborations, response = get uri
-			collaborations
+			collaborations['entries']
 		end
 
 		#make sure 'role' value is a string as Box has role values with spaces and dashes; e.g. 'previewer uploader'
@@ -46,7 +46,7 @@ module Boxr
 			collaboration
 		end
 
-		#these are pending collaborations for the current users; use the As-User Header to request for different users
+		#these are pending collaborations for the current user; use the As-User Header to request for different users
 		def pending_collaborations
 			query = {status: :pending}
 			pending_collaborations, response = get(COLLABORATIONS_URI, query: query)

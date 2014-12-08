@@ -20,6 +20,7 @@ describe Boxr::Client do
 	#uncomment this line to see the HTTP request and response debug info in the rspec output
 	#BOX_CLIENT.debug_device = STDOUT
 
+	BOX_SERVER_SLEEP = 5
 	TEST_FOLDER_NAME = 'Boxr Test'
 	SUB_FOLDER_NAME = 'sub_folder_1'
 	SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
@@ -28,10 +29,13 @@ describe Boxr::Client do
 	COMMENT_MESSAGE = 'this is a comment'
 	REPLY_MESSAGE = 'this is a comment reply'
 	CHANGED_COMMENT_MESSAGE = 'this comment has been changed'
+	TEST_USER_LOGIN = "test-boxr-user@example.com"
+	TEST_USER_NAME = "Test Boxr User"
+	TEST_TASK_MESSAGE = "Please review"
 
 	before(:each) do
 	  #delete pre-existing test folder if found and create a new test folder"
-	  sleep 2 #unfortunately we need to pause to make sure the Box servers return folders just created
+	  sleep BOX_SERVER_SLEEP
 		root_folders = BOX_CLIENT.folder_items(Boxr::ROOT).folders
 		test_folder = root_folders.select{|f| f.name == TEST_FOLDER_NAME}.first
 		if(test_folder)
@@ -40,6 +44,15 @@ describe Boxr::Client do
 
 		new_folder = BOX_CLIENT.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
 		@test_folder_id = new_folder.id
+
+		all_users = BOX_CLIENT.all_users
+		test_user = all_users.select{|u| u.login == TEST_USER_LOGIN}.first
+		if(test_user)
+			BOX_CLIENT.delete_user(test_user.id, force: true)
+		end
+		sleep BOX_SERVER_SLEEP
+		test_user = BOX_CLIENT.create_user(TEST_USER_LOGIN, TEST_USER_NAME)
+		@test_user_id = test_user.id
 	end
 
 	it 'invokes folder operations' do
@@ -184,6 +197,10 @@ describe Boxr::Client do
 		expect(result).to eq({})
 	end
 
+	it "invokes user operations" do 
+
+	end
+
 	it "invokes comment operations" do 
 		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder_id)
 		test_file_id = new_file.id
@@ -214,6 +231,85 @@ describe Boxr::Client do
 		expect(result).to eq({})
 	end
 
+	it "invokes collaborations operations" do
+		puts "add collaboration"
+		collaboration = BOX_CLIENT.add_collaboration(@test_folder_id, {id: @test_user_id, type: :user}, :editor)
+		expect(collaboration.accessible_by.id).to eq(@test_user_id)
+		collaboration_id = collaboration.id
+
+		puts "inspect collaboration"
+		collaboration = BOX_CLIENT.collaboration(collaboration_id)
+		expect(collaboration.id).to eq(collaboration_id)
+
+		puts "edit collaboration"
+		collaboration = BOX_CLIENT.edit_collaboration(collaboration_id, role: "viewer uploader")
+		expect(collaboration.role).to eq("viewer uploader")
+
+		puts "inspect folder collaborations"
+		collaborations = BOX_CLIENT.folder_collaborations(@test_folder_id)
+		expect(collaborations.count).to eq(1)
+		expect(collaborations[0].id).to eq(collaboration_id)
+
+		puts "remove collaboration"
+		result = BOX_CLIENT.remove_collaboration(collaboration_id)
+		expect(result).to eq({})
+		collaborations = BOX_CLIENT.folder_collaborations(@test_folder_id)
+		expect(collaborations.count).to eq(0)
+
+		puts "inspect pending collaborations"
+		pending_collaborations = BOX_CLIENT.pending_collaborations
+		expect(pending_collaborations).to eq([])
+	end
+
+	it "invokes task operations" do
+		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder_id)
+		test_file_id = new_file.id
+		collaboration = BOX_CLIENT.add_collaboration(@test_folder_id, {id: @test_user_id, type: :user}, :editor)
+
+		puts "create task"
+		new_task = BOX_CLIENT.create_task(test_file_id, message: TEST_TASK_MESSAGE)
+		expect(new_task.message).to eq(TEST_TASK_MESSAGE)
+		TEST_TASK_ID = new_task.id
+
+		puts "inspect file tasks"
+		tasks = BOX_CLIENT.file_tasks(test_file_id)
+		expect(tasks.first.id).to eq(TEST_TASK_ID)
+
+		puts "inspect task"
+		task = BOX_CLIENT.task(TEST_TASK_ID)
+		expect(task.id).to eq(TEST_TASK_ID)
+
+		puts "update task"
+		NEW_TASK_MESSAGE = "new task message"
+		updated_task = BOX_CLIENT.update_task(TEST_TASK_ID, message: NEW_TASK_MESSAGE)
+		expect(updated_task.message).to eq(NEW_TASK_MESSAGE)
+
+		puts "create task assignment"
+		task_assignment = BOX_CLIENT.create_task_assignment(TEST_TASK_ID, assign_to_id: @test_user_id)
+		expect(task_assignment.assigned_to.id).to eq(@test_user_id)
+		task_assignment_id = task_assignment.id
+
+		puts "inspect task assignment"
+		task_assignment = BOX_CLIENT.task_assignment(task_assignment_id)
+		expect(task_assignment.id).to eq(task_assignment_id)
+
+		puts "inspect task assignments"
+		task_assignments = BOX_CLIENT.task_assignments(TEST_TASK_ID)
+		expect(task_assignments.count).to eq(1)
+		expect(task_assignments[0].id).to eq(task_assignment_id)
+
+	  # TODO: can't do this test yet because the test user needs to confirm their email address before you can do this
+		# puts "update task assignment"
+		# box_client_as_test_user = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'], as_user_id: @test_user_id)
+		# new_message = "Updated task message"
+		# task_assignment = box_client_as_test_user.update_task_assignment(TEST_TASK_ID, resolution_state: :completed)
+		# expect(task_assignment.resolution_state).to eq('completed')
+
+		puts "delete task assignment"
+		result = BOX_CLIENT.delete_task_assignment(task_assignment_id)
+		expect(result).to eq({})
+	end
+
 	it "invokes metadata operations" do
 		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder_id)
 		test_file_id = new_file.id
@@ -227,8 +323,14 @@ describe Boxr::Client do
 		metadata = BOX_CLIENT.update_metadata(test_file_id, [{op: :replace, path: "/b", value: "there"}])
 		expect(metadata.b).to eq("there")
 
+		puts "get metadata"
+		metadata = BOX_CLIENT.metadata(test_file_id)
+		expect(metadata.a).to eq("hello")
+
 		puts "delete metadata"
 		result = BOX_CLIENT.delete_metadata(test_file_id)
 		expect(result).to eq({})
 	end
+
+
 end

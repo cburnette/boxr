@@ -8,6 +8,10 @@ module Boxr
 			user
 		end
 
+		def me(fields: [])
+			current_user(fields: fields)
+		end
+
 		def user(user_id, fields: [])
 			uri = "#{USERS_URI}/#{user_id}"
 			query = build_fields_query(fields, USER_FIELDS_QUERY)
@@ -19,7 +23,7 @@ module Boxr
 			uri = USERS_URI
 			query = build_fields_query(fields, USER_FIELDS_QUERY)
 			query[:filter_term] = filter_term unless filter_term.nil?
-			users, response = get_with_pagination(uri, query: query)
+			users = get_with_pagination(uri, query: query)
 		end
 
 		def create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,

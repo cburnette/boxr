@@ -198,7 +198,31 @@ describe Boxr::Client do
 	end
 
 	it "invokes user operations" do 
+		puts "inspect current user"
+		user = BOX_CLIENT.current_user
+		expect(user.status).to eq('active')
+		user = BOX_CLIENT.me(fields: [:role])
+		expect(user.role).to_not be_nil
 
+		puts "inspect a user"
+		user = BOX_CLIENT.user(@test_user_id)
+		expect(user.id).to eq(@test_user_id)
+
+		puts "inspect all users"
+		all_users = BOX_CLIENT.all_users()
+		test_user = all_users.select{|u| u.id == @test_user_id}.first
+		expect(test_user).to_not be_nil
+
+		puts "update user"
+		new_name = "Chuck Nevitt"
+		user = BOX_CLIENT.update_user(@test_user_id, name: new_name)
+		expect(user.name).to eq(new_name)
+
+		#create user is tested in the before method
+
+		puts "delete user"
+		result = BOX_CLIENT.delete_user(@test_user_id, force: true)
+		expect(result).to eq({})
 	end
 
 	it "invokes comment operations" do 

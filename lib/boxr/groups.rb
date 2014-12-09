@@ -20,6 +20,8 @@ module Boxr
 			updated_group
 		end
 
+		alias :rename_group :update_group
+
 		def delete_group(group_id)
 			uri = "#{GROUPS_URI}/#{group_id}"
 			result, response = delete(uri)

@@ -31,32 +31,37 @@ describe Boxr::Client do
 	CHANGED_COMMENT_MESSAGE = 'this comment has been changed'
 	TEST_USER_LOGIN = "test-boxr-user@example.com"
 	TEST_USER_NAME = "Test Boxr User"
+	TEST_GROUP_NAME= "Test Boxr Group"
 	TEST_TASK_MESSAGE = "Please review"
 
 	before(:each) do
-	  #delete pre-existing test folder if found and create a new test folder"
+		puts "-----> Resetting Box Environment"
 	  sleep BOX_SERVER_SLEEP
 		root_folders = BOX_CLIENT.folder_items(Boxr::ROOT).folders
-		test_folder = root_folders.select{|f| f.name == TEST_FOLDER_NAME}.first
+		test_folder = root_folders.find{|f| f.name == TEST_FOLDER_NAME}
 		if(test_folder)
 			BOX_CLIENT.delete_folder(test_folder.id, recursive: true)
 		end
-
 		new_folder = BOX_CLIENT.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
 		@test_folder_id = new_folder.id
 
 		all_users = BOX_CLIENT.all_users
-		test_user = all_users.select{|u| u.login == TEST_USER_LOGIN}.first
+		test_user = all_users.find{|u| u.login == TEST_USER_LOGIN}
 		if(test_user)
 			BOX_CLIENT.delete_user(test_user.id, force: true)
 		end
 		sleep BOX_SERVER_SLEEP
 		test_user = BOX_CLIENT.create_user(TEST_USER_LOGIN, TEST_USER_NAME)
 		@test_user_id = test_user.id
+
+		all_groups = BOX_CLIENT.groups
+		test_group = all_groups.find{|g| g.name == TEST_GROUP_NAME}
+		if(test_group)
+			BOX_CLIENT.delete_group(test_group.id)
+		end
 	end
 
 	it 'invokes folder operations' do
-
 		puts "get folder id using path"
 		folder_id = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
 		expect(folder_id).to eq(@test_folder_id)
@@ -107,11 +112,9 @@ describe Boxr::Client do
 		BOX_CLIENT.delete_folder(SUB_FOLDER_COPY_ID, recursive: true)
 		result = BOX_CLIENT.delete_trashed_folder(SUB_FOLDER_COPY_ID)
 		expect(result).to eq({})
-
 	end
 
 	it "invokes file operations" do
-
 		puts "upload a file"
 		new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder_id)
 		expect(new_file.name).to eq(TEST_FILE_NAME)
@@ -210,7 +213,7 @@ describe Boxr::Client do
 
 		puts "inspect all users"
 		all_users = BOX_CLIENT.all_users()
-		test_user = all_users.select{|u| u.id == @test_user_id}.first
+		test_user = all_users.find{|u| u.id == @test_user_id}
 		expect(test_user).to_not be_nil
 
 		puts "update user"
@@ -223,6 +226,68 @@ describe Boxr::Client do
 		puts "delete user"
 		result = BOX_CLIENT.delete_user(@test_user_id, force: true)
 		expect(result).to eq({})
+	end
+
+	it "invokes group operations" do
+		puts "create group"
+		group = BOX_CLIENT.create_group(TEST_GROUP_NAME)
+		expect(group.name).to eq(TEST_GROUP_NAME)
+		test_group_id = group.id
+
+		puts "inspect groups"
+		groups = BOX_CLIENT.groups
+		test_group = groups.find{|g| g.name == TEST_GROUP_NAME}
+		expect(test_group).to_not be_nil
+
+		puts "update group"
+		new_name = "Test Boxr Group Renamed"
+		group = BOX_CLIENT.update_group(test_group_id, new_name)
+		expect(group.name).to eq(new_name)
+		group = BOX_CLIENT.rename_group(test_group_id,TEST_GROUP_NAME)
+		expect(group.name).to eq(TEST_GROUP_NAME)
+
+		puts "add user to group"
+		group_membership = BOX_CLIENT.add_user_to_group(@test_user_id, test_group_id)
+		expect(group_membership.user.id).to eq(@test_user_id)
+		expect(group_membership.group.id).to eq(test_group_id)
+		membership_id = group_membership.id
+
+		puts "inspect group membership"
+		group_membership = BOX_CLIENT.group_membership(membership_id)
+		expect(group_membership.id).to eq(membership_id)
+
+		puts "inspect group memberships"
+		group_memberships = BOX_CLIENT.group_memberships(test_group_id)
+		expect(group_memberships.count).to eq(1)
+		expect(group_memberships.first.id).to eq(membership_id)
+
+		puts "inspect group memberships for a user"
+		group_memberships = BOX_CLIENT.group_memberships_for_user(@test_user_id)
+		expect(group_memberships.count).to eq(1)
+		expect(group_memberships.first.id).to eq(membership_id)
+
+		puts "inspect group memberships for me"
+		#this is whatever user your developer token is tied to
+		group_memberships = BOX_CLIENT.group_memberships_for_me
+		expect(group_memberships).to be_a(Array)
+
+		puts "update group membership"
+		group_membership = BOX_CLIENT.update_group_membership(membership_id, :admin)
+		expect(group_membership.role).to eq("admin")
+
+		puts "delete group membership"
+		result = BOX_CLIENT.delete_group_membership(membership_id)
+		expect(result).to eq({})
+		group_memberships = BOX_CLIENT.group_memberships_for_user(@test_user_id)
+		expect(group_memberships.count).to eq(0)
+
+		puts "inspect group collaborations"
+		group_collaboration = BOX_CLIENT.add_collaboration(@test_folder_id, {id: test_group_id, type: :group}, :editor)
+		expect(group_collaboration.accessible_by.id).to eq(test_group_id)
+
+		puts "delete group"
+		response = BOX_CLIENT.delete_group(test_group_id)
+		expect(response).to eq({})
 	end
 
 	it "invokes comment operations" do 
@@ -357,11 +422,11 @@ describe Boxr::Client do
 	end
 
 	it "invokes search operations" do
-		#the issue with this test is the Box can take between 5-10 minutes to index any content uploaded; this is just a smoke test
+		#the issue with this test is that Box can take between 5-10 minutes to index any content uploaded; this is just a smoke test
+		#so we are searching for something that should return zero results
 		puts "perform search"
-		results, count = BOX_CLIENT.search("sdlfjuwnsljsdfuqpoiqweouyvnnadsfkjhiuweruywerbjvhvkjlnasoifyukhenlwdflnsdvoiuawfydfjh")
+		results = BOX_CLIENT.search("sdlfjuwnsljsdfuqpoiqweouyvnnadsfkjhiuweruywerbjvhvkjlnasoifyukhenlwdflnsdvoiuawfydfjh")
 		expect(results).to eq([])
-		expect(count).to eq(0)
 	end
 
 end

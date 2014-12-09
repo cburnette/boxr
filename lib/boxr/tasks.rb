@@ -77,7 +77,7 @@ module Boxr
 			attributes[:message] = message unless message.nil?
 			attributes[:resolution_state] = resolution_state unless resolution_state.nil?
 
-			updated_task, respons = put uri, attributes
+			updated_task, response = put uri, attributes
 			updated_task
 		end
 

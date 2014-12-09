@@ -1,6 +1,6 @@
 # Boxr
 
-PLEASE NOTE: this is still a work in progress as I need to complete this README, complete the integration test suite, and add a few more convenience methods.  Feel free to try it out, and I'm almost finished with the integration test suite. Thanks!
+PLEASE NOTE: I need to complete this README with much more detailed instructions.  However, feel free to try it out. The integration test suite is achieving 95% code coverage. Thanks!
 
 ## Installation
 

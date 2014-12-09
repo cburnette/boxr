@@ -87,6 +87,11 @@ describe Boxr::Client do
 		puts "create shared link for folder"
 		updated_folder = BOX_CLIENT.create_shared_link_for_folder(@test_folder_id, access: :open)
 		expect(updated_folder.shared_link.access).to eq("open")
+		shared_link = updated_folder.shared_link.url
+
+		puts "inspect shared link"
+		shared_item = BOX_CLIENT.shared_item(shared_link)
+		expect(shared_item.id).to eq(@test_folder_id)
 
 		puts "disable shared link for folder"
 		updated_folder = BOX_CLIENT.disable_shared_link_for_folder(@test_folder_id)
@@ -387,15 +392,21 @@ describe Boxr::Client do
 		expect(task_assignments.count).to eq(1)
 		expect(task_assignments[0].id).to eq(task_assignment_id)
 
-	  # TODO: can't do this test yet because the test user needs to confirm their email address before you can do this
-		# puts "update task assignment"
-		# box_client_as_test_user = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'], as_user_id: @test_user_id)
-		# new_message = "Updated task message"
-		# task_assignment = box_client_as_test_user.update_task_assignment(TEST_TASK_ID, resolution_state: :completed)
-		# expect(task_assignment.resolution_state).to eq('completed')
+	  #TODO: can't do this test yet because the test user needs to confirm their email address before you can do this
+		puts "update task assignment"
+		expect {
+							box_client_as_test_user = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'], as_user_id: @test_user_id)
+							new_message = "Updated task message"
+							task_assignment = box_client_as_test_user.update_task_assignment(TEST_TASK_ID, resolution_state: :completed)
+							expect(task_assignment.resolution_state).to eq('completed')
+						}.to raise_error
 
 		puts "delete task assignment"
 		result = BOX_CLIENT.delete_task_assignment(task_assignment_id)
+		expect(result).to eq({})
+
+		puts "delete task"
+		result = BOX_CLIENT.delete_task(TEST_TASK_ID)
 		expect(result).to eq({})
 	end
 
@@ -427,6 +438,10 @@ describe Boxr::Client do
 		puts "perform search"
 		results = BOX_CLIENT.search("sdlfjuwnsljsdfuqpoiqweouyvnnadsfkjhiuweruywerbjvhvkjlnasoifyukhenlwdflnsdvoiuawfydfjh")
 		expect(results).to eq([])
+	end
+
+	it "invokes a Boxr exception" do
+		expect { BOX_CLIENT.folder(1)}.to raise_error
 	end
 
 end

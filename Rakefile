@@ -1,3 +1,5 @@
+import "./lib/tasks/oauth.rake"
+
 require 'rspec/core/rake_task'
 require "bundler/gem_tasks"
 

@@ -3,7 +3,7 @@ module Boxr
 
 		def folder_collaborations(folder_id)
 			uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
-			collaborations, response = get uri
+			collaborations, response = get(uri)
 			collaborations['entries']
 		end
 

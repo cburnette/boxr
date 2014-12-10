@@ -2,7 +2,7 @@ require 'oj'
 require 'httpclient'
 require 'hashie'
 
-require "boxr/version"
+require 'boxr/version'
 require 'boxr/exceptions'
 require 'boxr/client'
 require 'boxr/shared_items'
@@ -15,6 +15,7 @@ require 'boxr/collaborations'
 require 'boxr/search'
 require 'boxr/tasks'
 require 'boxr/metadata'
+require 'boxr/events'
 
 module Enumerable
 	def files

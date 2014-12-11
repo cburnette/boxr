@@ -5,6 +5,7 @@
 /.ruby-gemset
 /.env.test
 /.env
+/examples/.env
 /_yardoc/
 /coverage/
 /doc/

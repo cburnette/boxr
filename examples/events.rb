@@ -1,4 +1,4 @@
-require 'dotenv'; Dotenv.load!
+require 'dotenv'; Dotenv.load("../.env")
 require 'boxr'
 require 'awesome_print'
 require 'lru_redux'

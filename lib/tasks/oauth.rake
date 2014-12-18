@@ -10,7 +10,13 @@ require 'boxr'
 namespace :oauth do
 	desc "some stuff"
 	task :get_tokens, [:client_id, :client_secret] => :environment do |task, args|
-		
 		puts args.client_id, args.client_secret
+
+		# print "Whoa! Pushing to production. Type 'pushitrealgood' to continue: "
+  #   if STDIN.gets.chomp == 'pushitrealgood'
+  #     system "heroku pgbackups:capture -e -a zenph-production" or abort "aborted backing up production database"
+  #   else
+  #     abort 'task aborted'
+  #   end
 	end
 end

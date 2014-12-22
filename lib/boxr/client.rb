@@ -51,7 +51,7 @@ module Boxr
 		#All instances of Boxr::Client will use this one class instance of HTTPClient; that way persistent HTTPS connections work.
 		#Plus, httpclient is thread-safe so we can use the same class instance with multiple instances of Boxr::Client
 		BOX_CLIENT = HTTPClient.new
-		BOX_CLIENT.send_timeout = 3600
+		BOX_CLIENT.send_timeout = 3600 #one hour; needed for lengthy uploads
 		BOX_CLIENT.transparent_gzip_decompression = true 
 
 		def initialize(token, as_user_id: nil)

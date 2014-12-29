@@ -52,7 +52,7 @@ module Boxr
 			attributes[:description] = description unless description.nil?
 			attributes[:parent_id] = {id: parent_id} unless parent_id.nil?
 			attributes[:shared_link] = shared_link unless shared_link.nil?
-			attributes[:folder_upload_email_access] = folder_upload_email_access unless folder_upload_email_access.nil?
+			attributes[:folder_upload_email] = {access: folder_upload_email_access} unless folder_upload_email_access.nil?
 			attributes[:owned_by_id] = {owned_by: owned_by_id} unless owned_by_id.nil?
 			attributes[:sync_state] = sync_state unless sync_state.nil?
 			attributes[:tags] = tags unless tags.nil? 

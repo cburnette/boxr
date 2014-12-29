@@ -8,8 +8,8 @@ module Boxr
 	end
 
 	def self.get_tokens(code, grant_type: "authorization_code", username: nil)
-		url = "https://api.box.com/oauth2/token?code=#{code}&grant_type=#{grant_type}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
-		url = url + "&username=#{username}" unless username.nil?
+		uri = "https://api.box.com/oauth2/token?code=#{code}&grant_type=#{grant_type}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
+		uri = uri + "&username=#{username}" unless username.nil?
 
 		client = HTTPClient.new
 		res = client.post(uri)

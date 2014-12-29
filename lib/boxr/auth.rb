@@ -4,6 +4,7 @@ module Boxr
 		uri = "https://app.box.com/api/oauth2/authorize?response_type=#{response_type}&state=#{state}&client_id=#{ENV['BOX_CLIENT_ID']}"
 		uri = uri + "&scope=#{scope}" unless scope.nil?
 		uri = uri + "&folder_id=#{folder_id}" unless folder_id.nil?
+		uri
 	end
 
 	def self.get_tokens(code, grant_type: "authorization_code", username: nil)

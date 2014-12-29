@@ -12,7 +12,9 @@ module Boxr
 		url = url + "&username=#{username}" unless username.nil?
 
 		client = HTTPClient.new
-		res = client.post(uri) 
+		res = client.post(uri)
+		puts res.status
+		puts res.body 
 
 	end
 

@@ -5,6 +5,7 @@ module Boxr
 		url = url + "&redirect_uri=#{redirect_uri}" unless redirect_uri.nil?
 		url = url + "&scope=#{scope}" unless scope.nil?
 		url = url + "&folder_id=#{folder_id}" unless folder_id.nil?
+		url
 	end
 
 end

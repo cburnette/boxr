@@ -16,6 +16,7 @@ require 'boxr/search'
 require 'boxr/tasks'
 require 'boxr/metadata'
 require 'boxr/events'
+require 'boxr/auth'
 
 module Enumerable
 	def files

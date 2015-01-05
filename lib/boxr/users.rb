@@ -8,9 +8,7 @@ module Boxr
       user
     end
 
-    def me(fields: [])
-      current_user(fields: fields)
-    end
+    alias :me :current_user
 
     def user(user_id, fields: [])
       uri = "#{USERS_URI}/#{user_id}"

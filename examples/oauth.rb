@@ -19,7 +19,6 @@ print "Enter the code: "
 code = STDIN.gets.chomp
 
 Boxr::get_tokens(code)
-puts
 
 
 

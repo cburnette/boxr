@@ -10,7 +10,8 @@ oauth_url = Boxr::oauth_url(URI.encode_www_form_component('your-anti-forgery-tok
 
 puts "Copy the URL below and paste into a browser. Go through the OAuth flow using the desired Box account. \
 When you are finished your browser will redirect to a 404 error page. This is expected behavior. Look at the URL in the address \
-bar and copy the 'code' parameter value. Paste it into the prompt below. You only have 30 seconds to complete this task so be quick about it!"
+bar and copy the 'code' parameter value. Paste it into the prompt below. You only have 30 seconds to complete this task so be quick about it! \
+You will then see your access token and refresh token."
 
 puts
 puts "URL:  #{oauth_url}"

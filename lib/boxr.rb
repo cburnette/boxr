@@ -19,22 +19,22 @@ require 'boxr/events'
 require 'boxr/auth'
 
 module Enumerable
-	def files
-		self.select{|i| i.type == 'file'}
-	end
+  def files
+    self.select{|i| i.type == 'file'}
+  end
 
-	def folders
-		self.select{|i| i.type == 'folder'}
-	end
+  def folders
+    self.select{|i| i.type == 'folder'}
+  end
 
-	def web_links
-		self.select{|i| i.type == 'web_link'}
-	end
+  def web_links
+    self.select{|i| i.type == 'web_link'}
+  end
 end
 
 module Boxr
   Oj.default_options = {:mode => :compat }
 
-	#The root folder in Box is always identified by 0
-	ROOT = 0
+  #The root folder in Box is always identified by 0
+  ROOT = 0
 end

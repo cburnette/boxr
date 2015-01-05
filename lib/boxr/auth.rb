@@ -17,7 +17,7 @@ module Boxr
 
 	def self.refresh_token(refresh_token)
 		uri = "https://api.box.com/oauth2/token"
-		body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}&token=#{token}"
+		body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
 
 		auth_post(uri, body)
 	end

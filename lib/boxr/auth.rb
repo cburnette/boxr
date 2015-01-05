@@ -31,7 +31,7 @@ module Boxr
 
 	private
 
-	def auth_post(uri, body)
+	def self.auth_post(uri, body)
 		client = HTTPClient.new
 		res = client.post(uri, body: body)
 

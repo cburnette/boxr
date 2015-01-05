@@ -7,11 +7,24 @@ module Boxr
 		uri
 	end
 
-	def self.get_tokens(code, grant_type: "authorization_code", username: nil)
+	def self.get_token(code, grant_type: "authorization_code", username: nil)
 		uri = "https://api.box.com/oauth2/token"
 		body = "code=#{code}&grant_type=#{grant_type}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
 		body = body + "&username=#{username}" unless username.nil?
 
+		auth_post(uri, body)
+	end
+
+	def self.revoke_token(token)
+		uri = "https://api.box.com/oauth2/revoke"
+		body = "client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}&token=#{token}"
+
+		auth_post(uri, body)
+	end
+
+	private
+
+	def auth_post(uri, body)
 		client = HTTPClient.new
 		res = client.post(uri, body: body)
 

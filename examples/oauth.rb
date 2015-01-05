@@ -21,7 +21,7 @@ print "Enter the code: "
 code = STDIN.gets.chomp
 code = code.split('=').last
 
-ap Boxr::get_tokens(code)
+ap Boxr::get_token(code)
 
 
 

@@ -18,10 +18,9 @@ puts "URL:  #{oauth_url}"
 puts
 
 print "Enter the code: "
-code = STDIN.gets.chomp
-code = code.split('=').last
+code = STDIN.gets.chomp.split('=').last
 
-ap Boxr::get_token(code)
+ap Boxr::get_tokens(code)
 
 
 

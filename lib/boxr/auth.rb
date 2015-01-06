@@ -7,7 +7,7 @@ module Boxr
     uri
   end
 
-  def self.get_token(code, grant_type: "authorization_code", username: nil)
+  def self.get_tokens(code, grant_type: "authorization_code", username: nil)
     uri = "https://api.box.com/oauth2/token"
     body = "code=#{code}&grant_type=#{grant_type}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
     body = body + "&username=#{username}" unless username.nil?
@@ -15,14 +15,14 @@ module Boxr
     auth_post(uri, body)
   end
 
-  def self.refresh_token(refresh_token)
+  def self.refresh_tokens(refresh_token)
     uri = "https://api.box.com/oauth2/token"
     body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
 
     auth_post(uri, body)
   end
 
-  def self.revoke_token(token)
+  def self.revoke_tokens(token)
     uri = "https://api.box.com/oauth2/revoke"
     body = "client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}&token=#{token}"
 

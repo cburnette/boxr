@@ -2,6 +2,8 @@ module Boxr
   
   class Client
 
+    attr_reader :access_token, :refresh_token
+
     API_URI = "https://api.box.com/2.0"
     UPLOAD_URI = "https://upload.box.com/api/2.0"
     FILES_URI = "#{API_URI}/files"
@@ -54,8 +56,9 @@ module Boxr
     BOX_CLIENT.send_timeout = 3600 #one hour; needed for lengthy uploads
     BOX_CLIENT.transparent_gzip_decompression = true 
 
-    def initialize(token, as_user_id: nil)
-      @token = token
+    def initialize(access_token, refresh_token: nil, as_user_id: nil)
+      @access_token = access_token
+      @refresh_token = refresh_token
       @as_user_id = as_user_id
     end
 
@@ -70,15 +73,17 @@ module Boxr
     end
 
 
-
     private
 
     def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil)
-      headers = standard_headers()
-      headers['If-Match'] = if_match unless if_match.nil?
-      headers['BoxApi'] = box_api_header unless box_api_header.nil?
+      res = with_auto_token_refresh do
+        headers = standard_headers()
+        headers['If-Match'] = if_match unless if_match.nil?
+        headers['BoxApi'] = box_api_header unless box_api_header.nil?
 
-      res = BOX_CLIENT.get(uri, query: query, header: headers)
+        BOX_CLIENT.get(uri, query: query, header: headers)
+      end
+
       check_response_status(res, success_codes)
 
       if process_response
@@ -157,9 +162,27 @@ module Boxr
     end
 
     def standard_headers()
-      headers = {"Authorization" => "Bearer #{@token}"}
+      headers = {"Authorization" => "Bearer #{@access_token}"}
       headers['As-User'] = "#{@as_user_id}" unless @as_user_id.nil?
       headers
+    end
+
+    def with_auto_token_refresh
+      return yield unless @refresh_token
+
+      res = yield
+      if res.status == 401
+        auth_header = res.header['WWW-Authenticate'][0]
+        if auth_header && auth_header.include?('invalid_token')
+          #refresh the tokens
+          puts 'refreshing tokens'
+          new_tokens = Boxr::refresh_tokens(@refresh_token)
+          @access_token = new_tokens.access_token
+          @refresh_token = new_tokens.refresh_token
+          res = yield
+        end
+      end
+      res
     end
 
     def check_response_status(res, success_codes)

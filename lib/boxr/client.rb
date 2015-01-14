@@ -2,7 +2,7 @@ module Boxr
   
   class Client
 
-    attr_reader :access_token, :refresh_token
+    attr_reader :access_token, :refresh_token, :as_user_id, :identifier
 
     API_URI = "https://api.box.com/2.0"
     UPLOAD_URI = "https://upload.box.com/api/2.0"
@@ -56,20 +56,22 @@ module Boxr
     BOX_CLIENT.send_timeout = 3600 #one hour; needed for lengthy uploads
     BOX_CLIENT.transparent_gzip_decompression = true 
 
-    def initialize(access_token, refresh_token: nil, as_user_id: nil)
-      @access_token = access_token
-      @refresh_token = refresh_token
-      @as_user_id = as_user_id
+    def self.turn_on_debugging(device=STDOUT)
+      BOX_CLIENT.debug_dev = device
+      BOX_CLIENT.transparent_gzip_decompression = false
     end
 
-    def debug_device=(device)
-      if device
-        BOX_CLIENT.debug_dev = device
-        BOX_CLIENT.transparent_gzip_decompression = false
-      else
-        BOX_CLIENT.debug_dev = nil
-        BOX_CLIENT.transparent_gzip_decompression = true
-      end
+    def self.turn_off_debugging
+      BOX_CLIENT.debug_dev = nil
+      BOX_CLIENT.transparent_gzip_decompression = true
+    end
+
+    def initialize(access_token, refresh_token: nil, identifier: nil, as_user_id: nil, &token_refresh_listener)
+      @access_token = access_token
+      @refresh_token = refresh_token
+      @identifier = identifier
+      @as_user_id = as_user_id
+      @token_refresh_listener = token_refresh_listener
     end
 
 
@@ -190,9 +192,11 @@ module Boxr
           new_tokens = Boxr::refresh_tokens(@refresh_token)
           @access_token = new_tokens.access_token
           @refresh_token = new_tokens.refresh_token
+          @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener
           res = yield
         end
       end
+
       res
     end
 

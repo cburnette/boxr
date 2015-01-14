@@ -18,7 +18,7 @@ describe Boxr::Client do
   BOX_CLIENT = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'])
   
   #uncomment this line to see the HTTP request and response debug info in the rspec output
-  #BOX_CLIENT.debug_device = STDOUT
+  #Boxr::Client.turn_on_debugging
 
   BOX_SERVER_SLEEP = 5
   TEST_FOLDER_NAME = 'Boxr Test'

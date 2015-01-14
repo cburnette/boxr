@@ -1,30 +1,30 @@
 module Boxr
 
-  def self.oauth_url(state, response_type: "code", scope: nil, folder_id: nil)
-    uri = "https://app.box.com/api/oauth2/authorize?response_type=#{response_type}&state=#{state}&client_id=#{ENV['BOX_CLIENT_ID']}"
+  def self.oauth_url(state, response_type: "code", scope: nil, folder_id: nil, box_client_id: ENV['BOX_CLIENT_ID'])
+    uri = "https://app.box.com/api/oauth2/authorize?response_type=#{response_type}&state=#{state}&client_id=#{box_client_id}"
     uri = uri + "&scope=#{scope}" unless scope.nil?
     uri = uri + "&folder_id=#{folder_id}" unless folder_id.nil?
     uri
   end
 
-  def self.get_tokens(code, grant_type: "authorization_code", username: nil)
+  def self.get_tokens(code, grant_type: "authorization_code", username: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
     uri = "https://api.box.com/oauth2/token"
-    body = "code=#{code}&grant_type=#{grant_type}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
+    body = "code=#{code}&grant_type=#{grant_type}&client_id=#{box_client_id}&client_secret=#{box_client_secret}"
     body = body + "&username=#{username}" unless username.nil?
 
     auth_post(uri, body)
   end
 
-  def self.refresh_tokens(refresh_token)
+  def self.refresh_tokens(refresh_token, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
     uri = "https://api.box.com/oauth2/token"
-    body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}"
+    body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{box_client_id}&client_secret=#{box_client_secret}"
 
     auth_post(uri, body)
   end
 
-  def self.revoke_tokens(token)
+  def self.revoke_tokens(token, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
     uri = "https://api.box.com/oauth2/revoke"
-    body = "client_id=#{ENV['BOX_CLIENT_ID']}&client_secret=#{ENV['BOX_CLIENT_SECRET']}&token=#{token}"
+    body = "client_id=#{box_client_id}&client_secret=#{box_client_secret}&token=#{token}"
 
     auth_post(uri, body)
   end

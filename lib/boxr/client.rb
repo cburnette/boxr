@@ -2,7 +2,7 @@ module Boxr
   
   class Client
 
-    attr_reader :access_token, :refresh_token, :as_user_id, :identifier
+    attr_reader :access_token, :refresh_token, :box_client_id, :box_client_secret, :identifier, :as_user_id, 
 
     API_URI = "https://api.box.com/2.0"
     UPLOAD_URI = "https://upload.box.com/api/2.0"
@@ -66,9 +66,12 @@ module Boxr
       BOX_CLIENT.transparent_gzip_decompression = true
     end
 
-    def initialize(access_token, refresh_token: nil, identifier: nil, as_user_id: nil, &token_refresh_listener)
+    def initialize(access_token, refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], 
+                    identifier: nil, as_user_id: nil, &token_refresh_listener)
       @access_token = access_token
       @refresh_token = refresh_token
+      @box_client_id = box_client_id
+      @box_client_secret = box_client_secret
       @identifier = identifier
       @as_user_id = as_user_id
       @token_refresh_listener = token_refresh_listener
@@ -189,7 +192,7 @@ module Boxr
       if res.status == 401
         auth_header = res.header['WWW-Authenticate'][0]
         if auth_header && auth_header.include?('invalid_token')
-          new_tokens = Boxr::refresh_tokens(@refresh_token)
+          new_tokens = Boxr::refresh_tokens(@refresh_token, box_client_id: box_client_id, box_client_secret: box_client_secret)
           @access_token = new_tokens.access_token
           @refresh_token = new_tokens.refresh_token
           @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener

@@ -2,7 +2,7 @@ module Boxr
   
   class Client
 
-    attr_reader :access_token, :refresh_token, :box_client_id, :box_client_secret, :identifier, :as_user_id, 
+    attr_reader :access_token, :refresh_token, :box_client_id, :box_client_secret, :identifier, :as_user_id
 
     API_URI = "https://api.box.com/2.0"
     UPLOAD_URI = "https://upload.box.com/api/2.0"

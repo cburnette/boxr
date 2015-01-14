@@ -26,6 +26,10 @@ module Boxr
       items = get_with_pagination uri, query: query, limit: FOLDER_ITEMS_LIMIT
     end
 
+    def root_folder_items(fields: [])
+      folder_items(Boxr::ROOT, fields: fields)
+    end
+
     def create_folder(name, parent_id)
       uri = "#{FOLDERS_URI}"
       attributes = {:name => name, :parent => {:id => parent_id}}

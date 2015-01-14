@@ -37,7 +37,7 @@ describe Boxr::Client do
   before(:each) do
     puts "-----> Resetting Box Environment"
     sleep BOX_SERVER_SLEEP
-    root_folders = BOX_CLIENT.folder_items(Boxr::ROOT).folders
+    root_folders = BOX_CLIENT.root_folder_items.folders
     test_folder = root_folders.find{|f| f.name == TEST_FOLDER_NAME}
     if(test_folder)
       BOX_CLIENT.delete_folder(test_folder.id, recursive: true)

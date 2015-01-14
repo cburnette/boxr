@@ -28,7 +28,7 @@ module Boxr
       if(auth_header && auth_header != [])
         "#{@status}: #{auth_header}"
       elsif(@box_message)
-        "#{@status}: #{@boxr_message}"
+        "#{@status}: #{@box_message}"
       elsif(@boxr_message)
         @boxr_message
       else

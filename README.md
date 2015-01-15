@@ -1,5 +1,4 @@
 # Boxr
-
 Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.  
 
 The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://developers.box.com/docs/).
@@ -7,7 +6,6 @@ The purpose of this gem is to provide a clear, efficient, and intentional method
 The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration test found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
 
 ## Installation
-
 Add this line to your application's Gemfile:
 
 ```ruby
@@ -23,7 +21,6 @@ Or install it yourself as:
     $ gem install boxr
 
 ## Usage
-
 Super-fast instructions:
 
 1. go to http://developers.box.com
@@ -42,7 +39,6 @@ items.each {|i| puts i.name}
 ```
 
 ### Creating a client
-
 There are a few different ways to create a Boxr client.  The simplest is to use a Box Developer Token (you generate these from your Box app's General Information page).  They last for 60 minutes and you don't have to go through OAuth2.
 ```ruby
 client = Boxr::Client.new('yPDWOvnumUFaKIMrNBg6PGJpWXC0oaFW')
@@ -79,7 +75,18 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # will be provided.
 ```
   
+### A quick example
+Before diving into detailed documentation, let's take a look at how to accomplish a simple task with Boxr.  This script will find the id of a specific folder given it's path, upload a file to that folder, and create an open shared link to that file.
+```ruby
+require 'boxr'
 
+client = Boxr::Client.new  #using ENV['BOX_DEVELOPER_TOKEN']
+
+folder_id = client.folder_id('/some/directory/structure') #Box API calls require id's so we need it
+the_file = client.upload_file('./docs/test.txt', folder_id)
+the_file = client.create_shared_link_for_file(new_file.id, access: :open)
+puts "Shared Link: #{the_file.shared_link.url}"
+```
 
 
 ## Contributing

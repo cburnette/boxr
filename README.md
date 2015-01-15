@@ -24,7 +24,7 @@ Or install it yourself as:
 
 ## Usage
 
-Super-fast instructions for now (much more to come):
+Super-fast instructions:
 
 1. go to http://developers.box.com
 2. find or create your Box Content API app for testing
@@ -55,13 +55,13 @@ client = Boxr::Client.new  #uses ENV['BOX_DEVELOPER_TOKEN']
 
 The next way is to use an access token retrieved after going through the OAuth2 process.  If your application is going to handle refreshing the tokens in a scheduled way (more on this later) then this is the way to go.
 ```ruby
-client = Boxr::Client.new('v2eAXqhZ28WIEpIWeAJcmyamLLt77icP')  #a valid OAuth2 token
+client = Boxr::Client.new('v2eAXqhZ28WIEpIWeAJcmyamLLt77icP')  #a valid OAuth2 access token
 
 # Boxr will raise an error if this token becomes invalid. It is up to your application to generate
 # a new pair of access and refresh tokens in a timely manner.
 ```
 
-If you want Boxr to automatically refresh the tokens once the access token becomes invalid you can supply an optional refresh token, along with your client_id and client_secret, and a block that will get invoked when the refresh occurs.
+If you want Boxr to automatically refresh the tokens once the access token becomes invalid you can supply a refresh token, along with your client_id and client_secret, and a block that will get invoked when the refresh occurs.
 ```ruby
 token_refresh_callback = lambda {|access, refresh, identifier| some_method_that_saves_them(access, refresh)}
 client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T', 
@@ -73,6 +73,9 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # By default Boxr will look for client_id and client_secret in your environment variables as
 # BOX_CLIENT_ID and BOX_CLIENT_SECRET, respectively.  You can omit the two optional parameters above
 # if those are present.
+
+# Additionally, you can provide one other parameter called identifier. This can be used, for example, to
+# hold the id of the user associated with this Boxr client.  When the callback is invoked this value will be provided.
 ```
   
 

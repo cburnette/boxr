@@ -29,6 +29,10 @@ Super-fast instructions for now (much more to come):
 5. click 'Create a developer token'
 6. copy the token and use it in the code below in place of {BOX_DEVELOPER_TOKEN}
 
+1. what
+2. yeah
+
+
 ```ruby
 require 'boxr'
 

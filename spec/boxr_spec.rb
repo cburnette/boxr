@@ -29,7 +29,7 @@ describe Boxr::Client do
   COMMENT_MESSAGE = 'this is a comment'
   REPLY_MESSAGE = 'this is a comment reply'
   CHANGED_COMMENT_MESSAGE = 'this comment has been changed'
-  TEST_USER_LOGIN = "test-boxr-user@example.com"
+  TEST_USER_LOGIN = "test-boxr-user@#{('a'..'z').to_a.shuffle[0,10].join}.com" #needs to be unique across anyone running this test
   TEST_USER_NAME = "Test Boxr User"
   TEST_GROUP_NAME= "Test Boxr Group"
   TEST_TASK_MESSAGE = "Please review"
@@ -46,7 +46,7 @@ describe Boxr::Client do
     @test_folder_id = new_folder.id
 
     all_users = BOX_CLIENT.all_users
-    test_user = all_users.find{|u| u.login == TEST_USER_LOGIN}
+    test_user = all_users.find{|u| u.name == TEST_USER_NAME}
     if(test_user)
       BOX_CLIENT.delete_user(test_user.id, force: true)
     end

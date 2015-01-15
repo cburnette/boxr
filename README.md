@@ -75,7 +75,8 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # if those are present.
 
 # Additionally, you can provide one other parameter called identifier. This can be used, for example, to
-# hold the id of the user associated with this Boxr client.  When the callback is invoked this value will be provided.
+# hold the id of the user associated with this Boxr client.  When the callback is invoked this value 
+# will be provided.
 ```
   
 

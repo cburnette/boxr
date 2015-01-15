@@ -1,10 +1,10 @@
 # Boxr
 
-Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.
+Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.  
 
-As with any SDK that wraps a REST API, it is important to fully understand the Box API at the REST endpoint level.  You are strongly encouraged to read through the Box Content API documentation located [here](https://developers.box.com/docs/).
+The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://developers.box.com/docs/).
 
-The full RubyDoc documentation for Boxr can be found [here](http://www.rubydoc.info/gems/boxr).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem.
+The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration test found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
 
 ## Installation
 
@@ -41,7 +41,7 @@ items = client.folder_items(Boxr::ROOT)
 items.each {|i| puts i.name}
 ```
 
-### Create a client
+### Creating a client
 
 There are a few different ways to create a Boxr client.  The simplest is to use a Box Developer Token (you generate these from your Box app's General Information page).  They last for 60 minutes and you don't have to go through OAuth2.
 ```ruby
@@ -74,7 +74,8 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # BOX_CLIENT_ID and BOX_CLIENT_SECRET, respectively.  You can omit the two optional parameters above
 # if those are present.
 ```
-                           
+  
+
 
 
 ## Contributing

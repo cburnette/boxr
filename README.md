@@ -83,9 +83,9 @@ require 'boxr'
 client = Boxr::Client.new  #using ENV['BOX_DEVELOPER_TOKEN']
 
 folder_id = client.folder_id('/some/directory/structure') #Box API calls require id's so we need it
-the_file = client.upload_file('test.txt', folder_id)
-the_file = client.create_shared_link_for_file(new_file.id, access: :open)
-puts "Shared Link: #{the_file.shared_link.url}"
+file = client.upload_file('test.txt', folder_id)
+file = client.create_shared_link_for_file(file.id, access: :open)
+puts "Shared Link: #{file.shared_link.url}"
 ```
 
 

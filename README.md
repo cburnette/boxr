@@ -1,6 +1,6 @@
 # Boxr
 
-Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem (i.e. it's pronounced 'boxer').
+Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.
 
 ## Installation
 

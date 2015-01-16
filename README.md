@@ -99,7 +99,7 @@ root_folder_items(fields: [])
       
 create_folder(name, parent)
      
-folder(folder, fields: [])
+folder(folder_id, fields: [])
      
 update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
                 folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
@@ -125,7 +125,7 @@ restore_trashed_folder(folder, name: nil, parent_id: nil)
 ```ruby
 file_from_path(path)
 
-file(file, fields: [])
+file(file_id, fields: [])
 
 update_file(file, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
 
@@ -171,7 +171,7 @@ reply_to_comment(comment_id, message: nil, tagged_message: nil)
       
 change_comment(comment, message)
      
-comment(comment, fields: [])
+comment(comment_id, fields: [])
       
 delete_comment(comment)
 ```
@@ -185,7 +185,7 @@ edit_collaboration(collaboration, role: nil, status: nil)
       
 remove_collaboration(collaboration)
       
-collaboration(collaboration, fields: [], status: nil)
+collaboration(collaboration_id, fields: [], status: nil)
       
 pending_collaborations()
 ```
@@ -211,7 +211,7 @@ current_user(fields: [])
       
 alias :me :current_user
 
-user(user, fields: [])
+user(user_id, fields: [])
       
 all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
      
@@ -246,7 +246,7 @@ group_memberships_for_user(user, offset: 0, limit: DEFAULT_LIMIT)
       
 group_memberships_for_me(offset: 0, limit: DEFAULT_LIMIT)
       
-group_membership(membership)
+group_membership(membership_id)
      
 add_user_to_group(user, group, role: nil)
       
@@ -262,7 +262,7 @@ file_tasks(file, fields: [])
       
 create_task(file, action: :review, message: nil, due_at: nil)
       
-task(task)
+task(task_id)
      
 update_task(task, action: :review, message: nil, due_at: nil)
       

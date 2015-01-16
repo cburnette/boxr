@@ -89,6 +89,38 @@ puts "Shared Link: #{file.shared_link.url}"
 ```
 
 ### Methods
+#### Folders
+```ruby
+folder_from_path(path)
+     
+folder_items(folder, fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
+      
+root_folder_items(fields: [])
+      
+create_folder(name, parent)
+     
+folder(folder, fields: [])
+     
+update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
+                           folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
+                           can_non_owners_invite: nil, if_match: nil)
+     
+delete_folder(folder, recursive: false, if_match: nil)
+     
+copy_folder(folder, dest_folder, name: nil)
+      
+create_shared_link_for_folder(folder, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+      
+disable_shared_link_for_folder(folder)
+     
+trash(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
+      
+trashed_folder(folder, fields: [])
+     
+delete_trashed_folder(folder)
+      
+restore_trashed_folder(folder, name: nil, parent_id: nil)
+```
 #### Files
 ```ruby
 file_from_path(path)

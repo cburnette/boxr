@@ -62,9 +62,9 @@ describe Boxr::Client do
   end
 
   it 'invokes folder operations' do
-    puts "get folder id using path"
-    folder_id = BOX_CLIENT.folder_id(TEST_FOLDER_NAME)
-    expect(folder_id).to eq(@test_folder_id)
+    puts "get folder using path"
+    folder = BOX_CLIENT.folder_from_path(TEST_FOLDER_NAME)
+    expect(folder.id).to eq(@test_folder_id)
 
     puts "get folder info"
     folder = BOX_CLIENT.folder(@test_folder_id)
@@ -125,9 +125,9 @@ describe Boxr::Client do
     expect(new_file.name).to eq(TEST_FILE_NAME)
     test_file_id = new_file.id
 
-    puts "get file id using path"
-    file_id = BOX_CLIENT.file_id("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
-    expect(file_id).to eq(test_file_id)
+    puts "get file using path"
+    file = BOX_CLIENT.file_from_path("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
+    expect(file.id).to eq(test_file_id)
 
     puts "get file download url"
     download_url = BOX_CLIENT.download_url(test_file_id)

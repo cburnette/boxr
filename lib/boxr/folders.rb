@@ -1,18 +1,19 @@
 module Boxr
   class Client
 
-    def folder_id(path)
+    def folder_from_path(path)
       if(path.start_with?('/'))
         path = path.slice(1..-1)
       end
 
       path_folders = path.split('/')
 
-      folder_id = path_folders.inject(Boxr::ROOT) do |parent_id, folder_name|
-        folders = folder_items(parent_id, fields: [:id, :name]).folders
+      root_folder = Hashie::Mash.new({id: Boxr::ROOT})
+      folder = path_folders.inject(root_folder) do |parent_folder, folder_name|
+        folders = folder_items(parent_folder.id, fields: [:id, :name]).folders
 
         begin
-          folders.select{|f| f.name == folder_name}.first.id
+          folders.select{|f| f.name == folder_name}.first
         rescue
           raise BoxrException.new(boxr_message: "Folder not found: '#{folder_name}'")
         end

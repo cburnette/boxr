@@ -1,7 +1,7 @@
 module Boxr
   class Client
 
-    def file_id(path)
+    def file_from_path(path)
       if(path.start_with?('/'))
         path = path.slice(1..-1)
       end
@@ -9,15 +9,10 @@ module Boxr
       path_items = path.split('/')
       file_name = path_items.slice!(-1)
 
-      folder_id = folder_id(path_items.join('/'))
+      folder = folder_from_path(path_items.join('/'))
 
-      files = folder_items(folder_id, fields: [:id, :name])
-
-      begin
-        files.select{|f| f.name == file_name}.first.id
-      rescue
-        raise BoxrException.new(boxr_message: "File not found: '#{file_name}'")
-      end
+      files = folder_items(folder.id, fields: [:id, :name])
+      files.select{|f| f.name == file_name}.first
     end
 
     def file(file_id, fields: [])

@@ -76,7 +76,7 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 ```
   
 ### A quick example
-Before diving into detailed documentation, let's take a look at how to accomplish a simple task with Boxr.  This script will find the id of a specific folder given its path, upload a file to that folder, and create an open shared link to that file.
+Before diving into detailed documentation, let's take a look at how to accomplish a simple task with Boxr.  This script will find a specific folder given its path, upload a file to that folder, and create an open shared link to that file.
 ```ruby
 require 'boxr'
 

@@ -102,8 +102,8 @@ create_folder(name, parent)
 folder(folder, fields: [])
      
 update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
-                           folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
-                           can_non_owners_invite: nil, if_match: nil)
+                folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
+                can_non_owners_invite: nil, if_match: nil)
      
 delete_folder(folder, recursive: false, if_match: nil)
      
@@ -134,12 +134,12 @@ download_file(file, version: nil, follow_redirect: true)
 download_url(file, version: nil)
 
 upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil, 
-                    preflight_check: true, send_content_md5: true)
+            preflight_check: true, send_content_md5: true)
 
 delete_file(file, if_match: nil)
 
 upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true, 
-                                    preflight_check: true, if_match: nil)
+                            preflight_check: true, if_match: nil)
 
 versions_of_file(file)
 
@@ -161,7 +161,123 @@ delete_trashed_file(file)
 
 restore_trashed_file(file, name: nil, parent_id: nil)
 ```
+#### Comments
+```ruby
+file_comments(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
+      
+add_comment_to_file(file, message: nil, tagged_message: nil)
+     
+reply_to_comment(comment_id, message: nil, tagged_message: nil)
+      
+change_comment(comment, message)
+     
+comment(comment, fields: [])
+      
+delete_comment(comment)
+```
+#### Collaborations
+```ruby
+folder_collaborations(folder)
+    
+add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
+     
+edit_collaboration(collaboration, role: nil, status: nil)
+      
+remove_collaboration(collaboration)
+      
+collaboration(collaboration, fields: [], status: nil)
+      
+pending_collaborations()
+```
+#### Events
+```ruby
+user_events(stream_position: 0, stream_type: :all, limit: 100)
+      
+enterprise_events(stream_position: 0, limit: 100, event_type: nil, created_after: nil, created_before: nil)
+```
+#### Shared Items
+```ruby
+shared_item(shared_link, shared_link_password: nil)
+```
+#### Search
+```ruby
+search(query, scope: nil, file_extensions: nil, created_at_range: nil, updated_at_range: nil, size_range: nil, 
+        owner_user_ids: nil, ancestor_folder_ids: nil, content_types: nil, type: nil, 
+        limit: 30, offset: 0)
+```
+#### Users
+```ruby
+current_user(fields: [])
+      
+alias :me :current_user
 
+user(user, fields: [])
+      
+all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
+     
+create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
+            phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
+            can_see_managed_users: nil, is_external_collab_restricted: nil, status: nil, timezone: nil,
+            is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil)
+
+
+update_user(user, notify: nil, enterprise: true, name: nil, role: nil, language: nil, is_sync_enabled: nil,
+            job_title: nil, phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
+            can_see_managed_users: nil, status: nil, timezone: nil, is_exempt_from_device_limits: nil,
+            is_exempt_from_login_verification: nil, is_exempt_from_reset_required: nil, is_external_collab_restricted: nil)
+
+delete_user(user, notify: nil, force: nil)
+```
+#### Groups
+```ruby
+groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
+      
+create_group(name)
+     
+update_group(group, name)
+      
+alias :rename_group :update_group
+
+delete_group(group)
+     
+group_memberships(group, offset: 0, limit: DEFAULT_LIMIT)
+      
+group_memberships_for_user(user, offset: 0, limit: DEFAULT_LIMIT)
+      
+group_memberships_for_me(offset: 0, limit: DEFAULT_LIMIT)
+      
+group_membership(membership)
+     
+add_user_to_group(user, group, role: nil)
+      
+update_group_membership(membership, role)
+      
+delete_group_membership(membership)
+      
+group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
+```
+#### Tasks
+```ruby
+file_tasks(file, fields: [])
+      
+create_task(file, action: :review, message: nil, due_at: nil)
+      
+task(task)
+     
+update_task(task, action: :review, message: nil, due_at: nil)
+      
+delete_task(task)
+      
+task_assignments(task)
+      
+create_task_assignment(task, assign_to_id: nil, assign_to_login: nil)
+      
+task_assignment(task)
+      
+delete_task_assignment(task)
+      
+update_task_assignment(task, message: nil, resolution_state: nil)
+```
 
 ## Contributing
 

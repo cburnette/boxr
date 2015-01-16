@@ -11,8 +11,10 @@ module Boxr
 
       folder = folder_from_path(path_items.join('/'))
 
-      files = folder_items(folder.id, fields: [:id, :name])
-      files.select{|f| f.name == file_name}.first
+      files = folder_items(folder.id, fields: [:id, :name]).files
+      file = files.select{|f| f.name == file_name}.first
+      raise BoxrException.new(boxr_message: "File not found: '#{file_name}'") if file.nil?
+      file
     end
 
     def file(file_id, fields: [])

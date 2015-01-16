@@ -11,12 +11,9 @@ module Boxr
       root_folder = Hashie::Mash.new({id: Boxr::ROOT})
       folder = path_folders.inject(root_folder) do |parent_folder, folder_name|
         folders = folder_items(parent_folder.id, fields: [:id, :name]).folders
-
-        begin
-          folders.select{|f| f.name == folder_name}.first
-        rescue
-          raise BoxrException.new(boxr_message: "Folder not found: '#{folder_name}'")
-        end
+        folder = folders.select{|f| f.name == folder_name}.first
+        raise BoxrException.new(boxr_message: "Folder not found: '#{folder_name}'") if folder.nil?
+        folder
       end
     end
 

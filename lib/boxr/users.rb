@@ -11,6 +11,7 @@ module Boxr
     alias :me :current_user
 
     def user(user_id, fields: [])
+      user_id = ensure_id(user_id)
       uri = "#{USERS_URI}/#{user_id}"
       query = build_fields_query(fields, USER_FIELDS_QUERY)
       user, response = get(uri, query: query)
@@ -55,6 +56,7 @@ module Boxr
                              can_see_managed_users: nil, status: nil, timezone: nil, is_exempt_from_device_limits: nil,
                              is_exempt_from_login_verification: nil, is_exempt_from_reset_required: nil, is_external_collab_restricted: nil)
 
+      user_id = ensure_id(user_id)
       uri = "#{USERS_URI}/#{user_id}"
       query = {notify: notify} unless notify.nil?
       
@@ -82,6 +84,7 @@ module Boxr
     end
 
     def delete_user(user_id, notify: nil, force: nil)
+      user_id = ensure_id(user_id)
       uri = "#{USERS_URI}/#{user_id}"
       query = {}
       query[:notify] = notify unless notify.nil?

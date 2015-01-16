@@ -2,6 +2,7 @@ module Boxr
   class Client
 
     def file_comments(file_id, fields: [])
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}/comments"
       query = build_fields_query(fields, COMMENT_FIELDS_QUERY)
 
@@ -9,14 +10,17 @@ module Boxr
     end
 
     def add_comment_to_file(file_id, message: nil, tagged_message: nil)
+      file_id = ensure_id(file_id)
       add_comment(:file, file_id, message, tagged_message)
     end
 
     def reply_to_comment(comment_id, message: nil, tagged_message: nil)
+      comment_id = ensure_id(comment_id)
       add_comment(:comment, comment_id, message, tagged_message)
     end
 
     def change_comment(comment_id, message)
+      comment_id = ensure_id(comment_id)
       uri = "#{COMMENTS_URI}/#{comment_id}"
       attributes = {message: message}
       updated_comment, response = put uri, attributes
@@ -24,12 +28,14 @@ module Boxr
     end
 
     def comment(comment_id, fields: [])
+      comment_id = ensure_id(comment_id)
       uri ="#{COMMENTS_URI}/#{comment_id}"
       comment, response = get uri
       comment
     end
 
     def delete_comment(comment_id)
+      comment_id = ensure_id(comment_id)
       uri = "#{COMMENTS_URI}/#{comment_id}"
       result, response = delete uri
       result

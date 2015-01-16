@@ -13,6 +13,7 @@ module Boxr
     end
 
     def update_group(group_id, name)
+      group_id = ensure_id(group_id)
       uri = "#{GROUPS_URI}/#{group_id}"
       attributes = {name: name}
 
@@ -23,17 +24,20 @@ module Boxr
     alias :rename_group :update_group
 
     def delete_group(group_id)
+      group_id = ensure_id(group_id)
       uri = "#{GROUPS_URI}/#{group_id}"
       result, response = delete(uri)
       result
     end
 
     def group_memberships(group_id)
+      group_id = ensure_id(group_id)
       uri = "#{GROUPS_URI}/#{group_id}/memberships"
       memberships = get_with_pagination(uri)
     end
 
     def group_memberships_for_user(user_id)
+      user_id = ensure_id(user_id)
       uri = "#{USERS_URI}/#{user_id}/memberships"
       memberships = get_with_pagination(uri)
     end
@@ -44,12 +48,16 @@ module Boxr
     end
 
     def group_membership(membership_id)
+      membership_id = ensure_id(membership_id)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       membership, response = get(uri)
       membership
     end
 
     def add_user_to_group(user_id, group_id, role: nil)
+      user_id = ensure_id(user_id)
+      group_id = ensure_id(group_id)
+
       attributes = {user: {id: user_id}, group: {id: group_id}}
       attributes[:role] = role unless role.nil?
       membership, response = post(GROUP_MEMBERSHIPS_URI, attributes)
@@ -57,6 +65,7 @@ module Boxr
     end
 
     def update_group_membership(membership_id, role)
+      membership_id = ensure_id(membership_id)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       attributes = {role: role}
       updated_membership, response = put(uri, attributes)
@@ -64,12 +73,14 @@ module Boxr
     end
 
     def delete_group_membership(membership_id)
+      membership_id = ensure_id(membership_id)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       result, response = delete(uri)
       result
     end
 
     def group_collaborations(group_id)
+      group_id = ensure_id(group_id)
       uri = "#{GROUPS_URI}/#{group_id}/collaborations"
       collaborations = get_with_pagination(uri)
     end

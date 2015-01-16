@@ -18,6 +18,7 @@ module Boxr
     end
 
     def file(file_id, fields: [])
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       file, response = get uri, query: query
@@ -25,6 +26,7 @@ module Boxr
     end
 
     def update_file(file_id, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
 
       attributes = {}
@@ -39,6 +41,7 @@ module Boxr
     end
 
     def download_file(file_id, version: nil, follow_redirect: true)
+      file_id = ensure_id(file_id)
       begin
         uri = "#{FILES_URI}/#{file_id}/content"
         query = {}
@@ -69,6 +72,7 @@ module Boxr
     def upload_file(path_to_file, parent_id, content_created_at: nil, content_modified_at: nil, 
                     preflight_check: true, send_content_md5: true)
 
+      parent_id = ensure_id(parent_id)
       preflight_check(path_to_file, parent_id) if preflight_check
 
       file_info = nil
@@ -86,6 +90,7 @@ module Boxr
     end
 
     def delete_file(file_id, if_match: nil)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
       result, response = delete uri, if_match: if_match
       result
@@ -93,7 +98,7 @@ module Boxr
 
     def upload_new_version_of_file(path_to_file, file_id, content_modified_at: nil, send_content_md5: true, 
                                     preflight_check: true, if_match: nil)
-
+      file_id = ensure_id(file_id)
       preflight_check_new_version_of_file(path_to_file, file_id) if preflight_check
 
       uri = "#{UPLOAD_URI}/files/#{file_id}/content"
@@ -111,12 +116,16 @@ module Boxr
     end
 
     def versions_of_file(file_id)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}/versions"
       versions, response = get uri
       versions["entries"]
     end
 
     def promote_old_version_of_file(file_id, file_version_id)
+      file_id = ensure_id(file_id)
+      file_version_id = ensure_id(file_version_id)
+
       uri = "#{FILES_URI}/#{file_id}/versions/current"
       attributes = {:type => 'file_version', :id => file_version_id}
       new_version, res = post uri, attributes
@@ -124,12 +133,18 @@ module Boxr
     end
 
     def delete_old_version_of_file(file_id, file_version_id, if_match: nil)
+      file_id = ensure_id(file_id)
+      file_version_id = ensure_id(file_version_id)
+      
       uri = "#{FILES_URI}/#{file_id}/versions/#{file_version_id}"
       result, response = delete uri, if_match: if_match
       result
     end
 
     def copy_file(file_id, parent_id, name: nil)
+      file_id = ensure_id(file_id)
+      parent_id = ensure_id(parent_id)
+
       uri = "#{FILES_URI}/#{file_id}/copy"
       attributes = {:parent => {:id => parent_id}}
       attributes[:name] = name unless name.nil?
@@ -138,6 +153,7 @@ module Boxr
     end
 
     def thumbnail(file_id, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}/thumbnail.png"
       query = {}
       query[:min_height] = min_height unless min_height.nil?
@@ -157,16 +173,19 @@ module Boxr
     end
 
     def create_shared_link_for_file(file_id, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
       create_shared_link(uri, file_id, access, unshared_at, can_download, can_preview)
     end
 
     def disable_shared_link_for_file(file_id)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
       disable_shared_link(uri, file_id)
     end
 
     def trashed_file(file_id, fields: [])
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}/trash"
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
 
@@ -175,6 +194,7 @@ module Boxr
     end
 
     def delete_trashed_file(file_id)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}/trash"
 
       result, response = delete uri
@@ -182,6 +202,7 @@ module Boxr
     end
 
     def restore_trashed_file(file_id, name: nil, parent_id: nil)
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
       restore_trashed_item(uri, name, parent_id)
     end

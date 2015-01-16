@@ -18,6 +18,7 @@ module Boxr
     end
 
     def folder_items(folder_id, fields: [])
+      folder_id = ensure_id(folder_id)
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       uri = "#{FOLDERS_URI}/#{folder_id}/items"
 
@@ -29,6 +30,7 @@ module Boxr
     end
 
     def create_folder(name, parent_id)
+      parent_id = ensure_id(parent_id)
       uri = "#{FOLDERS_URI}"
       attributes = {:name => name, :parent => {:id => parent_id}}
       
@@ -37,6 +39,7 @@ module Boxr
     end
 
     def folder(folder_id, fields: [])
+      folder_id = ensure_id(folder_id)
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       uri = "#{FOLDERS_URI}/#{folder_id}"
 
@@ -47,6 +50,7 @@ module Boxr
     def update_folder(folder_id, name: nil, description: nil, parent_id: nil, shared_link: nil,
                            folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
                            can_non_owners_invite: nil, if_match: nil)
+      folder_id = ensure_id(folder_id)
       uri = "#{FOLDERS_URI}/#{folder_id}"
 
       attributes = {}
@@ -65,6 +69,7 @@ module Boxr
     end
 
     def delete_folder(folder_id, recursive: false, if_match: nil)
+      folder_id = ensure_id(folder_id)
       uri = "#{FOLDERS_URI}/#{folder_id}"
       query = {:recursive => recursive}
 
@@ -73,6 +78,9 @@ module Boxr
     end
 
     def copy_folder(folder_id, dest_folder_id, name: nil)
+      folder_id = ensure_id(folder_id)
+      dest_folder_id = ensure_id(dest_folder_id)
+
       uri = "#{FOLDERS_URI}/#{folder_id}/copy"
       attributes = {:parent => {:id => dest_folder_id}}
       attributes[:name] = name unless name.nil?
@@ -82,11 +90,13 @@ module Boxr
     end
 
     def create_shared_link_for_folder(folder_id, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+      folder_id = ensure_id(folder_id)
       uri = "#{FOLDERS_URI}/#{folder_id}"
       create_shared_link(uri, folder_id, access, unshared_at, can_download, can_preview)
     end
 
     def disable_shared_link_for_folder(folder_id)
+      folder_id = ensure_id(folder_id)
       uri = "#{FOLDERS_URI}/#{folder_id}"
       disable_shared_link(uri, folder_id)
     end
@@ -99,6 +109,7 @@ module Boxr
     end
 
     def trashed_folder(folder_id, fields: [])
+      folder_id = ensure_id(folder_id)
       uri = "#{FOLDERS_URI}/#{folder_id}/trash"
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       
@@ -107,12 +118,14 @@ module Boxr
     end
 
     def delete_trashed_folder(folder_id)
+      folder_id = ensure_id(folder_id)
       uri = "#{FOLDERS_URI}/#{folder_id}/trash"
       result, response = delete uri
       result
     end
 
     def restore_trashed_folder(folder_id, name: nil, parent_id: nil)
+      folder_id = ensure_id(folder_id)
       uri = "#{FOLDERS_URI}/#{folder_id}"
       restore_trashed_item(uri, name, parent_id)
     end

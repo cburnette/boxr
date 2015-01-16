@@ -222,6 +222,12 @@ module Boxr
       end
     end
 
+    def ensure_id(item)
+      return item if item.class == String || item.class == Fixnum
+      return item.id if item.respond_to?(:id)
+      raise BoxrException.new(boxr_message: "Expecting an id of class String or Fixnum, or object that responds to :id")
+    end
+
     def restore_trashed_item(uri, name, parent_id)
       attributes = {}
       attributes[:name] = name unless name.nil?

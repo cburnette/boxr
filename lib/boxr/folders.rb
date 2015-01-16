@@ -24,8 +24,8 @@ module Boxr
       items = get_with_pagination(uri, query: query, offset: offset, limit: limit)
     end
 
-    def root_folder_items(fields: [])
-      folder_items(Boxr::ROOT, fields: fields)
+    def root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
+      folder_items(Boxr::ROOT, fields: fields, offset: offset, limit: limit)
     end
 
     def create_folder(name, parent)

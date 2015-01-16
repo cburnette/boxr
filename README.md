@@ -83,8 +83,8 @@ require 'boxr'
 client = Boxr::Client.new  #using ENV['BOX_DEVELOPER_TOKEN']
 
 folder = client.folder_from_path('/some/directory/structure')
-file = client.upload_file('test.txt', folder.id)
-file = client.create_shared_link_for_file(file.id, access: :open)
+file = client.upload_file('test.txt', folder)
+file = client.create_shared_link_for_file(file, access: :open)
 puts "Shared Link: #{file.shared_link.url}"
 ```
 

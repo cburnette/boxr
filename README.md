@@ -88,6 +88,48 @@ file = client.create_shared_link_for_file(file, access: :open)
 puts "Shared Link: #{file.shared_link.url}"
 ```
 
+### Methods
+#### Files
+```ruby
+file_from_path(path)
+
+file(file, fields: [])
+
+update_file(file, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
+
+download_file(file, version: nil, follow_redirect: true)
+
+download_url(file, version: nil)
+
+upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil, 
+                    preflight_check: true, send_content_md5: true)
+
+delete_file(file, if_match: nil)
+
+upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true, 
+                                    preflight_check: true, if_match: nil)
+
+versions_of_file(file)
+
+promote_old_version_of_file(file, file_version)
+
+delete_old_version_of_file(file, file_version, if_match: nil)
+
+copy_file(file, parent, name: nil)
+
+thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
+
+create_shared_link_for_file(file, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+
+disable_shared_link_for_file(file)
+
+trashed_file(file, fields: [])
+
+delete_trashed_file(file)
+
+restore_trashed_file(file, name: nil, parent_id: nil)
+```
+
 
 ## Contributing
 

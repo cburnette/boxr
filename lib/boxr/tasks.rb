@@ -21,8 +21,8 @@ module Boxr
       new_task
     end
 
-    def task(task)
-      task_id = ensure_id(task)
+    def task(task_id)
+      task_id = ensure_id(task_id)
       uri = "#{TASKS_URI}/#{task_id}"
       task, response = get(uri)
       task

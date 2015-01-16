@@ -17,8 +17,8 @@ module Boxr
       file
     end
 
-    def file(file, fields: [])
-      file_id = ensure_id(file)
+    def file(file_id, fields: [])
+      file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       file, response = get(uri, query: query)

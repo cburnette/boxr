@@ -27,8 +27,8 @@ module Boxr
       updated_comment
     end
 
-    def comment(comment, fields: [])
-      comment_id = ensure_id(comment)
+    def comment(comment_id, fields: [])
+      comment_id = ensure_id(comment_id)
       uri ="#{COMMENTS_URI}/#{comment_id}"
       comment, response = get(uri)
       comment

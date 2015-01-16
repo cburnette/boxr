@@ -10,8 +10,8 @@ module Boxr
 
     alias :me :current_user
 
-    def user(user, fields: [])
-      user_id = ensure_id(user)
+    def user(user_id, fields: [])
+      user_id = ensure_id(user_id)
       uri = "#{USERS_URI}/#{user_id}"
       query = build_fields_query(fields, USER_FIELDS_QUERY)
       user, response = get(uri, query: query)

@@ -37,8 +37,8 @@ module Boxr
       created_folder
     end
 
-    def folder(folder, fields: [])
-      folder_id = ensure_id(folder)
+    def folder(folder_id, fields: [])
+      folder_id = ensure_id(folder_id)
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       uri = "#{FOLDERS_URI}/#{folder_id}"
 

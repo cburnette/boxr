@@ -40,8 +40,8 @@ module Boxr
       result
     end
 
-    def collaboration(collaboration, fields: [], status: nil)
-      collaboration_id = ensure_id(collaboration)
+    def collaboration(collaboration_id, fields: [], status: nil)
+      collaboration_id = ensure_id(collaboration_id)
       uri = "#{COLLABORATIONS_URI}/#{collaboration_id}"
 
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)

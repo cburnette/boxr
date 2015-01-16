@@ -47,8 +47,8 @@ module Boxr
       memberships = get_with_pagination(uri, offset: offset, limit: limit)
     end
 
-    def group_membership(membership)
-      membership_id = ensure_id(membership)
+    def group_membership(membership_id)
+      membership_id = ensure_id(membership_id)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       membership, response = get(uri)
       membership

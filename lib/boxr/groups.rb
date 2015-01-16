@@ -79,7 +79,7 @@ module Boxr
       result
     end
 
-    def group_collaborations(group offset: 0, limit: DEFAULT_LIMIT)
+    def group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
       group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}/collaborations"
       collaborations = get_with_pagination(uri, offset: offset, limit: limit)

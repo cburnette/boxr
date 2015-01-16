@@ -1,9 +1,9 @@
 module Boxr
   class Client
 
-    def groups(fields: [])
+    def groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
       query = build_fields_query(fields, GROUP_FIELDS_QUERY)
-      groups = get_with_pagination(GROUPS_URI, query: query)
+      groups = get_with_pagination(GROUPS_URI, query: query, offset: offset, limit: limit)
     end
 
     def create_group(name)
@@ -12,8 +12,8 @@ module Boxr
       new_group 
     end
 
-    def update_group(group_id, name)
-      group_id = ensure_id(group_id)
+    def update_group(group, name)
+      group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}"
       attributes = {name: name}
 
@@ -23,40 +23,40 @@ module Boxr
 
     alias :rename_group :update_group
 
-    def delete_group(group_id)
-      group_id = ensure_id(group_id)
+    def delete_group(group)
+      group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}"
       result, response = delete(uri)
       result
     end
 
-    def group_memberships(group_id)
-      group_id = ensure_id(group_id)
+    def group_memberships(group, offset: 0, limit: DEFAULT_LIMIT)
+      group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}/memberships"
-      memberships = get_with_pagination(uri)
+      memberships = get_with_pagination(uri, offset: offset, limit: limit)
     end
 
-    def group_memberships_for_user(user_id)
-      user_id = ensure_id(user_id)
+    def group_memberships_for_user(user, offset: 0, limit: DEFAULT_LIMIT)
+      user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}/memberships"
-      memberships = get_with_pagination(uri)
+      memberships = get_with_pagination(uri, offset: offset, limit: limit)
     end
 
-    def group_memberships_for_me
+    def group_memberships_for_me(offset: 0, limit: DEFAULT_LIMIT)
       uri = "#{USERS_URI}/me/memberships"
-      memberships = get_with_pagination(uri)
+      memberships = get_with_pagination(uri, offset: offset, limit: limit)
     end
 
-    def group_membership(membership_id)
-      membership_id = ensure_id(membership_id)
+    def group_membership(membership)
+      membership_id = ensure_id(membership)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       membership, response = get(uri)
       membership
     end
 
-    def add_user_to_group(user_id, group_id, role: nil)
-      user_id = ensure_id(user_id)
-      group_id = ensure_id(group_id)
+    def add_user_to_group(user, group, role: nil)
+      user_id = ensure_id(user)
+      group_id = ensure_id(group)
 
       attributes = {user: {id: user_id}, group: {id: group_id}}
       attributes[:role] = role unless role.nil?
@@ -64,25 +64,25 @@ module Boxr
       membership
     end
 
-    def update_group_membership(membership_id, role)
-      membership_id = ensure_id(membership_id)
+    def update_group_membership(membership, role)
+      membership_id = ensure_id(membership)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       attributes = {role: role}
       updated_membership, response = put(uri, attributes)
       updated_membership
     end
 
-    def delete_group_membership(membership_id)
-      membership_id = ensure_id(membership_id)
+    def delete_group_membership(membership)
+      membership_id = ensure_id(membership)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       result, response = delete(uri)
       result
     end
 
-    def group_collaborations(group_id)
-      group_id = ensure_id(group_id)
+    def group_collaborations(group offset: 0, limit: DEFAULT_LIMIT)
+      group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}/collaborations"
-      collaborations = get_with_pagination(uri)
+      collaborations = get_with_pagination(uri, offset: offset, limit: limit)
     end
 
   end

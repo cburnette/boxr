@@ -18,7 +18,7 @@ module Boxr
       query[:limit] = limit unless limit.nil?
       query[:offset] = offset unless offset.nil?
 
-      results, response = get SEARCH_URI, query: query
+      results, response = get(SEARCH_URI, query: query)
       results["entries"]
     end
 

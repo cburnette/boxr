@@ -10,19 +10,19 @@ module Boxr
 
     alias :me :current_user
 
-    def user(user_id, fields: [])
-      user_id = ensure_id(user_id)
+    def user(user, fields: [])
+      user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}"
       query = build_fields_query(fields, USER_FIELDS_QUERY)
       user, response = get(uri, query: query)
       user
     end
 
-    def all_users(filter_term: nil, fields: [])
+    def all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
       uri = USERS_URI
       query = build_fields_query(fields, USER_FIELDS_QUERY)
       query[:filter_term] = filter_term unless filter_term.nil?
-      users = get_with_pagination(uri, query: query)
+      users = get_with_pagination(uri, query: query, offset: offset, limit: limit)
     end
 
     def create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
@@ -51,12 +51,12 @@ module Boxr
       new_user
     end
 
-    def update_user(user_id, notify: nil, enterprise: true, name: nil, role: nil, language: nil, is_sync_enabled: nil,
+    def update_user(user, notify: nil, enterprise: true, name: nil, role: nil, language: nil, is_sync_enabled: nil,
                              job_title: nil, phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
                              can_see_managed_users: nil, status: nil, timezone: nil, is_exempt_from_device_limits: nil,
                              is_exempt_from_login_verification: nil, is_exempt_from_reset_required: nil, is_external_collab_restricted: nil)
 
-      user_id = ensure_id(user_id)
+      user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}"
       query = {notify: notify} unless notify.nil?
       
@@ -83,8 +83,8 @@ module Boxr
       updated_user
     end
 
-    def delete_user(user_id, notify: nil, force: nil)
-      user_id = ensure_id(user_id)
+    def delete_user(user, notify: nil, force: nil)
+      user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}"
       query = {}
       query[:notify] = notify unless notify.nil?

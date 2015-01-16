@@ -82,7 +82,7 @@ module Boxr
 
     def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil)
       res = with_auto_token_refresh do
-        headers = standard_headers()
+        headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers['BoxApi'] = box_api_header unless box_api_header.nil?
 
@@ -92,21 +92,20 @@ module Boxr
       check_response_status(res, success_codes)
 
       if process_response
-        return processed_response res
+        return processed_response(res)
       else
         return res.body, res
       end
     end
 
-    def get_with_pagination(uri, query: {}, limit: DEFAULT_LIMIT)
+    def get_with_pagination(uri, query: {}, offset: 0, limit: DEFAULT_LIMIT)
       entries = []
-      offset = 0
 
       begin
         query[:limit] = limit
         query[:offset] = offset
         res = with_auto_token_refresh do
-          headers = standard_headers()
+          headers = standard_headers
           BOX_CLIENT.get(uri, query: query, header: headers)
         end
         
@@ -128,7 +127,7 @@ module Boxr
       body = Oj.dump(body) if process_body
 
       res = with_auto_token_refresh do
-        headers = standard_headers()
+        headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers["Content-MD5"] = content_md5 unless content_md5.nil?
         headers["Content-Type"] = content_type unless content_type.nil?
@@ -138,12 +137,12 @@ module Boxr
 
       check_response_status(res, success_codes)
 
-      processed_response res
+      processed_response(res)
     end
 
     def put(uri, body, query: nil, success_codes: [200], content_type: nil, if_match: nil)
       res = with_auto_token_refresh do
-        headers = standard_headers()
+        headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers["Content-Type"] = content_type unless content_type.nil?
         
@@ -152,12 +151,12 @@ module Boxr
 
       check_response_status(res, success_codes)
 
-      processed_response res
+      processed_response(res)
     end
 
     def delete(uri, query: nil, success_codes: [204], if_match: nil)
       res = with_auto_token_refresh do
-        headers = standard_headers()
+        headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         
         BOX_CLIENT.delete(uri, query: query, header: headers)
@@ -165,18 +164,18 @@ module Boxr
 
       check_response_status(res, success_codes)
 
-      processed_response res
+      processed_response(res)
     end
 
     def options(uri, body, success_codes: [200])
       res = with_auto_token_refresh do
-        headers = standard_headers()
+        headers = standard_headers
         BOX_CLIENT.options(uri, body: Oj.dump(body), header: headers)
       end
 
       check_response_status(res, success_codes)
 
-      processed_response res
+      processed_response(res)
     end
 
     def standard_headers()
@@ -233,7 +232,7 @@ module Boxr
       attributes[:name] = name unless name.nil?
       attributes[:parent] = {id: parent_id} unless parent_id.nil?
       
-      restored_item, response = post uri, attributes
+      restored_item, response = post(uri, attributes)
       restored_item
     end
 
@@ -248,14 +247,14 @@ module Boxr
         attributes[:shared_link][:permissions][:can_preview] = can_preview unless can_preview.nil?
       end
 
-      updated_item, response = put uri, attributes
+      updated_item, response = put(uri, attributes)
       updated_item
     end
 
     def disable_shared_link(uri, item_id)
       attributes = {shared_link: nil}
 
-      updated_item, response = put uri, attributes
+      updated_item, response = put(uri, attributes)
       updated_item
     end
 

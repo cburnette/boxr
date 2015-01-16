@@ -1,16 +1,16 @@
 module Boxr
   class Client
 
-    def folder_collaborations(folder_id)
-      folder_id = ensure_id(folder_id)
+    def folder_collaborations(folder)
+      folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
       collaborations, response = get(uri)
       collaborations['entries']
     end
 
     #make sure 'role' value is a string as Box has role values with spaces and dashes; e.g. 'previewer uploader'
-    def add_collaboration(folder_id, accessible_by, role, fields: [], notify: nil)
-      folder_id = ensure_id(folder_id)
+    def add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
+      folder_id = ensure_id(folder)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
       query[:notify] = :notify unless notify.nil?
 
@@ -22,8 +22,8 @@ module Boxr
       collaboration
     end
 
-    def edit_collaboration(collaboration_id, role: nil, status: nil)
-      collaboration_id = ensure_id(collaboration_id)
+    def edit_collaboration(collaboration, role: nil, status: nil)
+      collaboration_id = ensure_id(collaboration)
       uri = "#{COLLABORATIONS_URI}/#{collaboration_id}"
       attributes = {}
       attributes[:role] = role unless role.nil?
@@ -33,15 +33,15 @@ module Boxr
       updated_collaboration
     end
 
-    def remove_collaboration(collaboration_id)
-      collaboration_id = ensure_id(collaboration_id)
+    def remove_collaboration(collaboration)
+      collaboration_id = ensure_id(collaboration)
       uri = "#{COLLABORATIONS_URI}/#{collaboration_id}"
       result, response = delete(uri)
       result
     end
 
-    def collaboration(collaboration_id, fields: [], status: nil)
-      collaboration_id = ensure_id(collaboration_id)
+    def collaboration(collaboration, fields: [], status: nil)
+      collaboration_id = ensure_id(collaboration)
       uri = "#{COLLABORATIONS_URI}/#{collaboration_id}"
 
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)

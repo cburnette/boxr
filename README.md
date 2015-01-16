@@ -95,7 +95,7 @@ folder_from_path(path)
      
 folder_items(folder, fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
       
-root_folder_items(fields: [])
+root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
       
 create_folder(name, parent)
      

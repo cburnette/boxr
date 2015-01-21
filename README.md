@@ -278,7 +278,16 @@ delete_task_assignment(task)
       
 update_task_assignment(task, message: nil, resolution_state: nil)
 ```
-
+#### Metadata
+```ruby
+create_metadata(file, metadata, type: :properties)
+      
+metadata(file, type: :properties)
+     
+update_metadata(file, updates, type: :properties)
+     
+delete_metadata(file, type: :properties)
+```
 ## Contributing
 
 1. Fork it ( https://github.com/cburnette/boxr/fork )

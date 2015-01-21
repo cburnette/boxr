@@ -89,7 +89,7 @@ puts "Shared Link: #{file.shared_link.url}"
 ```
 
 ### Methods
-#### Folders
+#### [Folders](https://developers.box.com/docs/#folders)
 ```ruby
 folder_from_path(path)
      
@@ -121,7 +121,7 @@ delete_trashed_folder(folder)
       
 restore_trashed_folder(folder, name: nil, parent_id: nil)
 ```
-#### Files
+#### [Files](https://developers.box.com/docs/#files)
 ```ruby
 file_from_path(path)
 
@@ -161,7 +161,7 @@ delete_trashed_file(file)
 
 restore_trashed_file(file, name: nil, parent_id: nil)
 ```
-#### Comments
+#### [Comments](https://developers.box.com/docs/#comments)
 ```ruby
 file_comments(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
       
@@ -175,7 +175,7 @@ comment(comment_id, fields: [])
       
 delete_comment(comment)
 ```
-#### Collaborations
+#### [Collaborations](https://developers.box.com/docs/#collaborations)
 ```ruby
 folder_collaborations(folder)
     
@@ -189,23 +189,23 @@ collaboration(collaboration_id, fields: [], status: nil)
       
 pending_collaborations()
 ```
-#### Events
+#### [Events](https://developers.box.com/docs/#events)
 ```ruby
 user_events(stream_position: 0, stream_type: :all, limit: 100)
       
 enterprise_events(stream_position: 0, limit: 100, event_type: nil, created_after: nil, created_before: nil)
 ```
-#### Shared Items
+#### [Shared Items](https://developers.box.com/docs/#shared-items)
 ```ruby
 shared_item(shared_link, shared_link_password: nil)
 ```
-#### Search
+#### [Search](https://developers.box.com/docs/#search)
 ```ruby
 search(query, scope: nil, file_extensions: nil, created_at_range: nil, updated_at_range: nil, size_range: nil, 
         owner_user_ids: nil, ancestor_folder_ids: nil, content_types: nil, type: nil, 
         limit: 30, offset: 0)
 ```
-#### Users
+#### [Users](https://developers.box.com/docs/#users)
 ```ruby
 current_user(fields: [])
       
@@ -228,7 +228,7 @@ update_user(user, notify: nil, enterprise: true, name: nil, role: nil, language:
 
 delete_user(user, notify: nil, force: nil)
 ```
-#### Groups
+#### [Groups](https://developers.box.com/docs/#groups)
 ```ruby
 groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
       
@@ -256,7 +256,7 @@ delete_group_membership(membership)
       
 group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
 ```
-#### Tasks
+#### [Tasks](https://developers.box.com/docs/#tasks)
 ```ruby
 file_tasks(file, fields: [])
       
@@ -278,7 +278,7 @@ delete_task_assignment(task)
       
 update_task_assignment(task, message: nil, resolution_state: nil)
 ```
-#### Metadata
+#### [Metadata](https://developers.box.com/metadata-api/#crud)
 ```ruby
 create_metadata(file, metadata, type: :properties)
       

@@ -1,9 +1,9 @@
 module Boxr
   class Client
 
-    def groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
+    def groups(fields: [])
       query = build_fields_query(fields, GROUP_FIELDS_QUERY)
-      groups = get_with_pagination(GROUPS_URI, query: query, offset: offset, limit: limit)
+      groups = get_all_with_pagination(GROUPS_URI, query: query, offset: 0, limit: DEFAULT_LIMIT)
     end
 
     def create_group(name)
@@ -30,21 +30,21 @@ module Boxr
       result
     end
 
-    def group_memberships(group, offset: 0, limit: DEFAULT_LIMIT)
+    def group_memberships(group)
       group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}/memberships"
-      memberships = get_with_pagination(uri, offset: offset, limit: limit)
+      memberships = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
     end
 
-    def group_memberships_for_user(user, offset: 0, limit: DEFAULT_LIMIT)
+    def group_memberships_for_user(user)
       user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}/memberships"
-      memberships = get_with_pagination(uri, offset: offset, limit: limit)
+      memberships = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
     end
 
-    def group_memberships_for_me(offset: 0, limit: DEFAULT_LIMIT)
+    def group_memberships_for_me
       uri = "#{USERS_URI}/me/memberships"
-      memberships = get_with_pagination(uri, offset: offset, limit: limit)
+      memberships = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
     end
 
     def group_membership(membership_id)
@@ -79,10 +79,10 @@ module Boxr
       result
     end
 
-    def group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
+    def group_collaborations(group)
       group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}/collaborations"
-      collaborations = get_with_pagination(uri, offset: offset, limit: limit)
+      collaborations = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
     end
 
   end

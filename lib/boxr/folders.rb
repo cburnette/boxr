@@ -16,15 +16,22 @@ module Boxr
       end
     end
 
-    def folder_items(folder, fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
+    def folder_items(folder, fields: [], offset: nil, limit: nil)
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       uri = "#{FOLDERS_URI}/#{folder_id}/items"
 
-      items = get_with_pagination(uri, query: query, offset: offset, limit: limit)
+      if offset.nil? || limit.nil?
+        items = get_all_with_pagination(uri, query: query, offset: 0, limit: FOLDER_ITEMS_LIMIT)
+      else
+        query[:offset] = offset
+        query[:limit] = limit
+        items, response = get(uri, query: query)
+        items['entries']
+      end
     end
 
-    def root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
+    def root_folder_items(fields: [], offset: nil, limit: nil)
       folder_items(Boxr::ROOT, fields: fields, offset: offset, limit: limit)
     end
 
@@ -100,11 +107,18 @@ module Boxr
       disable_shared_link(uri, folder_id)
     end
 
-    def trash(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
+    def trash(fields: [], offset: nil, limit: nil)
       uri = "#{FOLDERS_URI}/trash/items"
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
 
-      items = get_with_pagination(uri, query: query, offset: offset, limit: limit)
+      if offset.nil? || limit.nil?
+        items = get_all_with_pagination(uri, query: query, offset: 0, limit: FOLDER_ITEMS_LIMIT)
+      else
+        query[:offset] = offset
+        query[:limit] = limit
+        items, response = get(uri, query: query)
+        items['entries']
+      end
     end
 
     def trashed_folder(folder, fields: [])

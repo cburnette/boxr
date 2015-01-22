@@ -18,11 +18,19 @@ module Boxr
       user
     end
 
-    def all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
+    def all_users(filter_term: nil, fields: [], offset: nil, limit: nil)
       uri = USERS_URI
       query = build_fields_query(fields, USER_FIELDS_QUERY)
       query[:filter_term] = filter_term unless filter_term.nil?
-      users = get_with_pagination(uri, query: query, offset: offset, limit: limit)
+
+      if offset.nil? || limit.nil?
+        users = get_all_with_pagination(uri, query: query, offset: 0, limit: DEFAULT_LIMIT)
+      else
+        query[:offset] = offset
+        query[:limit] = limit
+        users, response = get(uri, query: query)
+        users['entries']
+      end
     end
 
     def create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,

@@ -41,9 +41,6 @@ module Boxr
     COLLABORATION_FIELDS = [:type,:id,:created_by,:created_at,:modified_at,:expires_at,:status,:accessible_by,:role,:acknowledged_at,:item]
     COLLABORATION_FIELDS_QUERY = COLLABORATION_FIELDS.join(',')
 
-    COLLECTION_FIELDS = [:type,:id,:name,:collection_type]
-    COLLECTION_FIELDS_QUERY = COLLECTION_FIELDS.join(',')
-
     USER_FIELDS = [:type,:id,:name,:login,:created_at,:modified_at,:role,:language,:timezone,:space_amount,:space_used,
                    :max_upload_size,:tracking_codes,:can_see_managed_users,:is_sync_enabled,:is_external_collab_restricted,
                    :status,:job_title,:phone,:address,:avatar_uri,:is_exempt_from_device_limits,:is_exempt_from_login_verification,
@@ -63,11 +60,13 @@ module Boxr
     def self.turn_on_debugging(device=STDOUT)
       BOX_CLIENT.debug_dev = device
       BOX_CLIENT.transparent_gzip_decompression = false
+      nil
     end
 
     def self.turn_off_debugging
       BOX_CLIENT.debug_dev = nil
       BOX_CLIENT.transparent_gzip_decompression = true
+      nil
     end
 
     def initialize(access_token, refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], 
@@ -102,7 +101,7 @@ module Boxr
       end
     end
 
-    def get_with_pagination(uri, query: {}, offset: 0, limit: DEFAULT_LIMIT)
+    def get_all_with_pagination(uri, query: {}, offset: 0, limit: DEFAULT_LIMIT)
       entries = []
 
       begin

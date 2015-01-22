@@ -1,8 +1,8 @@
 module Boxr
   class Client
 
-    def collections(limit: 100, offset: 0)
-      collections, response = get(COLLECTIONS_URI)
+    def collections(offset: 0, limit: DEFAULT_LIMIT)
+      collections, response = get_with_paginations(COLLECTIONS_URI, offset: offset, limit: limit)
       collections['entries']
     end
 

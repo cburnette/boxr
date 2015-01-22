@@ -13,6 +13,7 @@ module Boxr
     GROUPS_URI = "#{API_URI}/groups"
     GROUP_MEMBERSHIPS_URI = "#{API_URI}/group_memberships"
     COLLABORATIONS_URI = "#{API_URI}/collaborations"
+    COLLECTIONS_URI = "#{API_URI}/collections"
     COMMENTS_URI = "#{API_URI}/comments"
     SEARCH_URI = "#{API_URI}/search"
     TASKS_URI = "#{API_URI}/tasks"
@@ -39,6 +40,9 @@ module Boxr
 
     COLLABORATION_FIELDS = [:type,:id,:created_by,:created_at,:modified_at,:expires_at,:status,:accessible_by,:role,:acknowledged_at,:item]
     COLLABORATION_FIELDS_QUERY = COLLABORATION_FIELDS.join(',')
+
+    COLLECTION_FIELDS = [:type,:id,:name,:collection_type]
+    COLLECTION_FIELDS_QUERY = COLLECTION_FIELDS.join(',')
 
     USER_FIELDS = [:type,:id,:name,:login,:created_at,:modified_at,:role,:language,:timezone,:space_amount,:space_used,
                    :max_upload_size,:tracking_codes,:can_see_managed_users,:is_sync_enabled,:is_external_collab_restricted,

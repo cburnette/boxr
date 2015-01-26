@@ -49,25 +49,7 @@ module Boxr
 
     GROUP_FIELDS = [:type, :id, :name, :created_at, :modified_at]
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
-
-    #Read this to see why the httpclient gem was chosen: http://bibwild.wordpress.com/2012/04/30/ruby-http-performance-shootout-redux/
-    #All instances of Boxr::Client will use this one class instance of HTTPClient; that way persistent HTTPS connections work.
-    #Plus, httpclient is thread-safe so we can use the same class instance with multiple instances of Boxr::Client
-    BOX_CLIENT = HTTPClient.new
-    BOX_CLIENT.send_timeout = 3600 #one hour; needed for lengthy uploads
-    BOX_CLIENT.transparent_gzip_decompression = true 
-
-    def self.turn_on_debugging(device=STDOUT)
-      BOX_CLIENT.debug_dev = device
-      BOX_CLIENT.transparent_gzip_decompression = false
-      nil
-    end
-
-    def self.turn_off_debugging
-      BOX_CLIENT.debug_dev = nil
-      BOX_CLIENT.transparent_gzip_decompression = true
-      nil
-    end
+    
 
     def initialize(access_token, refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], 
                     identifier: nil, as_user_id: nil, &token_refresh_listener)

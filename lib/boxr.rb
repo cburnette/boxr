@@ -38,4 +38,24 @@ module Boxr
 
   #The root folder in Box is always identified by 0
   ROOT = 0
+
+  #Read this to see why the httpclient gem was chosen: http://bibwild.wordpress.com/2012/04/30/ruby-http-performance-shootout-redux/
+  #All instances of Boxr::Client will use this one module instance of HTTPClient; that way persistent HTTPS connections work across all clients.
+  #HTTPClient is thread-safe
+  BOX_CLIENT = HTTPClient.new
+  BOX_CLIENT.send_timeout = 3600 #one hour; needed for lengthy uploads
+  BOX_CLIENT.agent_name = "Boxr/#{Boxr::VERSION}"
+  BOX_CLIENT.transparent_gzip_decompression = true 
+
+  def self.turn_on_debugging(device=STDOUT)
+    BOX_CLIENT.debug_dev = device
+    BOX_CLIENT.transparent_gzip_decompression = false
+    nil
+  end
+
+  def self.turn_off_debugging
+    BOX_CLIENT.debug_dev = nil
+    BOX_CLIENT.transparent_gzip_decompression = true
+    nil
+  end
 end

@@ -92,15 +92,15 @@ puts "Shared Link: #{file.shared_link.url}"
 #### [Folders](https://developers.box.com/docs/#folders)
 ```ruby
 folder_from_path(path)
+
+folder_from_id(folder_id, fields: [])
+alias :folder :folder_from_id
      
 folder_items(folder, fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
       
 root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
       
 create_folder(name, parent)
-     
-folder_from_id(folder_id, fields: [])
-alias :folder :folder_from_id
      
 update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
                 folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,

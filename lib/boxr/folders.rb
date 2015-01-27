@@ -16,6 +16,16 @@ module Boxr
       end
     end
 
+    def folder_from_id(folder_id, fields: [])
+      folder_id = ensure_id(folder_id)
+      query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
+      uri = "#{FOLDERS_URI}/#{folder_id}"
+
+      folder, response = get(uri, query: query)
+      folder
+    end
+    alias :folder :folder_from_id
+
     def folder_items(folder, fields: [], offset: nil, limit: nil)
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
@@ -43,16 +53,6 @@ module Boxr
       created_folder, response = post(uri, attributes)
       created_folder
     end
-
-    def folder_from_id(folder_id, fields: [])
-      folder_id = ensure_id(folder_id)
-      query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
-      uri = "#{FOLDERS_URI}/#{folder_id}"
-
-      folder, response = get(uri, query: query)
-      folder
-    end
-    alias :folder :folder_from_id
 
     def update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
                            folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,

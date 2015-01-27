@@ -99,7 +99,8 @@ root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
       
 create_folder(name, parent)
      
-folder(folder_id, fields: [])
+folder_from_id(folder_id, fields: [])
+alias :folder :folder_from_id
      
 update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
                 folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
@@ -125,7 +126,8 @@ restore_trashed_folder(folder, name: nil, parent_id: nil)
 ```ruby
 file_from_path(path)
 
-file(file_id, fields: [])
+file_from_id(file_id, fields: [])
+alias :file :file_from_id
 
 update_file(file, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
 

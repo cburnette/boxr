@@ -17,13 +17,14 @@ module Boxr
       file
     end
 
-    def file(file_id, fields: [])
+    def file_from_id(file_id, fields: [])
       file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}"
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
       file, response = get(uri, query: query)
       file
     end
+    alias :file :file_from_id
 
     def update_file(file, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
       file_id = ensure_id(file)

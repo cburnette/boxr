@@ -20,7 +20,6 @@ module Boxr
       updated_group, response = put(uri, attributes)
       updated_group
     end
-
     alias :rename_group :update_group
 
     def delete_group(group)
@@ -47,12 +46,13 @@ module Boxr
       memberships = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
     end
 
-    def group_membership(membership_id)
+    def group_membership_from_id(membership_id)
       membership_id = ensure_id(membership_id)
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       membership, response = get(uri)
       membership
     end
+    alias :group_membership :group_membership_from_id
 
     def add_user_to_group(user, group, role: nil)
       user_id = ensure_id(user)

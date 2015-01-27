@@ -7,16 +7,16 @@ module Boxr
       user, response = get(uri, query: query)
       user
     end
-
     alias :me :current_user
 
-    def user(user_id, fields: [])
+    def user_from_id(user_id, fields: [])
       user_id = ensure_id(user_id)
       uri = "#{USERS_URI}/#{user_id}"
       query = build_fields_query(fields, USER_FIELDS_QUERY)
       user, response = get(uri, query: query)
       user
     end
+    alias :user :user_from_id
 
     def all_users(filter_term: nil, fields: [], offset: nil, limit: nil)
       uri = USERS_URI

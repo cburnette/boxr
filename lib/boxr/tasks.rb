@@ -21,12 +21,13 @@ module Boxr
       new_task
     end
 
-    def task(task_id)
+    def task_from_id(task_id)
       task_id = ensure_id(task_id)
       uri = "#{TASKS_URI}/#{task_id}"
       task, response = get(uri)
       task
     end
+    alias :task :task_from_id
 
     def update_task(task, action: :review, message: nil, due_at: nil)
       task_id = ensure_id(task)

@@ -27,12 +27,13 @@ module Boxr
       updated_comment
     end
 
-    def comment(comment_id, fields: [])
+    def comment_from_id(comment_id, fields: [])
       comment_id = ensure_id(comment_id)
       uri ="#{COMMENTS_URI}/#{comment_id}"
       comment, response = get(uri)
       comment
     end
+    alias :comment :comment_from_id
 
     def delete_comment(comment)
       comment_id = ensure_id(comment)

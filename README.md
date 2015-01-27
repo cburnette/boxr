@@ -173,7 +173,8 @@ reply_to_comment(comment_id, message: nil, tagged_message: nil)
       
 change_comment(comment, message)
      
-comment(comment_id, fields: [])
+comment_from_id(comment_id, fields: [])
+alias :comment :comment_from_id
       
 delete_comment(comment)
 ```
@@ -187,7 +188,8 @@ edit_collaboration(collaboration, role: nil, status: nil)
       
 remove_collaboration(collaboration)
       
-collaboration(collaboration_id, fields: [], status: nil)
+collaboration_from_id(collaboration_id, fields: [], status: nil)
+alias :collaboration :collaboration_from_id
       
 pending_collaborations()
 ```
@@ -210,10 +212,10 @@ search(query, scope: nil, file_extensions: nil, created_at_range: nil, updated_a
 #### [Users](https://developers.box.com/docs/#users)
 ```ruby
 current_user(fields: [])
-      
 alias :me :current_user
 
-user(user_id, fields: [])
+user_from_id(user_id, fields: [])
+alias :user :user_from_id
       
 all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
      
@@ -237,7 +239,6 @@ groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
 create_group(name)
      
 update_group(group, name)
-      
 alias :rename_group :update_group
 
 delete_group(group)
@@ -248,7 +249,8 @@ group_memberships_for_user(user, offset: 0, limit: DEFAULT_LIMIT)
       
 group_memberships_for_me(offset: 0, limit: DEFAULT_LIMIT)
       
-group_membership(membership_id)
+group_membership_from_id(membership_id)
+alias :group_membership :group_membership_from_id
      
 add_user_to_group(user, group, role: nil)
       
@@ -264,7 +266,8 @@ file_tasks(file, fields: [])
       
 create_task(file, action: :review, message: nil, due_at: nil)
       
-task(task_id)
+task_from_id(task_id)
+alias :task :task_from_id
      
 update_task(task, action: :review, message: nil, due_at: nil)
       

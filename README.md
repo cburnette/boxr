@@ -40,6 +40,7 @@ items.each {|i| puts i.name}
 
 ### Creating a client
 There are a few different ways to create a Boxr client.  The simplest is to use a Box Developer Token (you generate these from your Box app's General Information page).  They last for 60 minutes and you don't have to go through OAuth2.
+
 ```ruby
 client = Boxr::Client.new('yPDWOvnumUFaKIMrNBg6PGJpWXC0oaFW')
 
@@ -50,6 +51,7 @@ client = Boxr::Client.new  #uses ENV['BOX_DEVELOPER_TOKEN']
 ```
 
 The next way is to use an access token retrieved after going through the OAuth2 process.  If your application is going to handle refreshing the tokens in a scheduled way (more on this later) then this is the way to go.
+
 ```ruby
 client = Boxr::Client.new('v2eAXqhZ28WIEpIWeAJcmyamLLt77icP')  #a valid OAuth2 access token
 
@@ -58,6 +60,7 @@ client = Boxr::Client.new('v2eAXqhZ28WIEpIWeAJcmyamLLt77icP')  #a valid OAuth2 a
 ```
 
 If you want Boxr to automatically refresh the tokens once the access token becomes invalid you can supply a refresh token, along with your client_id and client_secret, and a block that will get invoked when the refresh occurs.
+
 ```ruby
 token_refresh_callback = lambda {|access, refresh, identifier| some_method_that_saves_them(access, refresh)}
 client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T', 
@@ -77,6 +80,7 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
   
 ### A quick example
 Before diving into detailed documentation, let's take a look at how to accomplish a simple task with Boxr.  This script will find a specific folder given its path, upload a file to that folder, and create an open shared link to that file.
+
 ```ruby
 require 'boxr'
 

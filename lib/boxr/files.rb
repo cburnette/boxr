@@ -33,9 +33,9 @@ module Boxr
       attributes = {}
       attributes[:name] = name unless name.nil?
       attributes[:description] = description unless description.nil?
-      attributes[:parent_id] = {id: parent_id} unless parent_id.nil?
+      attributes[:parent] = {id: parent_id} unless parent_id.nil?
       attributes[:shared_link] = shared_link unless shared_link.nil?
-      attributes[:tags] = tags unless tags.nil? 
+      attributes[:tags] = tags unless tags.nil?
 
       updated_file, response = put(uri, attributes, if_match: if_match)
       updated_file
@@ -70,7 +70,7 @@ module Boxr
       download_file(file, version: version, follow_redirect: false)
     end
 
-    def upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil, 
+    def upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil,
                     preflight_check: true, send_content_md5: true)
 
       parent_id = ensure_id(parent)
@@ -97,7 +97,7 @@ module Boxr
       result
     end
 
-    def upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true, 
+    def upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
                                     preflight_check: true, if_match: nil)
       file_id = ensure_id(file)
       preflight_check_new_version_of_file(path_to_file, file_id) if preflight_check
@@ -136,7 +136,7 @@ module Boxr
     def delete_old_version_of_file(file, file_version, if_match: nil)
       file_id = ensure_id(file)
       file_version_id = ensure_id(file_version)
-      
+
       uri = "#{FILES_URI}/#{file_id}/versions/#{file_version_id}"
       result, response = delete(uri, if_match: if_match)
       result
@@ -213,7 +213,7 @@ module Boxr
 
     def preflight_check(path_to_file, parent_id)
       size = File.size(path_to_file)
-      
+
       #TODO: need to make sure that figuring out the filename from the path_to_file works for people using Winblows
       filename = File.basename(path_to_file)
       attributes = {"name" => filename, "parent" => {"id" => "#{parent_id}"}, "size" => size}

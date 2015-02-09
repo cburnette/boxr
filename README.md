@@ -106,9 +106,11 @@ root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
       
 create_folder(name, parent)
      
-update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
+update_folder(folder, name: nil, description: nil, parent: nil, shared_link: nil,
                 folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
                 can_non_owners_invite: nil, if_match: nil)
+
+move_folder(folder, new_parent, name: nil, if_match: nil)
      
 delete_folder(folder, recursive: false, if_match: nil)
      
@@ -124,7 +126,7 @@ trashed_folder(folder, fields: [])
      
 delete_trashed_folder(folder)
       
-restore_trashed_folder(folder, name: nil, parent_id: nil)
+restore_trashed_folder(folder, name: nil, parent: nil)
 ```
 #### [Files](https://developers.box.com/docs/#files)
 ```ruby
@@ -133,7 +135,9 @@ file_from_path(path)
 file_from_id(file_id, fields: [])
 alias :file :file_from_id
 
-update_file(file, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
+update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, if_match: nil)
+
+move_file(file, new_parent, name: nil, if_match: nil)
 
 download_file(file, version: nil, follow_redirect: true)
 
@@ -165,7 +169,7 @@ trashed_file(file, fields: [])
 
 delete_trashed_file(file)
 
-restore_trashed_file(file, name: nil, parent_id: nil)
+restore_trashed_file(file, name: nil, parent: nil)
 ```
 #### [Comments](https://developers.box.com/docs/#comments)
 ```ruby

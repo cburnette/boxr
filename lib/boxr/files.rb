@@ -26,8 +26,9 @@ module Boxr
     end
     alias :file :file_from_id
 
-    def update_file(file, name: nil, description: nil, parent_id: nil, shared_link: nil, tags: nil, if_match: nil)
+    def update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, if_match: nil)
       file_id = ensure_id(file)
+      parent_id = ensure_id(parent)
       uri = "#{FILES_URI}/#{file_id}"
 
       attributes = {}
@@ -39,6 +40,10 @@ module Boxr
 
       updated_file, response = put(uri, attributes, if_match: if_match)
       updated_file
+    end
+
+    def move_file(file, new_parent, name: nil, if_match: nil)
+      update_file(file, parent: new_parent, name: name, if_match: if_match)
     end
 
     def download_file(file, version: nil, follow_redirect: true)
@@ -202,8 +207,10 @@ module Boxr
       result
     end
 
-    def restore_trashed_file(file, name: nil, parent_id: nil)
+    def restore_trashed_file(file, name: nil, parent: nil)
       file_id = ensure_id(file)
+      parent_id = ensure_id(parent)
+
       uri = "#{FILES_URI}/#{file_id}"
       restore_trashed_item(uri, name, parent_id)
     end

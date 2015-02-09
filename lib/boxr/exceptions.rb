@@ -11,14 +11,18 @@ module Boxr
       @boxr_message = boxr_message
 
       if(body)
-        body_json = Oj.load(body)
-        if body_json
-          @type = body_json["type"]
-          @box_status = body_json["status"]
-          @code = body_json["code"]
-          @help_uri = body_json["help_uri"]
-          @box_message = body_json["message"]
-          @request_id = body_json["request_id"]
+        begin
+          body_json = Oj.load(body)
+
+          if body_json
+            @type = body_json["type"]
+            @box_status = body_json["status"]
+            @code = body_json["code"]
+            @help_uri = body_json["help_uri"]
+            @box_message = body_json["message"]
+            @request_id = body_json["request_id"]
+          end
+        rescue
         end
       end
     end

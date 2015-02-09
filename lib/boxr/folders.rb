@@ -47,6 +47,7 @@ module Boxr
 
     def create_folder(name, parent)
       parent_id = ensure_id(parent)
+
       uri = "#{FOLDERS_URI}"
       attributes = {:name => name, :parent => {:id => parent_id}}
       
@@ -54,16 +55,17 @@ module Boxr
       created_folder
     end
 
-    def update_folder(folder, name: nil, description: nil, parent_id: nil, shared_link: nil,
+    def update_folder(folder, name: nil, description: nil, parent: nil, shared_link: nil,
                            folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
                            can_non_owners_invite: nil, if_match: nil)
       folder_id = ensure_id(folder)
+      parent_id = ensure_id(parent)
       uri = "#{FOLDERS_URI}/#{folder_id}"
 
       attributes = {}
       attributes[:name] = name unless name.nil?
       attributes[:description] = description unless description.nil?
-      attributes[:parent_id] = {id: parent_id} unless parent_id.nil?
+      attributes[:parent] = {id: parent_id} unless parent_id.nil?
       attributes[:shared_link] = shared_link unless shared_link.nil?
       attributes[:folder_upload_email] = {access: folder_upload_email_access} unless folder_upload_email_access.nil?
       attributes[:owned_by_id] = {owned_by: owned_by_id} unless owned_by_id.nil?
@@ -73,6 +75,10 @@ module Boxr
 
       updated_folder, response = put(uri, attributes, if_match: if_match)
       updated_folder
+    end
+
+    def move_folder(folder, new_parent, name: nil, if_match: nil)
+      update_folder(folder, parent: new_parent, name: name, if_match: if_match)
     end
 
     def delete_folder(folder, recursive: false, if_match: nil)
@@ -138,8 +144,10 @@ module Boxr
       result
     end
 
-    def restore_trashed_folder(folder, name: nil, parent_id: nil)
+    def restore_trashed_folder(folder, name: nil, parent: nil)
       folder_id = ensure_id(folder)
+      parent_id = ensure_id(parent)
+
       uri = "#{FOLDERS_URI}/#{folder_id}"
       restore_trashed_item(uri, name, parent_id)
     end

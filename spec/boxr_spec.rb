@@ -80,7 +80,7 @@ describe Boxr::Client do
     expect(updated_folder.description).to eq(SUB_FOLDER_DESCRIPTION)
 
     puts "copy folder"
-    new_folder = BOX_CLIENT.copy_folder(SUB_FOLDER,@test_folder, name: 'copy of sub_folder_1')
+    new_folder = BOX_CLIENT.copy_folder(SUB_FOLDER,@test_folder, name: "copy of #{SUB_FOLDER_NAME}")
     expect(new_folder).to be_a Hashie::Mash
     SUB_FOLDER_COPY = new_folder
 
@@ -96,6 +96,12 @@ describe Boxr::Client do
     puts "disable shared link for folder"
     updated_folder = BOX_CLIENT.disable_shared_link_for_folder(@test_folder)
     expect(updated_folder.shared_link).to be_nil
+
+    puts "move folder"
+    folder_to_move = BOX_CLIENT.create_folder("Folder to move", @test_folder)
+    folder_to_move_into = BOX_CLIENT.create_folder("Folder to move into", @test_folder)
+    folder_to_move = BOX_CLIENT.move_folder(folder_to_move, folder_to_move_into)
+    expect(folder_to_move.parent.id).to eq(folder_to_move_into.id)
 
     puts "delete folder"
     result = BOX_CLIENT.delete_folder(SUB_FOLDER_COPY, recursive: true)
@@ -186,6 +192,11 @@ describe Boxr::Client do
     new_file = BOX_CLIENT.copy_file(test_file, @test_folder, name: new_file_name)
     expect(new_file.name).to eq(new_file_name)
     NEW_FILE = new_file
+
+    puts "move file"
+    new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, @test_folder)
+    test_file = BOX_CLIENT.move_file(test_file, new_folder.id)
+    expect(test_file.parent.id).to eq(new_folder.id)
 
     puts "delete file"
     result = BOX_CLIENT.delete_file(NEW_FILE)

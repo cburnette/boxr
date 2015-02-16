@@ -32,8 +32,7 @@ module Boxr
   private
 
   def self.auth_post(uri, body)
-    client = HTTPClient.new
-    res = client.post(uri, body: body)
+    res = BOX_CLIENT.post(uri, body: body)
 
     if(res.status==200)
       body_json = Oj.load(res.body)

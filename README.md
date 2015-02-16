@@ -93,6 +93,16 @@ puts "Shared Link: #{file.shared_link.url}"
 ```
 
 ### Methods
+#### [OAuth](https://developers.box.com/docs/#oauth-2)
+```ruby
+Boxr::oauth_url(state, response_type: "code", scope: nil, folder_id: nil, box_client_id: ENV['BOX_CLIENT_ID'])
+
+Boxr::get_tokens(code, grant_type: "authorization_code", username: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
+
+Boxr::refresh_tokens(refresh_token, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
+
+Boxr::revoke_tokens(token, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
+```
 #### [Folders](https://developers.box.com/docs/#folders)
 ```ruby
 folder_from_path(path)

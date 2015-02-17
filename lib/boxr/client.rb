@@ -52,13 +52,13 @@ module Boxr
     
 
     def initialize(access_token, refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], 
-                    identifier: nil, as_user_id: nil, &token_refresh_listener)
+                    identifier: nil, as_user: nil, &token_refresh_listener)
       @access_token = access_token
       @refresh_token = refresh_token
       @box_client_id = box_client_id
       @box_client_secret = box_client_secret
       @identifier = identifier
-      @as_user_id = as_user_id
+      @as_user_id = ensure_id(as_user)
       @token_refresh_listener = token_refresh_listener
     end
 

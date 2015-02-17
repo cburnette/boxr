@@ -79,6 +79,10 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # hold the id of the user associated with this Boxr client.  When the callback is invoked this value 
 # will be provided.
 ```
+Here's the complete method signature to initialize an instance of Boxr::Client
+```ruby
+initialize(access_token, refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], identifier: nil, as_user: nil, &token_refresh_listener)
+```
   
 ### A quick example
 Before diving into detailed documentation, let's take a look at how to accomplish a simple task with Boxr.  This script will find a specific folder given its path, upload a file to that folder, and create an open shared link to that file.

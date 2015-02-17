@@ -51,9 +51,11 @@ module Boxr
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
     
 
-    def initialize(access_token, refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], 
+    def initialize(access_token=ENV['BOX_DEVELOPER_TOKEN'], refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], 
                     identifier: nil, as_user: nil, &token_refresh_listener)
       @access_token = access_token
+      raise BoxrException.new(boxr_message: "Access token cannot be nil") if @access_token.nil?
+
       @refresh_token = refresh_token
       @box_client_id = box_client_id
       @box_client_secret = box_client_secret

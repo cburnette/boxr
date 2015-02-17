@@ -15,7 +15,7 @@ describe Boxr::Client do
 
   #follow the directions in .env.example to set up your BOX_DEVELOPER_TOKEN
   #keep in mind it is only valid for 60 minutes
-  BOX_CLIENT = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'])
+  BOX_CLIENT = Boxr::Client.new #using ENV['BOX_DEVELOPER_TOKEN']
   
   #uncomment this line to see the HTTP request and response debug info in the rspec output
   #Boxr::turn_on_debugging

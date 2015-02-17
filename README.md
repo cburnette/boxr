@@ -305,13 +305,13 @@ update_task_assignment(task, message: nil, resolution_state: nil)
 ```
 #### [Metadata](https://developers.box.com/metadata-api/#crud)
 ```ruby
-create_metadata(file, metadata, type: :properties)
-      
-metadata(file, type: :properties)
-     
-update_metadata(file, updates, type: :properties)
-     
-delete_metadata(file, type: :properties)
+create_metadata(file, metadata, scope: :global, template: :properties)
+
+metadata(file, scope: :global, template: :properties)
+
+update_metadata(file, updates, scope: :global, template: :properties)
+
+delete_metadata(file, scope: :global, template: :properties)
 ```
 ## Contributing
 

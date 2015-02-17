@@ -56,10 +56,11 @@ module Boxr
     end
 
     def update_folder(folder, name: nil, description: nil, parent: nil, shared_link: nil,
-                           folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
+                           folder_upload_email_access: nil, owned_by: nil, sync_state: nil, tags: nil,
                            can_non_owners_invite: nil, if_match: nil)
       folder_id = ensure_id(folder)
       parent_id = ensure_id(parent)
+      owned_by_id = ensure_id(owned_by)
       uri = "#{FOLDERS_URI}/#{folder_id}"
 
       attributes = {}
@@ -68,7 +69,7 @@ module Boxr
       attributes[:parent] = {id: parent_id} unless parent_id.nil?
       attributes[:shared_link] = shared_link unless shared_link.nil?
       attributes[:folder_upload_email] = {access: folder_upload_email_access} unless folder_upload_email_access.nil?
-      attributes[:owned_by_id] = {owned_by: owned_by_id} unless owned_by_id.nil?
+      attributes[:owned_by] = {id: owned_by_id} unless owned_by_id.nil?
       attributes[:sync_state] = sync_state unless sync_state.nil?
       attributes[:tags] = tags unless tags.nil? 
       attributes[:can_non_owners_invite] = can_non_owners_invite unless can_non_owners_invite.nil?

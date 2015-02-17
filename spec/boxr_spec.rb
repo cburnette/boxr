@@ -388,7 +388,7 @@ describe Boxr::Client do
     expect(updated_task.message).to eq(NEW_TASK_MESSAGE)
 
     puts "create task assignment"
-    task_assignment = BOX_CLIENT.create_task_assignment(TEST_TASK, assign_to_id: @test_user.id)
+    task_assignment = BOX_CLIENT.create_task_assignment(TEST_TASK, assign_to: @test_user.id)
     expect(task_assignment.assigned_to.id).to eq(@test_user.id)
     TASK_ASSIGNMENT = task_assignment
 

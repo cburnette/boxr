@@ -14,8 +14,8 @@ module Boxr
       add_comment(:file, file_id, message, tagged_message)
     end
 
-    def reply_to_comment(comment_id, message: nil, tagged_message: nil)
-      comment_id = ensure_id(comment_id)
+    def reply_to_comment(comment, message: nil, tagged_message: nil)
+      comment_id = ensure_id(comment)
       add_comment(:comment, comment_id, message, tagged_message)
     end
 

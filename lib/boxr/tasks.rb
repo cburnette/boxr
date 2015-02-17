@@ -55,8 +55,9 @@ module Boxr
       assignments['entries']
     end
 
-    def create_task_assignment(task, assign_to_id: nil, assign_to_login: nil)
+    def create_task_assignment(task, assign_to: nil, assign_to_login: nil)
       task_id = ensure_id(task)
+      assign_to_id = ensure_id(assign_to)
       attributes = {task: {type: :task, id: "#{task_id}"}}
       
       attributes[:assign_to] = {} 

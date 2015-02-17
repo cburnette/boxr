@@ -73,6 +73,8 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # BOX_CLIENT_ID and BOX_CLIENT_SECRET, respectively.  You can omit the two optional parameters above
 # if those are present.
 
+# You can also provide another parameter called as_user. Read about what that means here: https://developers.box.com/docs/#users-as-user
+
 # Additionally, you can provide one other parameter called identifier. This can be used, for example, to
 # hold the id of the user associated with this Boxr client.  When the callback is invoked this value 
 # will be provided.

@@ -119,7 +119,7 @@ root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
 create_folder(name, parent)
      
 update_folder(folder, name: nil, description: nil, parent: nil, shared_link: nil,
-                folder_upload_email_access: nil, owned_by_id: nil, sync_state: nil, tags: nil,
+                folder_upload_email_access: nil, owned_by: nil, sync_state: nil, tags: nil,
                 can_non_owners_invite: nil, if_match: nil)
 
 move_folder(folder, new_parent, name: nil, if_match: nil)
@@ -189,7 +189,7 @@ file_comments(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
       
 add_comment_to_file(file, message: nil, tagged_message: nil)
      
-reply_to_comment(comment_id, message: nil, tagged_message: nil)
+reply_to_comment(comment, message: nil, tagged_message: nil)
       
 change_comment(comment, message)
      
@@ -295,7 +295,7 @@ delete_task(task)
       
 task_assignments(task)
       
-create_task_assignment(task, assign_to_id: nil, assign_to_login: nil)
+create_task_assignment(task, assign_to: nil, assign_to_login: nil)
       
 task_assignment(task)
       

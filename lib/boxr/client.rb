@@ -236,7 +236,7 @@ module Boxr
       updated_item
     end
 
-    def disable_shared_link(uri, item_id)
+    def disable_shared_link(uri)
       attributes = {shared_link: nil}
 
       updated_item, response = put(uri, attributes)

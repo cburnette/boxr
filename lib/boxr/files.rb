@@ -187,7 +187,7 @@ module Boxr
     def disable_shared_link_for_file(file)
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}"
-      disable_shared_link(uri, file_id)
+      disable_shared_link(uri)
     end
 
     def trashed_file(file, fields: [])

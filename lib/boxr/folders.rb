@@ -112,7 +112,7 @@ module Boxr
     def disable_shared_link_for_folder(folder)
       folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}"
-      disable_shared_link(uri, folder_id)
+      disable_shared_link(uri)
     end
 
     def trash(fields: [], offset: nil, limit: nil)

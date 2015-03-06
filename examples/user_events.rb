@@ -13,7 +13,7 @@ loop do
   event_response.events.each do |event|
     key = "/box-event/id/#{event.event_id}"
 
-    #we need to de-dupe the events because we will receive multiple events with the same event_id; this is to ensure that we get the event
+    #we need to de-dupe the events because we will receive multiple events with the same event_id; Box does this to ensure that we get the event
     if (cache.fetch(event.event_id)==nil)
       cache[event.event_id] = true
       puts event.event_type

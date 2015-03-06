@@ -17,7 +17,19 @@ module Boxr
 
         break if event_response.events.empty?
       end
-      Hashie::Mash.new({events: events, stream_position: stream_position})
+      Hashie::Mash.new({events: events, next_stream_position: stream_position})
+    end
+
+    def enterprise_events_stream(initial_stream_position, event_type: nil, limit: 100, refresh_period: 5, &stream_listener)
+      stream_position = initial_stream_position
+      loop do
+        response = enterprise_events(stream_position: stream_position, event_type: event_type, limit: limit)
+        
+        stream_listener.call(response)
+        
+        stream_position = response.next_stream_position
+        sleep refresh_period
+      end
     end
 
 

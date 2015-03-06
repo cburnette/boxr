@@ -5,7 +5,7 @@ require 'awesome_print'
 client = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'])
 
 now = Time.now
-start_date = now - (60*60*24*10) #one day ago
+start_date = now - (60*60*24) #one day ago
 end_date = now
 
 puts "fetching historic enterprise events..."
@@ -15,6 +15,7 @@ ap result.events.each{|event| ap event; puts;}
 output={count: result.events.count, next_stream_position: result.next_stream_position}
 ap output
 
+#now that we have the latest stream position let's start monitoring in real-time
 puts "listening for new enterprise events..."
 client.enterprise_events_stream(result.next_stream_position) do |result|
   result.events.each{|e| puts e.event_type}

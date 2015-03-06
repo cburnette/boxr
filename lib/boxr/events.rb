@@ -1,7 +1,7 @@
 module Boxr
   class Client
 
-    def user_events(stream_position: 0, stream_type: :all, limit: 100)
+    def user_events(stream_position, stream_type: :all, limit: 100)
       query = {stream_position: stream_position, stream_type: stream_type, limit: limit}
       
       events, response = get(EVENTS_URI, query: query)
@@ -20,12 +20,12 @@ module Boxr
       Hashie::Mash.new({events: events, next_stream_position: stream_position})
     end
 
-    def enterprise_events_stream(initial_stream_position, event_type: nil, limit: 100, refresh_period: 5, &stream_listener)
+    def enterprise_events_stream(initial_stream_position, event_type: nil, limit: 100, refresh_period: 5)
       stream_position = initial_stream_position
       loop do
         response = enterprise_events(stream_position: stream_position, event_type: event_type, limit: limit)
-        
-        stream_listener.call(response)
+
+        yield(response) if block_given?
         
         stream_position = response.next_stream_position
         sleep refresh_period

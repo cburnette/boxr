@@ -9,17 +9,15 @@ cache = LruRedux::Cache.new(1000)
 stream_position = :now
 loop do 
   puts "fetching events..."
-  deduped_count=0
   event_response = client.user_events(stream_position)
   event_response.events.each do |event|
     #we need to de-dupe the events because we will receive multiple events with the same event_id; Box does this to ensure that we get the event
     key = "/box-event/#{event.event_id}"
     if (cache.fetch(key)==nil)
       cache[key] = true
-      deduped_count+=1
       puts event.event_type
     end
   end
   stream_position = event_response.next_stream_position
-  sleep 5 if deduped_count==0
+  sleep 5
 end

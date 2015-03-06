@@ -86,6 +86,7 @@ module Boxr
 
       File.open(path_to_file) do |file|
         content_md5 = send_content_md5 ? Digest::SHA1.file(file).hexdigest : nil
+
         attributes = {filename: file, parent_id: parent_id}
         attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
         attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
@@ -221,7 +222,7 @@ module Boxr
     def preflight_check(path_to_file, parent_id)
       size = File.size(path_to_file)
 
-      #TODO: need to make sure that figuring out the filename from the path_to_file works for people using Winblows
+      #TODO: need to make sure that figuring out the filename from the path_to_file works for people using Windows
       filename = File.basename(path_to_file)
       attributes = {"name" => filename, "parent" => {"id" => "#{parent_id}"}, "size" => size}
       body_json, res = options("#{FILES_URI}/content", attributes)

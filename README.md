@@ -223,7 +223,7 @@ pending_collaborations()
 ```ruby
 user_events(stream_position: 0, stream_type: :all, limit: 100)
       
-enterprise_events(stream_position: 0, limit: 100, event_type: nil, created_after: nil, created_before: nil)
+enterprise_events(created_after, created_before)
 ```
 #### [Shared Items](https://developers.box.com/docs/#shared-items)
 ```ruby

@@ -40,17 +40,17 @@ result = @box_client.enterprise_events(created_after: start_date, created_before
     puts "no new #{BOX_TRIGGER_EVENT} events..."
   else
     puts "detected #{result.events.count} new #{BOX_TRIGGER_EVENT}"
-  end
-  result.events.each do |e|
-    folder = @box_client.folder(e.source.parent)
-    message = "Document '#{e.source.item_name}' uploaded to folder '#{folder.name}' by #{e.created_by.name}"
-    
-    #first notify the folder owner
-    send_sms_to_box_user(folder.owned_by, message)
+    result.events.each do |e|
+      folder = @box_client.folder(e.source.parent)
+      message = "Document '#{e.source.item_name}' uploaded to folder '#{folder.name}' by #{e.created_by.name}"
+      
+      #first notify the folder owner
+      send_sms_to_box_user(folder.owned_by, message)
 
-    #now notify collaborators
-    user_collabs = @box_client.folder_collaborations(folder).select{|c| c.accessible_by.type=='user'}
-    user_collabs.each{|c| send_sms_to_box_user(c.accessible_by, message)}
+      #now notify collaborators
+      user_collabs = @box_client.folder_collaborations(folder).select{|c| c.accessible_by.type=='user'}
+      user_collabs.each{|c| send_sms_to_box_user(c.accessible_by, message)}
+    end
   end
 end
 

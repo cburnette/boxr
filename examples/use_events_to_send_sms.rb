@@ -7,7 +7,7 @@ require 'twilio-ruby' #make sure you 'gem install twilio-ruby'
 TWILIO_PHONE_NUMBER= ENV['TWILIO_PHONE_NUMBER']
 BOX_TRIGGER_EVENT = 'UPLOAD'
 
-@twilio_client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
+@twilio_client = Twilio::REST::Client.new(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
 @box_client = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'])
 
 def send_sms_to_box_user(recipient, message)

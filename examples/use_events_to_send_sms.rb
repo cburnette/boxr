@@ -15,8 +15,7 @@ def send_sms_to_box_user(recipient, message)
   unless phone.nil? || phone.empty?
     begin
       full_phone = "+1#{phone}"
-      @client = Twilio::REST::Client.new ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN']
-      @client.account.messages.create(
+      @twilio_client.account.messages.create(
         from: ENV['TWILIO_PHONE_NUMBER'],
         to: full_phone,
         body: message

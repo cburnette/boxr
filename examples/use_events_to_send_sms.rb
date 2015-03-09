@@ -1,6 +1,5 @@
 require 'dotenv'; Dotenv.load("../.env")
 require 'boxr'
-require 'awesome_print'
 require 'twilio-ruby' #make sure you 'gem install twilio-ruby'
  
 # Get your Account Sid, Auth Token, and phone number from twilio.com/user/account

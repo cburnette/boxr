@@ -1,10 +1,12 @@
 module Boxr
   class Client
 
-    def folder_collaborations(folder)
+    def folder_collaborations(folder, fields: [])
       folder_id = ensure_id(folder)
+      query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
       uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
-      collaborations, response = get(uri)
+
+      collaborations, response = get(uri, query: query)
       collaborations['entries']
     end
 
@@ -52,8 +54,9 @@ module Boxr
     end
 
     #these are pending collaborations for the current user; use the As-User Header to request for different users
-    def pending_collaborations
-      query = {status: :pending}
+    def pending_collaborations(fields: [])
+      query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
+      query[:status] = :pending
       pending_collaborations, response = get(COLLABORATIONS_URI, query: query)
       pending_collaborations['entries']
     end

@@ -1,14 +1,14 @@
 module Boxr
   class Client
 
-    def user_events(stream_position, stream_type: :all, limit: 100)
+    def user_events(stream_position, stream_type: :all, limit: 800)
       query = {stream_position: stream_position, stream_type: stream_type, limit: limit}
       
       events, response = get(EVENTS_URI, query: query)
       Hashie::Mash.new({events: events["entries"], chunk_size: events["chunk_size"], next_stream_position: events["next_stream_position"]})
     end
 
-    def enterprise_events(created_after: nil, created_before: nil, stream_position: 0, event_type: nil, limit: 100)
+    def enterprise_events(created_after: nil, created_before: nil, stream_position: 0, event_type: nil, limit: 500)
       events = []
       loop do
         event_response = get_enterprise_events(created_after, created_before, stream_position, event_type, limit)
@@ -20,7 +20,7 @@ module Boxr
       Hashie::Mash.new({events: events, next_stream_position: stream_position})
     end
 
-    def enterprise_events_stream(initial_stream_position, event_type: nil, limit: 100, refresh_period: 5)
+    def enterprise_events_stream(initial_stream_position, event_type: nil, limit: 500, refresh_period: 300)
       stream_position = initial_stream_position
       loop do
         response = enterprise_events(stream_position: stream_position, event_type: event_type, limit: limit)

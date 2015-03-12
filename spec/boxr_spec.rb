@@ -449,7 +449,7 @@ describe Boxr::Client do
     expect(results).to eq([])
   end
 
-  it "invokes a Boxr exception" do
+  it "invokes a Boxr error" do
     expect { BOX_CLIENT.folder(1)}.to raise_error
   end
 

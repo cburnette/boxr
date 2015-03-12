@@ -3,7 +3,7 @@ require 'httpclient'
 require 'hashie'
 
 require 'boxr/version'
-require 'boxr/exceptions'
+require 'boxr/errors'
 require 'boxr/client'
 require 'boxr/shared_items'
 require 'boxr/folders'

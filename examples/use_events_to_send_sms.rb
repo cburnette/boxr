@@ -10,19 +10,24 @@ BOX_TRIGGER_EVENT = 'UPLOAD'
 @box_client = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'])
 
 def send_sms_to_box_user(recipient, message)
-  phone = @box_client.user(recipient, fields: [:phone]).phone
-  unless phone.nil? || phone.empty?
-    begin
-      full_phone = "+1#{phone}"
-      @twilio_client.account.messages.create(
-        from: ENV['TWILIO_PHONE_NUMBER'],
-        to: full_phone,
-        body: message
-      )
-      puts "Sent SMS to user #{recipient.name} at #{full_phone}"
-    rescue Twilio::REST::RequestError => e
-      puts e.message
+  begin
+    phone = @box_client.user(recipient, fields: [:phone]).phone
+    unless phone.nil? || phone.empty?
+      begin
+        full_phone = "+1#{phone}"
+        @twilio_client.account.messages.create(
+          from: ENV['TWILIO_PHONE_NUMBER'],
+          to: full_phone,
+          body: message
+        )
+        puts "Sent SMS to user #{recipient.name} at #{full_phone}"
+      rescue Twilio::REST::RequestError => e
+        puts e.message
+      end
     end
+  rescue Boxr::BoxrError => e
+    #most likely error is that a collaborator is an external user and Box threw a 404
+    puts e.message
   end
 end
 

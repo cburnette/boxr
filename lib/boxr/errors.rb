@@ -1,6 +1,6 @@
 module Boxr
 
-  class BoxrException < Exception
+  class BoxrError < StandardError
 
     attr_reader :response_body, :type, :status, :code, :help_uri, :box_message, :boxr_message, :request_id
 

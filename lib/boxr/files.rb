@@ -13,7 +13,7 @@ module Boxr
 
       files = folder_items(folder, fields: [:id, :name]).files
       file = files.select{|f| f.name == file_name}.first
-      raise BoxrException.new(boxr_message: "File not found: '#{file_name}'") if file.nil?
+      raise BoxrError.new(boxr_message: "File not found: '#{file_name}'") if file.nil?
       file
     end
 
@@ -86,7 +86,7 @@ module Boxr
 
       File.open(path_to_file) do |file|
         content_md5 = send_content_md5 ? Digest::SHA1.file(file).hexdigest : nil
-
+        
         attributes = {filename: file, parent_id: parent_id}
         attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
         attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?

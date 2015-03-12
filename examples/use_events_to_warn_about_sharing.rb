@@ -50,6 +50,8 @@ def send_email_to_box_user(from, to, subject, text)
   #this example code uses Mailgun to send email, but you can use any standard SMTP server
   message_params = {:from => from, :to => to, :subject => subject, :text => text}
   @mailgun_client.send_message ENV['MAILGUN_SENDING_DOMAIN'], message_params
+
+  puts "Sent email to #{to} with subject '#{subject}'"
 end
 
 #need to look back in time to make sure we get a valid stream position; 
@@ -59,7 +61,7 @@ start_date = now - (60*60*24) #one day ago
 result = @box_client.enterprise_events(created_after: start_date, created_before: now)
 
 #now that we have the latest stream position let's start monitoring in real-time
-@box_client.enterprise_events_stream(result.next_stream_position, event_type: BOX_TRIGGER_EVENT) do |result|
+@box_client.enterprise_events_stream(result.next_stream_position, event_type: BOX_TRIGGER_EVENT, refresh_period: 60) do |result|
   if result.events.count==0
     puts "no new #{BOX_TRIGGER_EVENT} events..."
   else

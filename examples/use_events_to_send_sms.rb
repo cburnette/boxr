@@ -33,7 +33,7 @@ start_date = now - (60*60*24) #one day ago
 result = @box_client.enterprise_events(created_after: start_date, created_before: now)
 
 #now that we have the latest stream position let's start monitoring in real-time
-@box_client.enterprise_events_stream(result.next_stream_position, event_type: BOX_TRIGGER_EVENT) do |result|
+@box_client.enterprise_events_stream(result.next_stream_position, event_type: BOX_TRIGGER_EVENT, refresh_period: 5) do |result|
   if result.events.count==0
     puts "no new #{BOX_TRIGGER_EVENT} events..."
   else

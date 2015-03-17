@@ -221,11 +221,11 @@ pending_collaborations()
 ```
 #### [Events](https://developers.box.com/docs/#events)
 ```ruby
-user_events(stream_position, stream_type: :all, limit: 100)
+user_events(stream_position, stream_type: :all, limit: 800)
       
-enterprise_events(created_after: nil, created_before: nil, stream_position: 0, event_type: nil, limit: 100)
+enterprise_events(created_after: nil, created_before: nil, stream_position: 0, event_type: nil, limit: 500)
 
-enterprise_events_stream(initial_stream_position, event_type: nil, limit: 100, refresh_period: 5)
+enterprise_events_stream(initial_stream_position, event_type: nil, limit: 500, refresh_period: 300)
 ```
 #### [Shared Items](https://developers.box.com/docs/#shared-items)
 ```ruby

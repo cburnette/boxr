@@ -3,7 +3,7 @@ Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the
 
 The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://developers.box.com/docs/).
 
-The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr/Boxr/Client).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration test found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
+The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr/Boxr/Client).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration tests found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -103,7 +103,7 @@ puts "Shared Link: #{file.shared_link.url}"
 ```ruby
 #NOTE: these are all module methods
 
-Boxr::oauth_url(state, response_type: "code", scope: nil, folder_id: nil, box_client_id: ENV['BOX_CLIENT_ID'])
+Boxr::oauth_url(state, host: "app.box.com", response_type: "code", scope: nil, folder_id: nil, box_client_id: ENV['BOX_CLIENT_ID'])
 
 Boxr::get_tokens(code, grant_type: "authorization_code", username: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
 

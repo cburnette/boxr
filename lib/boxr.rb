@@ -1,6 +1,7 @@
 require 'oj'
 require 'httpclient'
 require 'hashie'
+require 'addressable/template'
 
 require 'boxr/version'
 require 'boxr/errors'

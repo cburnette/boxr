@@ -67,13 +67,15 @@ module Boxr
 
     private
 
-    def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil)
+    def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil, follow_redirect: true)
+      uri = Addressable::URI.encode(uri)
+
       res = with_auto_token_refresh do
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers['BoxApi'] = box_api_header unless box_api_header.nil?
 
-        BOX_CLIENT.get(uri, query: query, header: headers)
+        BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
       end
 
       check_response_status(res, success_codes)
@@ -85,7 +87,8 @@ module Boxr
       end
     end
 
-    def get_all_with_pagination(uri, query: {}, offset: 0, limit: DEFAULT_LIMIT)
+    def get_all_with_pagination(uri, query: {}, offset: 0, limit: DEFAULT_LIMIT, follow_redirect: true)
+      uri = Addressable::URI.encode(uri)
       entries = []
 
       begin
@@ -93,7 +96,7 @@ module Boxr
         query[:offset] = offset
         res = with_auto_token_refresh do
           headers = standard_headers
-          BOX_CLIENT.get(uri, query: query, header: headers)
+          BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
         end
         
         if (res.status==200)
@@ -111,6 +114,7 @@ module Boxr
     end
 
     def post(uri, body, query: nil, success_codes: [201], process_body: true, content_md5: nil, content_type: nil, if_match: nil)
+      uri = Addressable::URI.encode(uri)
       body = Oj.dump(body) if process_body
 
       res = with_auto_token_refresh do
@@ -128,6 +132,8 @@ module Boxr
     end
 
     def put(uri, body, query: nil, success_codes: [200], content_type: nil, if_match: nil)
+      uri = Addressable::URI.encode(uri)
+
       res = with_auto_token_refresh do
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
@@ -142,6 +148,8 @@ module Boxr
     end
 
     def delete(uri, query: nil, success_codes: [204], if_match: nil)
+      uri = Addressable::URI.encode(uri)
+
       res = with_auto_token_refresh do
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
@@ -155,6 +163,8 @@ module Boxr
     end
 
     def options(uri, body, success_codes: [200])
+      uri = Addressable::URI.encode(uri)
+
       res = with_auto_token_refresh do
         headers = standard_headers
         BOX_CLIENT.options(uri, body: Oj.dump(body), header: headers)

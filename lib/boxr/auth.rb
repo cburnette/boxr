@@ -1,9 +1,13 @@
 module Boxr
 
-  def self.oauth_url(state, response_type: "code", scope: nil, folder_id: nil, box_client_id: ENV['BOX_CLIENT_ID'])
-    uri = "https://app.box.com/api/oauth2/authorize?response_type=#{response_type}&state=#{state}&client_id=#{box_client_id}"
-    uri = uri + "&scope=#{scope}" unless scope.nil?
-    uri = uri + "&folder_id=#{folder_id}" unless folder_id.nil?
+  def self.oauth_url(state, host: "app.box.com", response_type: "code", scope: nil, folder_id: nil, box_client_id: ENV['BOX_CLIENT_ID'])
+    template = Addressable::Template.new("https://{host}/api/oauth2/authorize{?query*}")
+
+    query = {"response_type": "#{response_type}", "state": "#{state}", "client_id": "#{box_client_id}"}
+    query["scope"] = "#{scope}" unless scope.nil?
+    query["folder_id"] = "#{folder_id}" unless folder_id.nil?
+    
+    uri = template.expand({"host": "#{host}", "query": query})
     uri
   end
 
@@ -32,6 +36,8 @@ module Boxr
   private
 
   def self.auth_post(uri, body)
+    uri = Addressable::URI.encode(uri)
+
     res = BOX_CLIENT.post(uri, body: body)
 
     if(res.status==200)

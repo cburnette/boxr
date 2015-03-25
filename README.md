@@ -5,6 +5,9 @@ The purpose of this gem is to provide a clear, efficient, and intentional method
 
 The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr/Boxr/Client).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration tests found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
 
+## Requirements
+This gem requires Ruby 2.0.0 or higher.  The integration tests are currently being run using MRI Ruby 2.0.0-p643 and MRI Ruby 2.2.0.
+
 ## Installation
 Add this line to your application's Gemfile:
 

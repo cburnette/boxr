@@ -18,7 +18,7 @@ module Boxr
 
       attributes = {item: {id: folder_id, type: :folder}}
       attributes[:accessible_by] = accessible_by
-      attributes[:role] = role
+      attributes[:role] = validate_role(role)
 
       collaboration, response = post(COLLABORATIONS_URI, attributes, query: query)
       collaboration
@@ -28,7 +28,7 @@ module Boxr
       collaboration_id = ensure_id(collaboration)
       uri = "#{COLLABORATIONS_URI}/#{collaboration_id}"
       attributes = {}
-      attributes[:role] = role unless role.nil?
+      attributes[:role] = validate_role(role) unless role.nil?
       attributes[:status] = status unless status.nil?
 
       updated_collaboration, response = put(uri, attributes)
@@ -62,5 +62,22 @@ module Boxr
     end
 
 
+    private
+    
+    def validate_role(role)
+      case role
+      when :previewer_uploader
+        role = 'previewer uploader'
+      when :viewer_uploader
+        role = 'viewer uploader'
+      when :co_owner
+        role = 'co-owner'
+      end
+
+      role = role.to_s
+      raise BoxrError.new(boxr_message: "Invalid collaboration role: '#{role}'") unless VALID_COLLABORATION_ROLES.include?(role)
+      
+      role
+    end
   end
 end

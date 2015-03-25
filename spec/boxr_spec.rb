@@ -61,6 +61,8 @@ describe Boxr::Client do
     end
   end
 
+  #use this command to just execute this scenario
+  #rake spec SPEC_OPTS="-e \"invokes folder operations"\"
   it 'invokes folder operations' do
     puts "get folder using path"
     folder = BOX_CLIENT.folder_from_path(TEST_FOLDER_NAME)
@@ -125,6 +127,7 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes file operations"\"
   it "invokes file operations" do
     puts "upload a file"
     new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
@@ -216,6 +219,7 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes user operations"\"
   it "invokes user operations" do 
     puts "inspect current user"
     user = BOX_CLIENT.current_user
@@ -244,6 +248,7 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes group operations"\"
   it "invokes group operations" do
     puts "create group"
     group = BOX_CLIENT.create_group(TEST_GROUP_NAME)
@@ -305,6 +310,7 @@ describe Boxr::Client do
     expect(response).to eq({})
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes comment operations"\"
   it "invokes comment operations" do 
     new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
     test_file = new_file
@@ -335,9 +341,10 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes collaborations operations"\"
   it "invokes collaborations operations" do
     puts "add collaboration"
-    collaboration = BOX_CLIENT.add_collaboration(@test_folder, {id: @test_user.id, type: :user}, :editor)
+    collaboration = BOX_CLIENT.add_collaboration(@test_folder, {id: @test_user.id, type: :user}, :viewer_uploader)
     expect(collaboration.accessible_by.id).to eq(@test_user.id)
     COLLABORATION = collaboration
 
@@ -363,8 +370,12 @@ describe Boxr::Client do
     puts "inspect pending collaborations"
     pending_collaborations = BOX_CLIENT.pending_collaborations
     expect(pending_collaborations).to eq([])
+
+    puts "add invalid collaboration"
+    expect { BOX_CLIENT.add_collaboration(@test_folder, {id: @test_user.id, type: :user}, :invalid_role)}.to raise_error
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes task operations"\"
   it "invokes task operations" do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
     collaboration = BOX_CLIENT.add_collaboration(@test_folder, {id: @test_user.id, type: :user}, :editor)
@@ -419,9 +430,9 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes metadata operations"\"
   it "invokes metadata operations" do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
-    #test_file_id = new_file.id
 
     puts "create metadata"
     meta = {"a" => "hello", "b" => "world"}
@@ -441,16 +452,13 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
+  #rake spec SPEC_OPTS="-e \"invokes search operations"\"
   it "invokes search operations" do
     #the issue with this test is that Box can take between 5-10 minutes to index any content uploaded; this is just a smoke test
     #so we are searching for something that should return zero results
     puts "perform search"
     results = BOX_CLIENT.search("sdlfjuwnsljsdfuqpoiqweouyvnnadsfkjhiuweruywerbjvhvkjlnasoifyukhenlwdflnsdvoiuawfydfjh")
     expect(results).to eq([])
-  end
-
-  it "invokes a Boxr error" do
-    expect { BOX_CLIENT.folder(1)}.to raise_error
   end
 
 end

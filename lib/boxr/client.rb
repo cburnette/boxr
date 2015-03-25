@@ -49,6 +49,8 @@ module Boxr
 
     GROUP_FIELDS = [:type, :id, :name, :created_at, :modified_at]
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
+
+    VALID_COLLABORATION_ROLES = ['editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner']
     
 
     def initialize(access_token=ENV['BOX_DEVELOPER_TOKEN'], refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], 

@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'boxr'
+require 'dotenv'; Dotenv.load
+
+puts ENV['BOX_DEVELOPER_TOKEN']
+@client = Boxr::Client.new
+
+require 'irb'
+IRB.start

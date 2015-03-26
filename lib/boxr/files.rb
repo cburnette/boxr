@@ -26,7 +26,7 @@ module Boxr
     end
     alias :file :file_from_id
 
-    def update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, if_match: nil)
+    def update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, lock: nil, if_match: nil)
       file_id = ensure_id(file)
       parent_id = ensure_id(parent)
       uri = "#{FILES_URI}/#{file_id}"
@@ -37,6 +37,24 @@ module Boxr
       attributes[:parent] = {id: parent_id} unless parent_id.nil?
       attributes[:shared_link] = shared_link unless shared_link.nil?
       attributes[:tags] = tags unless tags.nil?
+      attributes[:lock] = lock unless lock.nil?
+
+      updated_file, response = put(uri, attributes, if_match: if_match)
+      updated_file
+    end
+
+    def lock_file(file, expires_at: nil, is_download_prevented: false, if_match: nil)
+      lock = {type: "lock"}
+      lock[:expires_at] = expires_at.to_datetime.rfc3339 unless expires_at.nil?
+      lock[:is_download_prevented] = is_download_prevented unless is_download_prevented.nil?
+
+      update_file(file, lock: lock, if_match: if_match)
+    end
+
+    def unlock_file(file, if_match: nil)
+      file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}"
+      attributes = {lock: nil}
 
       updated_file, response = put(uri, attributes, if_match: if_match)
       updated_file

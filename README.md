@@ -158,6 +158,10 @@ alias :file :file_from_id
 
 update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, if_match: nil)
 
+lock_file(file, expires_at: nil, is_download_prevented: false, if_match: nil)
+
+unlock_file(file, if_match: nil)
+
 move_file(file, new_parent, name: nil, if_match: nil)
 
 download_file(file, version: nil, follow_redirect: true)

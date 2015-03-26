@@ -56,7 +56,7 @@ end
 
 #need to look back in time to make sure we get a valid stream position; 
 #normally your app will be persisting the last known stream position and you wouldn't have to look this up
-now = Time.now
+now = Time.now.utc
 start_date = now - (60*60*24) #one day ago
 result = @box_client.enterprise_events(created_after: start_date, created_before: now)
 

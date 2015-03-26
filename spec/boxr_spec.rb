@@ -151,6 +151,19 @@ describe Boxr::Client do
     updated_file_info = BOX_CLIENT.update_file(test_file, description: new_description)
     expect(updated_file_info.description).to eq(new_description)
 
+    puts "lock file"
+    expires_at_utc = Time.now.utc + (60*60*24) #one day from now
+    locked_file = BOX_CLIENT.lock_file(test_file, expires_at: expires_at_utc, is_download_prevented: true)
+    locked_file = BOX_CLIENT.file(locked_file, fields: [:lock])
+    expect(locked_file.lock.type).to eq('lock')
+    expect(locked_file.lock.expires_at).to_not be_nil
+    expect(locked_file.lock.is_download_prevented).to eq(true)
+
+    puts "unlock file"
+    unlocked_file = BOX_CLIENT.unlock_file(locked_file)
+    unlocked_file = BOX_CLIENT.file(unlocked_file, fields: [:lock])
+    expect(unlocked_file.lock).to be_nil
+
     puts "download file"
     file = BOX_CLIENT.download_file(test_file)
     f = open("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}", 'w+')

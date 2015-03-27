@@ -148,8 +148,11 @@ describe Boxr::Client do
 
     puts "update file"
     new_description = 'this file is used to test Boxr'
-    updated_file_info = BOX_CLIENT.update_file(test_file, description: new_description)
+    tags = ['tag one','tag two']
+    updated_file_info = BOX_CLIENT.update_file(test_file, description: new_description, tags: tags)
     expect(updated_file_info.description).to eq(new_description)
+    tag_file_info = BOX_CLIENT.file(updated_file_info, fields: [:tags])
+    expect(tag_file_info.tags.length).to eq(2)
 
     puts "lock file"
     expires_at_utc = Time.now.utc + (60*60*24) #one day from now

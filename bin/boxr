@@ -2,9 +2,8 @@
 
 require 'boxr'
 require 'dotenv'; Dotenv.load
-
-puts ENV['BOX_DEVELOPER_TOKEN']
-@client = Boxr::Client.new
-
+require 'awesome_print'
 require 'irb'
+
+@box = Boxr::Client.new #uses ENV['BOX_DEVELOPER_TOKEN']
 IRB.start

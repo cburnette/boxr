@@ -113,14 +113,14 @@ module Boxr
       aliases['entries']
     end
 
-    # def add_email_alias_for_user(user, email)
-    #   user_id = ensure_id(user)
-    #   uri = "#{USERS_URI}/#{user_id}/email_aliases"
-    #   attributes = {email: email}
+    def add_email_alias_for_user(user, email)
+      user_id = ensure_id(user)
+      uri = "#{USERS_URI}/#{user_id}/email_aliases"
+      attributes = {email: email}
 
-    #   updated_user, response = post(uri, attributes)
-    #   updated_user
-    # end
+      updated_user, response = post(uri, attributes)
+      updated_user
+    end
 
     def remove_email_alias_for_user(user, email_alias)
       user_id = ensure_id(user)

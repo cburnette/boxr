@@ -46,9 +46,9 @@ describe Boxr::Client do
     @test_folder = new_folder
 
     all_users = BOX_CLIENT.all_users
-    test_user = all_users.find{|u| u.name == TEST_USER_NAME}
-    if(test_user)
-      BOX_CLIENT.delete_user(test_user, force: true)
+    test_users = all_users.select{|u| u.name == TEST_USER_NAME}
+    test_users.each do |u|
+      BOX_CLIENT.delete_user(u, force: true)
     end
     sleep BOX_SERVER_SLEEP
     test_user = BOX_CLIENT.create_user(TEST_USER_LOGIN, TEST_USER_NAME)
@@ -259,18 +259,18 @@ describe Boxr::Client do
     user = BOX_CLIENT.update_user(@test_user, name: new_name)
     expect(user.name).to eq(new_name)
 
-    # puts "add email alias for user"
-    # email_alias = "test-boxr-user-alias@#{('a'..'z').to_a.shuffle[0,10].join}.com"
-    # new_alias = BOX_CLIENT.add_email_alias_for_user(@test_user, email_alias)
-    # expect(new_alias.type).to eq('email_alias')
+    puts "add email alias for user"
+    email_alias = "test-boxr-user-alias@boxntest.com" #{('a'..'z').to_a.shuffle[0,10].join}.com"
+    new_alias = BOX_CLIENT.add_email_alias_for_user(@test_user, email_alias)
+    expect(new_alias.type).to eq('email_alias')
 
-    # puts "get email aliases for user"
-    # email_aliases = BOX_CLIENT.email_aliases_for_user(@test_user)
-    # expect(email_aliases.first.id).to eq(new_alias.id)
+    puts "get email aliases for user"
+    email_aliases = BOX_CLIENT.email_aliases_for_user(@test_user)
+    expect(email_aliases.first.id).to eq(new_alias.id)
 
-    # puts "remove email alias for user"
-    # result = BOX_CLIENT.remove_email_alias_for_user(@test_user, new_alias.id)
-    # expect(result).to eq({})
+    puts "remove email alias for user"
+    result = BOX_CLIENT.remove_email_alias_for_user(@test_user, new_alias.id)
+    expect(result).to eq({})
 
     puts "delete user"
     result = BOX_CLIENT.delete_user(@test_user, force: true)

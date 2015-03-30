@@ -265,6 +265,12 @@ update_user(user, notify: nil, enterprise: true, name: nil, role: nil, language:
             can_see_managed_users: nil, status: nil, timezone: nil, is_exempt_from_device_limits: nil,
             is_exempt_from_login_verification: nil, is_exempt_from_reset_required: nil, is_external_collab_restricted: nil)
 
+email_aliases_for_user(user)
+
+add_email_alias_for_user(user, email)
+
+remove_email_alias_for_user(user, email_alias)
+
 delete_user(user, notify: nil, force: nil)
 ```
 #### [Groups](https://developers.box.com/docs/#groups)

@@ -10,7 +10,6 @@ module Boxr
       collaborations['entries']
     end
 
-    #make sure 'role' value is a string as Box has role values with spaces and dashes; e.g. 'previewer uploader'
     def add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)

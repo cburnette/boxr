@@ -27,6 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "dotenv", "~> 0.11"
   spec.add_development_dependency "awesome_print"
   spec.add_development_dependency "lru_redux", "~> 0.8"
+  spec.add_development_dependency "jwt", "~> 1.4"
 
   spec.add_runtime_dependency "oj", "~> 2.11"
   spec.add_runtime_dependency "httpclient", "~> 2.5"

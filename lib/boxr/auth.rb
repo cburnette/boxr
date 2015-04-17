@@ -24,12 +24,12 @@ module Boxr
     auth_post(uri, body)
   end
 
-  def self.get_enterprise_token(private_key, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
-    jwt_auth_post(private_key, client_id, enterprise_id, "enterprise")
+  def self.get_enterprise_token(private_key, scope: nil, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
+    jwt_auth_post(private_key, scope, client_id, enterprise_id, "enterprise")
   end
 
-  def self.get_user_token(private_key, user_id, client_id: ENV['BOX_CLIENT_ID'])
-    jwt_auth_post(private_key, client_id, user_id, "user")
+  def self.get_user_token(private_key, user_id, scope: nil, client_id: ENV['BOX_CLIENT_ID'])
+    jwt_auth_post(private_key, scope, client_id, user_id, "user")
   end
 
   def self.refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
@@ -54,7 +54,7 @@ module Boxr
 
   private
 
-  def self.jwt_auth_post(private_key, iss, sub, box_sub_type)
+  def self.jwt_auth_post(private_key, scope, iss, sub, box_sub_type)
     payload = {
       iss: iss,
       sub: sub,
@@ -65,7 +65,7 @@ module Boxr
     }
     assertion = JWT.encode(payload, private_key, "RS256")
 
-    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion)
+    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, scope: scope)
   end
 
   def self.auth_post(uri, body)

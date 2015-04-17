@@ -51,7 +51,7 @@ describe Boxr::Client do
       BOX_CLIENT.delete_user(u, force: true)
     end
     sleep BOX_SERVER_SLEEP
-    test_user = BOX_CLIENT.create_user(TEST_USER_LOGIN, TEST_USER_NAME)
+    test_user = BOX_CLIENT.create_user(TEST_USER_NAME, login: TEST_USER_LOGIN)
     @test_user = test_user
 
     all_groups = BOX_CLIENT.groups

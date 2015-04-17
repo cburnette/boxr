@@ -36,14 +36,15 @@ module Boxr
       end
     end
 
-    def create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
+    def create_user(name, login: nil, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
                                  phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
                                  can_see_managed_users: nil, is_external_collab_restricted: nil, status: nil, timezone: nil,
                                  is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil,
                                  is_platform_access_only: nil)
 
       uri = USERS_URI
-      attributes = {login: login, name: name}
+      attributes = {name: name}
+      attributes[:login] = login unless login.nil? #login is not required for platform users, so needed to make this optional
       attributes[:role] = role unless role.nil?
       attributes[:language] = language unless language.nil?
       attributes[:is_sync_enabled] = is_sync_enabled unless is_sync_enabled.nil?

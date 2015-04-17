@@ -2,6 +2,8 @@ require 'oj'
 require 'httpclient'
 require 'hashie'
 require 'addressable/template'
+require 'jwt'
+require 'securerandom'
 
 require 'boxr/version'
 require 'boxr/errors'

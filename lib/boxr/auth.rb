@@ -1,5 +1,7 @@
 module Boxr
 
+  JWT_GRANT_TYPE="urn:ietf:params:oauth:grant-type:jwt-bearer"
+
   def self.oauth_url(state, host: "app.box.com", response_type: "code", scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
     template = Addressable::Template.new("https://{host}/api/oauth2/authorize{?query*}")
 
@@ -20,6 +22,14 @@ module Boxr
     body = body + "&assertion=#{assertion}" unless assertion.nil?
 
     auth_post(uri, body)
+  end
+
+  def self.get_enterprise_token(private_key, enterprise_id=ENV['BOX_ENTERPRISE_ID'], client_id=ENV['BOX_CLIENT_ID'])
+    jwt_auth_post(private_key, client_id, enterprise_id, "enterprise")
+  end
+
+  def self.get_user_token(private_key, user_id, client_id=ENV['BOX_CLIENT_ID'])
+    jwt_auth_post(private_key, client_id, user_id, "user")
   end
 
   def self.refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
@@ -43,6 +53,20 @@ module Boxr
   end
 
   private
+
+  def self.jwt_auth_post(private_key, iss, sub, box_sub_type)
+    payload = {
+      iss: iss,
+      sub: sub,
+      box_sub_type: box_sub_type,
+      aud: "https://api.box.com/oauth2/token",
+      jti: SecureRandom.hex(64),
+      exp: (Time.now.utc + 10).to_i
+    }
+    assertion = JWT.encode(payload, private_key, "RS256")
+
+    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion)
+  end
 
   def self.auth_post(uri, body)
     uri = Addressable::URI.encode(uri)

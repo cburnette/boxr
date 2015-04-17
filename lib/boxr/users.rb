@@ -39,7 +39,8 @@ module Boxr
     def create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
                                  phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
                                  can_see_managed_users: nil, is_external_collab_restricted: nil, status: nil, timezone: nil,
-                                 is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil)
+                                 is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil,
+                                 is_platform_access_only: nil)
 
       uri = USERS_URI
       attributes = {login: login, name: name}
@@ -57,6 +58,7 @@ module Boxr
       attributes[:timezone] = timezone unless timezone.nil?
       attributes[:is_exempt_from_device_limits] = is_exempt_from_device_limits unless is_exempt_from_device_limits.nil? 
       attributes[:is_exempt_from_login_verification] = is_exempt_from_login_verification unless is_exempt_from_login_verification.nil?
+      attributes[:is_platform_access_only] = is_platform_access_only unless is_platform_access_only.nil?
 
       new_user, response = post(uri, attributes)
       new_user

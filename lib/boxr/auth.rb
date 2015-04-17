@@ -24,11 +24,11 @@ module Boxr
     auth_post(uri, body)
   end
 
-  def self.get_enterprise_token(private_key, enterprise_id=ENV['BOX_ENTERPRISE_ID'], client_id=ENV['BOX_CLIENT_ID'])
+  def self.get_enterprise_token(private_key, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
     jwt_auth_post(private_key, client_id, enterprise_id, "enterprise")
   end
 
-  def self.get_user_token(private_key, user_id, client_id=ENV['BOX_CLIENT_ID'])
+  def self.get_user_token(private_key, user_id, client_id: ENV['BOX_CLIENT_ID'])
     jwt_auth_post(private_key, client_id, user_id, "user")
   end
 

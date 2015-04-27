@@ -108,7 +108,11 @@ puts "Shared Link: #{file.shared_link.url}"
 
 Boxr::oauth_url(state, host: "app.box.com", response_type: "code", scope: nil, folder_id: nil, box_client_id: ENV['BOX_CLIENT_ID'])
 
-Boxr::get_tokens(code, grant_type: "authorization_code", username: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
+Boxr::get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+
+Boxr::get_enterprise_token(private_key, scope: nil, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
+
+Boxr::get_user_token(private_key, user_id, scope: nil, client_id: ENV['BOX_CLIENT_ID'])
 
 Boxr::refresh_tokens(refresh_token, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'])
 

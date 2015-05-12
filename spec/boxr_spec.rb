@@ -169,7 +169,7 @@ describe Boxr::Client do
 
     puts "download file"
     file = BOX_CLIENT.download_file(test_file)
-    f = open("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}", 'w+')
+    f = File.open("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}", 'w+')
     f.write(file)
     f.close
     expect(FileUtils.identical?("./spec/test_files/#{TEST_FILE_NAME}","./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")).to eq(true)
@@ -469,8 +469,10 @@ describe Boxr::Client do
     expect(metadata.a).to eq("hello")
 
     puts "update metadata"
-    metadata = BOX_CLIENT.update_metadata(test_file, [{op: :replace, path: "/b", value: "there"}])
+    metadata = BOX_CLIENT.update_metadata(test_file, {op: :replace, path: "/b", value: "there"})
     expect(metadata.b).to eq("there")
+    metadata = BOX_CLIENT.update_metadata(test_file, [{op: :replace, path: "/b", value: "friend"}])
+    expect(metadata.b).to eq("friend")
 
     puts "get metadata"
     metadata = BOX_CLIENT.metadata(test_file)

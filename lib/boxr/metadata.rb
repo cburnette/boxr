@@ -18,6 +18,10 @@ module Boxr
     def update_metadata(file, updates, scope: :global, template: :properties)
       file_id = ensure_id(file)
       uri = "#{METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
+
+      #in the event just one update is specified ensure that it is packaged inside an array
+      updates = [updates] unless updates.is_a? Array
+
       metadata, response = put(uri, updates, content_type: "application/json-patch+json")
       metadata
     end

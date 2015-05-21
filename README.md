@@ -97,26 +97,28 @@ client = Boxr::Client.new  #using ENV['BOX_DEVELOPER_TOKEN']
 
 folder = client.folder_from_path('/some/directory/structure')
 file = client.upload_file('test.txt', folder)
-file = client.create_shared_link_for_file(file, access: :open)
-puts "Shared Link: #{file.shared_link.url}"
+updated_file = client.create_shared_link_for_file(file, access: :open)
+puts "Shared Link: #{updated_file.shared_link.url}"
 ```
 
 ### Methods
-#### [OAuth](https://developers.box.com/docs/#oauth-2)
+#### [OAuth & JWT](https://developers.box.com/docs/#oauth-2)
 ```ruby
 #NOTE: these are all module methods
 
+#OAuth methods
 Boxr::oauth_url(state, host: "app.box.com", response_type: "code", scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
 
 Boxr::get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 
-Boxr::get_enterprise_token(private_key, scope: nil, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
-
-Boxr::get_user_token(private_key, user_id, scope: nil, client_id: ENV['BOX_CLIENT_ID'])
-
 Boxr::refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 
 Boxr::revoke_tokens(token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+
+#JWT methods
+Boxr::get_enterprise_token(private_key, scope: nil, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
+
+Boxr::get_user_token(private_key, user_id, scope: nil, client_id: ENV['BOX_CLIENT_ID'])
 ```
 #### [Folders](https://developers.box.com/docs/#folders)
 ```ruby

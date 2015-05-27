@@ -12,7 +12,7 @@ module Boxr
       events = []
       loop do
         event_response = get_enterprise_events(created_after, created_before, stream_position, event_type, limit)
-        event_response.events.each{|event| events << event}
+        events.concat(event_response.events)
         stream_position = event_response.next_stream_position
 
         break if event_response.events.empty?

@@ -53,14 +53,26 @@ module Boxr
     VALID_COLLABORATION_ROLES = ['editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner']
     
 
-    def initialize(access_token=ENV['BOX_DEVELOPER_TOKEN'], refresh_token: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'], 
-                    identifier: nil, as_user: nil, &token_refresh_listener)
+    def initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'], 
+                    refresh_token: nil, 
+                    client_id: ENV['BOX_CLIENT_ID'], 
+                    client_secret: ENV['BOX_CLIENT_SECRET'],
+                    enterprise_id: ENV['BOX_ENTERPRISE_ID'],
+                    jwt_private_key: ENV['JWT_PRIVATE_KEY'], 
+                    jwt_private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+                    identifier: nil, 
+                    as_user: nil, 
+                    &token_refresh_listener)
+
       @access_token = access_token
       raise BoxrError.new(boxr_message: "Access token cannot be nil") if @access_token.nil?
 
       @refresh_token = refresh_token
       @client_id = client_id
       @client_secret = client_secret
+      @enterprise_id = enterprise_id
+      @jwt_private_key = jwt_private_key
+      @jwt_private_key_password = jwt_private_key_password
       @identifier = identifier
       @as_user_id = ensure_id(as_user)
       @token_refresh_listener = token_refresh_listener
@@ -179,21 +191,34 @@ module Boxr
 
     def standard_headers()
       headers = {"Authorization" => "Bearer #{@access_token}"}
-      headers['As-User'] = "#{@as_user_id}" unless @as_user_id.nil?
+      if @jwt_private_key.nil?
+        headers['As-User'] = "#{@as_user_id}" unless @as_user_id.nil?
+      end
       headers
     end
 
     def with_auto_token_refresh
-      return yield unless @refresh_token
+      return yield unless @refresh_token or @jwt_secret_key
 
       res = yield
       if res.status == 401
         auth_header = res.header['WWW-Authenticate'][0]
         if auth_header && auth_header.include?('invalid_token')
-          new_tokens = Boxr::refresh_tokens(@refresh_token, client_id: client_id, client_secret: client_secret)
-          @access_token = new_tokens.access_token
-          @refresh_token = new_tokens.refresh_token
-          @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener
+          if @refresh_token
+            new_tokens = Boxr::refresh_tokens(@refresh_token, client_id: client_id, client_secret: client_secret)
+            @access_token = new_tokens.access_token
+            @refresh_token = new_tokens.refresh_token
+            @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener
+          else
+            if @as_user_id
+              new_token = Boxr::get_user_token(@as_user_id, private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, client_id: @client_id)
+              @access_token = new_token.access_token
+            else
+              new_token = Boxr::get_enterprise_token(private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, enterprise_id: @enterprise_id, client_id: @client_id)
+              @access_token = new_token.access_token
+            end
+          end
+
           res = yield
         end
       end

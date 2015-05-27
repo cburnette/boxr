@@ -116,9 +116,9 @@ Boxr::refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secr
 Boxr::revoke_tokens(token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 
 #JWT methods
-Boxr::get_enterprise_token(private_key, scope: nil, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
+Boxr::get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
 
-Boxr::get_user_token(private_key, user_id, scope: nil, client_id: ENV['BOX_CLIENT_ID'])
+Boxr::get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], client_id: ENV['BOX_CLIENT_ID'])
 ```
 #### [Folders](https://developers.box.com/docs/#folders)
 ```ruby

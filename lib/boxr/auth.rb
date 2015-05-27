@@ -24,12 +24,16 @@ module Boxr
     auth_post(uri, body)
   end
 
-  def self.get_enterprise_token(private_key, scope: nil, enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
-    jwt_auth_post(private_key, scope, client_id, enterprise_id, "enterprise")
+  def self.get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+                                enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
+    unlocked_private_key = unlock_key(private_key, private_key_password)
+    jwt_auth_post(unlocked_private_key, client_id, enterprise_id, "enterprise")
   end
 
-  def self.get_user_token(private_key, user_id, scope: nil, client_id: ENV['BOX_CLIENT_ID'])
-    jwt_auth_post(private_key, scope, client_id, user_id, "user")
+  def self.get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+                          client_id: ENV['BOX_CLIENT_ID'])
+    unlocked_private_key = unlock_key(private_key, private_key_password)
+    jwt_auth_post(unlocked_private_key, client_id, user_id, "user")
   end
 
   def self.refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
@@ -54,7 +58,8 @@ module Boxr
 
   private
 
-  def self.jwt_auth_post(private_key, scope, iss, sub, box_sub_type)
+
+  def self.jwt_auth_post(private_key, iss, sub, box_sub_type)
     payload = {
       iss: iss,
       sub: sub,
@@ -65,7 +70,7 @@ module Boxr
     }
     assertion = JWT.encode(payload, private_key, "RS256")
 
-    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, scope: scope)
+    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion)
   end
 
   def self.auth_post(uri, body)
@@ -78,6 +83,14 @@ module Boxr
       return Hashie::Mash.new(body_json)
     else
       raise BoxrError.new(status: res.status, body: res.body, header: res.header)
+    end
+  end
+
+  def self.unlock_key(private_key, private_key_password)
+    if private_key.is_a?(OpenSSL::PKey::RSA)
+      private_key
+    else
+      OpenSSL::PKey::RSA.new(private_key, private_key_password)
     end
   end
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Boxr::Client do
 
-  #PLEASE NOTE 
+  #PLEASE NOTE
   #This test is intentionally NOT a series of unit tests.  The goal is to smoke test the entire code base
   #against an actual Box account, making real calls to the Box API.  The Box API is subject to frequent
   #changes and it is not sufficient to mock responses as those responses will change over time.  Successfully
@@ -16,7 +16,7 @@ describe Boxr::Client do
   #follow the directions in .env.example to set up your BOX_DEVELOPER_TOKEN
   #keep in mind it is only valid for 60 minutes
   BOX_CLIENT = Boxr::Client.new #using ENV['BOX_DEVELOPER_TOKEN']
-  
+
   #uncomment this line to see the HTTP request and response debug info in the rspec output
   #Boxr::turn_on_debugging
 
@@ -25,6 +25,7 @@ describe Boxr::Client do
   SUB_FOLDER_NAME = 'sub_folder_1'
   SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
   TEST_FILE_NAME = 'test file.txt'
+  TEST_FILE_NAME_CUSTOM = 'test file custom.txt'
   DOWNLOADED_TEST_FILE_NAME = 'downloaded test file.txt'
   COMMENT_MESSAGE = 'this is a comment'
   REPLY_MESSAGE = 'this is a comment reply'
@@ -134,6 +135,10 @@ describe Boxr::Client do
     expect(new_file.name).to eq(TEST_FILE_NAME)
     test_file = new_file
 
+    puts "upload a file with custom name"
+    new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder, name: TEST_FILE_NAME_CUSTOM)
+    expect(new_file.name).to eq(TEST_FILE_NAME_CUSTOM)
+
     puts "get file using path"
     file = BOX_CLIENT.file_from_path("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
     expect(file.id).to eq(test_file.id)
@@ -236,7 +241,7 @@ describe Boxr::Client do
   end
 
   #rake spec SPEC_OPTS="-e \"invokes user operations"\"
-  it "invokes user operations" do 
+  it "invokes user operations" do
     puts "inspect current user"
     user = BOX_CLIENT.current_user
     expect(user.status).to eq('active')
@@ -253,7 +258,7 @@ describe Boxr::Client do
     expect(test_user).to_not be_nil
 
     #create user is tested in the before method
-    
+
     puts "update user"
     new_name = "Chuck Nevitt"
     user = BOX_CLIENT.update_user(@test_user, name: new_name)
@@ -340,7 +345,7 @@ describe Boxr::Client do
   end
 
   #rake spec SPEC_OPTS="-e \"invokes comment operations"\"
-  it "invokes comment operations" do 
+  it "invokes comment operations" do
     new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
     test_file = new_file
 

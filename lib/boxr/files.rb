@@ -93,22 +93,27 @@ module Boxr
       download_file(file, version: version, follow_redirect: false)
     end
 
-    def upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil,
+    def upload_file(path_to_file, parent, name: nil, content_created_at: nil, content_modified_at: nil,
                     preflight_check: true, send_content_md5: true)
 
       parent_id = ensure_id(parent)
-      preflight_check(path_to_file, parent_id) if preflight_check
+
+      filename = name ? name : File.basename(path_to_file)
+      preflight_check(path_to_file, filename, parent_id) if preflight_check
 
       file_info = nil
       response = nil
 
       File.open(path_to_file) do |file|
         content_md5 = send_content_md5 ? Digest::SHA1.file(file).hexdigest : nil
-        
-        attributes = {filename: file, parent_id: parent_id}
+
+        attributes = {name: filename, parent: {id: parent_id}}
         attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
         attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
-        file_info, response = post(FILES_UPLOAD_URI, attributes, process_body: false, content_md5: content_md5)
+
+        body = {attributes: Oj.dump(attributes), file: file}
+
+        file_info, response = post(FILES_UPLOAD_URI, body, process_body: false, content_md5: content_md5)
       end
 
       file_info["entries"][0]
@@ -237,18 +242,17 @@ module Boxr
 
     private
 
-    def preflight_check(path_to_file, parent_id)
+    def preflight_check(path_to_file, filename, parent_id)
       size = File.size(path_to_file)
 
       #TODO: need to make sure that figuring out the filename from the path_to_file works for people using Windows
-      filename = File.basename(path_to_file)
-      attributes = {"name" => filename, "parent" => {"id" => "#{parent_id}"}, "size" => size}
+      attributes = {name: filename, parent: {id: "#{parent_id}"}, size: size}
       body_json, res = options("#{FILES_URI}/content", attributes)
     end
 
     def preflight_check_new_version_of_file(path_to_file, file_id)
       size = File.size(path_to_file)
-      attributes = {"size" => size}
+      attributes = {size: size}
       body_json, res = options("#{FILES_URI}/#{file_id}/content", attributes)
     end
 

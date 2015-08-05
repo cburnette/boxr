@@ -25,15 +25,17 @@ module Boxr
   end
 
   def self.get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
-                                enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'])
+                                enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
-    jwt_auth_post(unlocked_private_key, client_id, enterprise_id, "enterprise")
+    assertion = jwt_assertion(unlocked_private_key, client_id, enterprise_id, "enterprise")
+    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, client_id: client_id, client_secret: client_secret)
   end
 
   def self.get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
-                          client_id: ENV['BOX_CLIENT_ID'])
+                          client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
-    jwt_auth_post(unlocked_private_key, client_id, user_id, "user")
+    assertion = jwt_assertion(unlocked_private_key, client_id, user_id, "user")
+    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, client_id: client_id, client_secret: client_secret)
   end
 
   def self.refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
@@ -59,7 +61,7 @@ module Boxr
   private
 
 
-  def self.jwt_auth_post(private_key, iss, sub, box_sub_type)
+  def self.jwt_assertion(private_key, iss, sub, box_sub_type)
     payload = {
       iss: iss,
       sub: sub,
@@ -68,9 +70,8 @@ module Boxr
       jti: SecureRandom.hex(64),
       exp: (Time.now.utc + 10).to_i
     }
-    assertion = JWT.encode(payload, private_key, "RS256")
-
-    get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion)
+    
+    JWT.encode(payload, private_key, "RS256")
   end
 
   def self.auth_post(uri, body)

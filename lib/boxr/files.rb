@@ -119,13 +119,6 @@ module Boxr
       file_info["entries"][0]
     end
 
-    def delete_file(file, if_match: nil)
-      file_id = ensure_id(file)
-      uri = "#{FILES_URI}/#{file_id}"
-      result, response = delete(uri, if_match: if_match)
-      result
-    end
-
     def upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
                                     preflight_check: true, if_match: nil)
       file_id = ensure_id(file)
@@ -162,6 +155,13 @@ module Boxr
       new_version
     end
 
+    def delete_file(file, if_match: nil)
+      file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}"
+      result, response = delete(uri, if_match: if_match)
+      result
+    end
+
     def delete_old_version_of_file(file, file_version, if_match: nil)
       file_id = ensure_id(file)
       file_version_id = ensure_id(file_version)
@@ -181,6 +181,19 @@ module Boxr
       new_file, res = post(uri, attributes)
       new_file
     end
+
+    def embed_url(file, version: nil, disable_download: nil)
+      file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}/embed_url"
+
+      query = {}
+      query[:version] = version unless version.nil?
+      query[:disable_download] = disable_download unless disable_download.nil?
+
+      result, response = get(uri, query: query)
+      result.url
+    end
+    alias :preview_url :embed_url
 
     def thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
       file_id = ensure_id(file)

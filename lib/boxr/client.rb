@@ -4,6 +4,9 @@ module Boxr
 
     attr_reader :access_token, :refresh_token, :client_id, :client_secret, :identifier, :as_user_id
 
+    #API_URI = "https://wcheng.inside-box.net/api/2.0"
+    #UPLOAD_URI = "https://upload.wcheng.inside-box.net/api/2.0"
+
     API_URI = "https://api.box.com/2.0"
     UPLOAD_URI = "https://upload.box.com/api/2.0"
     FILES_URI = "#{API_URI}/files"

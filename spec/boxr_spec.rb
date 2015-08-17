@@ -75,7 +75,7 @@ describe Boxr::Client do
 
     puts "create new folder"
     new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, @test_folder)
-    expect(new_folder).to be_a Hashie::Mash
+    expect(new_folder).to be_a BoxrMash
     SUB_FOLDER = new_folder
 
     puts "update folder"
@@ -84,7 +84,7 @@ describe Boxr::Client do
 
     puts "copy folder"
     new_folder = BOX_CLIENT.copy_folder(SUB_FOLDER,@test_folder, name: "copy of #{SUB_FOLDER_NAME}")
-    expect(new_folder).to be_a Hashie::Mash
+    expect(new_folder).to be_a BoxrMash
     SUB_FOLDER_COPY = new_folder
 
     puts "create shared link for folder"

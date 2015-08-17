@@ -127,7 +127,7 @@ module Boxr
         end
       end until offset - total_count >= 0
 
-      entries.flatten.map{|i| Hashie::Mash.new(i)}
+      entries.flatten.map{|i| BoxrMash.new(i)}
     end
 
     def post(uri, body, query: nil, success_codes: [201], process_body: true, content_md5: nil, content_type: nil, if_match: nil)
@@ -214,10 +214,10 @@ module Boxr
             @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener
           else
             if @as_user_id
-              new_token = Boxr::get_user_token(@as_user_id, private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, client_id: @client_id)
+              new_token = Boxr::get_user_token(@as_user_id, private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, client_id: @client_id, client_secret: @client_secret)
               @access_token = new_token.access_token
             else
-              new_token = Boxr::get_enterprise_token(private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, enterprise_id: @enterprise_id, client_id: @client_id)
+              new_token = Boxr::get_enterprise_token(private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, enterprise_id: @enterprise_id, client_id: @client_id, client_secret: @client_secret)
               @access_token = new_token.access_token
             end
           end
@@ -235,7 +235,7 @@ module Boxr
 
     def processed_response(res)
       body_json = Oj.load(res.body)
-      return Hashie::Mash.new(body_json), res
+      return BoxrMash.new(body_json), res
     end
 
     def build_fields_query(fields, all_fields_query)

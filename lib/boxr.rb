@@ -36,6 +36,16 @@ module Enumerable
   end
 end
 
+class BoxrMash < Hashie::Mash
+  def entries
+    self["entries"]
+  end
+
+  def size
+    self["size"]
+  end
+end
+
 module Boxr
   Oj.default_options = {:mode => :compat }
 

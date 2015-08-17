@@ -7,7 +7,7 @@ module Boxr
       query = build_fields_query(fields, TASK_FIELDS_QUERY)
 
       tasks, response = get(uri, query: query)
-      tasks["entries"]
+      tasks.entries
     end
 
     def create_task(file, action: :review, message: nil, due_at: nil)

@@ -116,7 +116,7 @@ module Boxr
         file_info, response = post(FILES_UPLOAD_URI, body, process_body: false, content_md5: content_md5)
       end
 
-      file_info["entries"][0]
+      file_info.entries[0]
     end
 
     def upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
@@ -135,14 +135,14 @@ module Boxr
         file_info, response = post(uri, attributes, process_body: false, content_md5: content_md5, if_match: if_match)
       end
 
-      file_info["entries"][0]
+      file_info.entries[0]
     end
 
     def versions_of_file(file)
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}/versions"
       versions, response = get(uri)
-      versions["entries"]
+      versions.entries
     end
 
     def promote_old_version_of_file(file, file_version)

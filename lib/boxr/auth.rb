@@ -81,7 +81,7 @@ module Boxr
 
     if(res.status==200)
       body_json = Oj.load(res.body)
-      return Hashie::Mash.new(body_json)
+      return BoxrMash.new(body_json)
     else
       raise BoxrError.new(status: res.status, body: res.body, header: res.header)
     end

@@ -19,7 +19,7 @@ module Boxr
       query[:offset] = offset unless offset.nil?
 
       results, response = get(SEARCH_URI, query: query)
-      results["entries"]
+      results.entries
     end
 
   end

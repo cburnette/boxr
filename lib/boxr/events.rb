@@ -5,7 +5,7 @@ module Boxr
       query = {stream_position: stream_position, stream_type: stream_type, limit: limit}
       
       events, response = get(EVENTS_URI, query: query)
-      Hashie::Mash.new({events: events["entries"], chunk_size: events["chunk_size"], next_stream_position: events["next_stream_position"]})
+      BoxrMash.new({events: events.entries, chunk_size: events.chunk_size, next_stream_position: events.next_stream_position})
     end
 
     def enterprise_events(created_after: nil, created_before: nil, stream_position: 0, event_type: nil, limit: 500)
@@ -17,7 +17,7 @@ module Boxr
 
         break if event_response.events.empty?
       end
-      Hashie::Mash.new({events: events, next_stream_position: stream_position})
+      BoxrMash.new({events: events, next_stream_position: stream_position})
     end
 
     def enterprise_events_stream(initial_stream_position, event_type: nil, limit: 500, refresh_period: 300)
@@ -42,7 +42,7 @@ module Boxr
       query['created_before'] = created_before.to_datetime.rfc3339 unless created_before.nil?
 
       events, response = get(EVENTS_URI, query: query)
-      Hashie::Mash.new({events: events["entries"], chunk_size: events["chunk_size"], next_stream_position: events["next_stream_position"]})
+      BoxrMash.new({events: events.entries, chunk_size: events.chunk_size, next_stream_position: events.next_stream_position})
     end
 
   end

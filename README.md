@@ -84,7 +84,17 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 ```
 Here's the complete method signature to initialize an instance of Boxr::Client
 ```ruby
-initialize(access_token=ENV['BOX_DEVELOPER_TOKEN'], refresh_token: nil, box_client_id: ENV['BOX_CLIENT_ID'], box_client_secret: ENV['BOX_CLIENT_SECRET'], identifier: nil, as_user: nil, &token_refresh_listener)
+initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'], 
+            refresh_token: nil, 
+            client_id: ENV['BOX_CLIENT_ID'], 
+            client_secret: ENV['BOX_CLIENT_SECRET'],
+            enterprise_id: ENV['BOX_ENTERPRISE_ID'],
+            jwt_private_key: ENV['JWT_PRIVATE_KEY'], 
+            jwt_private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+            jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
+            identifier: nil, 
+            as_user: nil, 
+            &token_refresh_listener)
 ```
   
 ### A quick example
@@ -116,9 +126,9 @@ Boxr::refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secr
 Boxr::revoke_tokens(token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 
 #JWT methods
-Boxr::get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+Boxr::get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], public_key_id: ENV['JWT_PUBLIC_KEY_ID'], enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 
-Boxr::get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+Boxr::get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], public_key_id: ENV['JWT_PUBLIC_KEY_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 ```
 #### [Folders](https://developers.box.com/docs/#folders)
 ```ruby

@@ -25,16 +25,17 @@ module Boxr
   end
 
   def self.get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
-                                enterprise_id: ENV['BOX_ENTERPRISE_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+                                public_key_id: ENV['JWT_PUBLIC_KEY_ID'], enterprise_id: ENV['BOX_ENTERPRISE_ID'], 
+                                client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
-    assertion = jwt_assertion(unlocked_private_key, client_id, enterprise_id, "enterprise")
+    assertion = jwt_assertion(unlocked_private_key, client_id, enterprise_id, "enterprise", public_key_id)
     get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, client_id: client_id, client_secret: client_secret)
   end
 
   def self.get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
-                          client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+                          public_key_id: ENV['JWT_PUBLIC_KEY_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
-    assertion = jwt_assertion(unlocked_private_key, client_id, user_id, "user")
+    assertion = jwt_assertion(unlocked_private_key, client_id, user_id, "user", public_key_id)
     get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, client_id: client_id, client_secret: client_secret)
   end
 
@@ -61,7 +62,7 @@ module Boxr
   private
 
 
-  def self.jwt_assertion(private_key, iss, sub, box_sub_type)
+  def self.jwt_assertion(private_key, iss, sub, box_sub_type, public_key_id)
     payload = {
       iss: iss,
       sub: sub,
@@ -70,8 +71,11 @@ module Boxr
       jti: SecureRandom.hex(64),
       exp: (Time.now.utc + 10).to_i
     }
+
+    additional_headers = {}
+    additional_headers['kid'] = public_key_id unless public_key_id.nil?
     
-    JWT.encode(payload, private_key, "RS256")
+    JWT.encode(payload, private_key, "RS256", additional_headers)
   end
 
   def self.auth_post(uri, body)

@@ -63,6 +63,7 @@ module Boxr
                     enterprise_id: ENV['BOX_ENTERPRISE_ID'],
                     jwt_private_key: ENV['JWT_PRIVATE_KEY'], 
                     jwt_private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+                    jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
                     identifier: nil, 
                     as_user: nil, 
                     &token_refresh_listener)
@@ -76,6 +77,7 @@ module Boxr
       @enterprise_id = enterprise_id
       @jwt_private_key = jwt_private_key
       @jwt_private_key_password = jwt_private_key_password
+      @jwt_public_key_id = jwt_public_key_id
       @identifier = identifier
       @as_user_id = ensure_id(as_user)
       @token_refresh_listener = token_refresh_listener
@@ -214,10 +216,10 @@ module Boxr
             @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener
           else
             if @as_user_id
-              new_token = Boxr::get_user_token(@as_user_id, private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, client_id: @client_id, client_secret: @client_secret)
+              new_token = Boxr::get_user_token(@as_user_id, private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, public_key_id: @jwt_public_key_id, client_id: @client_id, client_secret: @client_secret)
               @access_token = new_token.access_token
             else
-              new_token = Boxr::get_enterprise_token(private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, enterprise_id: @enterprise_id, client_id: @client_id, client_secret: @client_secret)
+              new_token = Boxr::get_enterprise_token(private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, public_key_id: @jwt_public_key_id, enterprise_id: @enterprise_id, client_id: @client_id, client_secret: @client_secret)
               @access_token = new_token.access_token
             end
           end

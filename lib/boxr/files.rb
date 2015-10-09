@@ -26,6 +26,15 @@ module Boxr
     end
     alias :file :file_from_id
 
+    def embed_url(file)
+      file_info = file_from_id(file, fields:[:expiring_embed_link])
+      url = file_info.expiring_embed_link.url
+      url
+    end
+    alias :embed_link :embed_url
+    alias :preview_url :embed_url
+    alias :preview_link :embed_url
+
     def update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, lock: nil, if_match: nil)
       file_id = ensure_id(file)
       parent_id = ensure_id(parent)
@@ -181,19 +190,6 @@ module Boxr
       new_file, res = post(uri, attributes)
       new_file
     end
-
-    def embed_url(file, version: nil, disable_download: nil)
-      file_id = ensure_id(file)
-      uri = "#{FILES_URI}/#{file_id}/embed_url"
-
-      query = {}
-      query[:version] = version unless version.nil?
-      query[:disable_download] = disable_download unless disable_download.nil?
-
-      result, response = get(uri, query: query)
-      result.url
-    end
-    alias :preview_url :embed_url
 
     def thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
       file_id = ensure_id(file)

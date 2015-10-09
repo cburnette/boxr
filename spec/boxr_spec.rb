@@ -151,6 +151,10 @@ describe Boxr::Client do
     file_info = BOX_CLIENT.file(test_file)
     expect(file_info.id).to eq(test_file.id)
 
+    puts "get file preview link"
+    preview_url = BOX_CLIENT.preview_url(test_file)
+    expect(preview_url).to start_with("https://")
+
     puts "update file"
     new_description = 'this file is used to test Boxr'
     tags = ['tag one','tag two']

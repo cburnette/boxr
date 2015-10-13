@@ -172,6 +172,11 @@ file_from_path(path)
 file_from_id(file_id, fields: [])
 alias :file :file_from_id
 
+embed_url(file)
+alias :embed_link :embed_url
+alias :preview_url :embed_url
+alias :preview_link :embed_url
+
 update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, if_match: nil)
 
 lock_file(file, expires_at: nil, is_download_prevented: false, if_match: nil)
@@ -199,9 +204,6 @@ promote_old_version_of_file(file, file_version)
 delete_old_version_of_file(file, file_version, if_match: nil)
 
 copy_file(file, parent, name: nil)
-
-embed_url(file, version: nil, disable_download: nil)
-alias :preview_url :embed_url
 
 thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
 

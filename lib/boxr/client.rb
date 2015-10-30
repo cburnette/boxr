@@ -253,6 +253,22 @@ module Boxr
       end
     end
 
+    def to_comma_separated_string(values)
+      return values if values.is_a?(String) || values.is_a?(Symbol)
+
+      if values.is_a?(Array) && values.length > 0
+        values.join(',')
+      else
+        nil
+      end
+    end
+
+    def build_range_string(from, to)
+      range_string = "#{from},#{to}"
+      range_string = nil if range_string == ","
+      range_string
+    end
+
     def ensure_id(item)
       return item if item.class == String || item.class == Fixnum || item.nil?
       return item.id if item.respond_to?(:id)

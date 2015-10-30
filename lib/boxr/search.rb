@@ -1,12 +1,12 @@
 module Boxr
   class Client
 
-    def search(query=nil, scope: nil, file_extensions: nil, 
-                      created_at_range_from_date: nil, created_at_range_to_date: nil,
-                      updated_at_range_from_date: nil, updated_at_range_to_date: nil,
-                      size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil, 
-                      owner_user_ids: nil, ancestor_folder_ids: nil, content_types: nil, trash_content: nil, 
-                      mdfilters: nil, type: nil, limit: 30, offset: 0)
+    def search( query=nil, scope: nil, file_extensions: [], 
+                created_at_range_from_date: nil, created_at_range_to_date: nil,
+                updated_at_range_from_date: nil, updated_at_range_to_date: nil,
+                size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil, 
+                owner_user_ids: [], ancestor_folder_ids: [], content_types: [], trash_content: nil, 
+                mdfilters: nil, type: nil, limit: 30, offset: 0)
 
       
       unless mdfilters.nil?
@@ -22,16 +22,21 @@ module Boxr
       updated_at_range_string = build_date_range_field(updated_at_range_from_date, updated_at_range_to_date)
       size_range_string = build_size_range_field(size_range_lower_bound_bytes, size_range_upper_bound_bytes)
 
+      file_extensions_string = to_comma_separated_string(file_extensions)
+      owner_user_ids_string = to_comma_separated_string(owner_user_ids)
+      ancestor_folder_ids_string = to_comma_separated_string(ancestor_folder_ids)
+      content_types_string = to_comma_separated_string(content_types)
+
       search_query = {}
       search_query[:query] = query unless query.nil?
       search_query[:scope] = scope unless scope.nil?
-      search_query[:file_extensions] = file_extensions unless file_extensions.nil?
+      search_query[:file_extensions] = file_extensions_string unless file_extensions_string.nil?
       search_query[:created_at_range] = created_at_range_string unless created_at_range_string.nil?
       search_query[:updated_at_range] = updated_at_range_string unless updated_at_range_string.nil?
       search_query[:size_range] = size_range_string unless size_range_string.nil?
-      search_query[:owner_user_ids] = owner_user_ids unless owner_user_ids.nil?
-      search_query[:ancestor_folder_ids] = ancestor_folder_ids unless ancestor_folder_ids.nil?
-      search_query[:content_types] = content_types unless content_types.nil?
+      search_query[:owner_user_ids] = owner_user_ids_string unless owner_user_ids_string.nil?
+      search_query[:ancestor_folder_ids] = ancestor_folder_ids_string unless ancestor_folder_ids_string.nil?
+      search_query[:content_types] = content_types_string unless content_types_string.nil?
       search_query[:trash_content] = trash_content unless trash_content.nil?
       search_query[:mdfilters] = mdfilters unless mdfilters.nil?
       search_query[:type] = type unless type.nil?
@@ -54,12 +59,6 @@ module Boxr
       lower_string = lower.nil? ? "" : lower.to_i
       upper_string = upper.nil? ? "" : upper.to_i
       build_range_string(lower_string, upper_string)
-    end
-
-    def build_range_string(from, to)
-      range_string = "#{from},#{to}"
-      range_string = nil if range_string == ","
-      range_string
     end
 
   end

@@ -23,7 +23,9 @@ module Boxr
     TASK_ASSIGNMENTS_URI = "#{API_URI}/task_assignments"
     SHARED_ITEMS_URI = "#{API_URI}/shared_items"
     METADATA_URI = "#{API_URI}/files"
+    METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
+
 
     DEFAULT_LIMIT = 100
     FOLDER_ITEMS_LIMIT = 1000
@@ -249,6 +251,22 @@ module Boxr
       else
         {}
       end
+    end
+
+    def to_comma_separated_string(values)
+      return values if values.is_a?(String) || values.is_a?(Symbol)
+
+      if values.is_a?(Array) && values.length > 0
+        values.join(',')
+      else
+        nil
+      end
+    end
+
+    def build_range_string(from, to)
+      range_string = "#{from},#{to}"
+      range_string = nil if range_string == ","
+      range_string
     end
 
     def ensure_id(item)

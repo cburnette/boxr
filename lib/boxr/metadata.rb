@@ -15,6 +15,13 @@ module Boxr
       metadata
     end
 
+    def all_metadata(file)
+      file_id = ensure_id(file)
+      uri = "#{METADATA_URI}/#{file_id}/metadata"
+      all_metadata, response = get(uri)
+      all_metadata
+    end
+
     def update_metadata(file, updates, scope: :global, template: :properties)
       file_id = ensure_id(file)
       uri = "#{METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
@@ -31,6 +38,18 @@ module Boxr
       uri = "#{METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
       result, response = delete(uri)
       result
+    end
+
+    def enterprise_metadata
+      uri = "#{METADATA_TEMPLATES_URI}/enterprise"
+      ent_metadata, response = get(uri)
+      ent_metadata
+    end
+
+    def metadata_schema(scope, template_key)
+      uri = "#{METADATA_TEMPLATES_URI}/#{scope}/#{template_key}/schema"
+      schema, response = get(uri)
+      schema
     end
 
   end

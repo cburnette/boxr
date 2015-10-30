@@ -23,7 +23,9 @@ module Boxr
     TASK_ASSIGNMENTS_URI = "#{API_URI}/task_assignments"
     SHARED_ITEMS_URI = "#{API_URI}/shared_items"
     METADATA_URI = "#{API_URI}/files"
+    METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
+
 
     DEFAULT_LIMIT = 100
     FOLDER_ITEMS_LIMIT = 1000

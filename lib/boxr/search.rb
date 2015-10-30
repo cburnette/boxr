@@ -1,25 +1,65 @@
 module Boxr
   class Client
 
-    def search(query, scope: nil, file_extensions: nil, created_at_range: nil, updated_at_range: nil, size_range: nil, 
-                      owner_user_ids: nil, ancestor_folder_ids: nil, content_types: nil, type: nil, 
-                      limit: 30, offset: 0)
+    def search(query=nil, scope: nil, file_extensions: nil, 
+                      created_at_range_from_date: nil, created_at_range_to_date: nil,
+                      updated_at_range_from_date: nil, updated_at_range_to_date: nil,
+                      size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil, 
+                      owner_user_ids: nil, ancestor_folder_ids: nil, content_types: nil, trash_content: nil, 
+                      mdfilters: nil, type: nil, limit: 30, offset: 0)
 
-      query = {query: query}
-      query[:scope] = scope unless scope.nil?
-      query[:file_extensions] = file_extensions unless file_extensions.nil?
-      query[:created_at_range] = created_at_range unless created_at_range.nil?
-      query[:updated_at_range] = updated_at_range unless updated_at_range.nil?
-      query[:size_range] = size_range unless size_range.nil?
-      query[:owner_user_ids] = owner_user_ids unless owner_user_ids.nil?
-      query[:ancestor_folder_ids] = ancestor_folder_ids unless ancestor_folder_ids.nil?
-      query[:content_types] = content_types unless content_types.nil?
-      query[:type] = type unless type.nil?
-      query[:limit] = limit unless limit.nil?
-      query[:offset] = offset unless offset.nil?
+      
+      unless mdfilters.nil?
+        unless mdfilters.is_a? String   #if a string is passed in assume it is already formatted correctly
+          unless mdfilters.is_a? Array  
+            mdfilters = [mdfilters]     #if just one mdfilter is specified ensure that it is packaged inside an array
+          end
+          mdfilters = Oj.dump(mdfilters) 
+        end
+      end
 
-      results, response = get(SEARCH_URI, query: query)
+      created_at_range_string = build_date_range_field(created_at_range_from_date, created_at_range_to_date)
+      updated_at_range_string = build_date_range_field(updated_at_range_from_date, updated_at_range_to_date)
+      size_range_string = build_size_range_field(size_range_lower_bound_bytes, size_range_upper_bound_bytes)
+
+      search_query = {}
+      search_query[:query] = query unless query.nil?
+      search_query[:scope] = scope unless scope.nil?
+      search_query[:file_extensions] = file_extensions unless file_extensions.nil?
+      search_query[:created_at_range] = created_at_range_string unless created_at_range_string.nil?
+      search_query[:updated_at_range] = updated_at_range_string unless updated_at_range_string.nil?
+      search_query[:size_range] = size_range_string unless size_range_string.nil?
+      search_query[:owner_user_ids] = owner_user_ids unless owner_user_ids.nil?
+      search_query[:ancestor_folder_ids] = ancestor_folder_ids unless ancestor_folder_ids.nil?
+      search_query[:content_types] = content_types unless content_types.nil?
+      search_query[:trash_content] = trash_content unless trash_content.nil?
+      search_query[:mdfilters] = mdfilters unless mdfilters.nil?
+      search_query[:type] = type unless type.nil?
+      search_query[:limit] = limit unless limit.nil?
+      search_query[:offset] = offset unless offset.nil?
+
+      results, response = get(SEARCH_URI, query: search_query)
       results.entries
+    end
+
+    private
+
+    def build_date_range_field(from, to)
+      from_string = from.nil? ? "" : from.to_datetime.rfc3339
+      to_string = to.nil? ? "" : to.to_datetime.rfc3339
+      build_range_string(from_string, to_string)
+    end
+
+    def build_size_range_field(lower, upper)
+      lower_string = lower.nil? ? "" : lower.to_i
+      upper_string = upper.nil? ? "" : upper.to_i
+      build_range_string(lower_string, upper_string)
+    end
+
+    def build_range_string(from, to)
+      range_string = "#{from},#{to}"
+      range_string = nil if range_string == ","
+      range_string
     end
 
   end

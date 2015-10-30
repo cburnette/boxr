@@ -18,10 +18,12 @@ module Boxr
         end
       end
 
+      #build range strings
       created_at_range_string = build_date_range_field(created_at_range_from_date, created_at_range_to_date)
       updated_at_range_string = build_date_range_field(updated_at_range_from_date, updated_at_range_to_date)
       size_range_string = build_size_range_field(size_range_lower_bound_bytes, size_range_upper_bound_bytes)
 
+      #build comma separated strings
       file_extensions_string = to_comma_separated_string(file_extensions)
       owner_user_ids_string = to_comma_separated_string(owner_user_ids)
       ancestor_folder_ids_string = to_comma_separated_string(ancestor_folder_ids)

@@ -261,9 +261,12 @@ shared_item(shared_link, shared_link_password: nil)
 ```
 #### [Search](https://developers.box.com/docs/#search)
 ```ruby
-search(query, scope: nil, file_extensions: nil, created_at_range: nil, updated_at_range: nil, size_range: nil, 
-        owner_user_ids: nil, ancestor_folder_ids: nil, content_types: nil, type: nil, 
-        limit: 30, offset: 0)
+search( query=nil, scope: nil, file_extensions: [], 
+        created_at_range_from_date: nil, created_at_range_to_date: nil,
+        updated_at_range_from_date: nil, updated_at_range_to_date: nil,
+        size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil, 
+        owner_user_ids: [], ancestor_folder_ids: [], content_types: [], trash_content: nil, 
+        mdfilters: nil, type: nil, limit: 30, offset: 0)
 ```
 #### [Users](https://developers.box.com/docs/#users)
 ```ruby
@@ -351,9 +354,15 @@ create_metadata(file, metadata, scope: :global, template: :properties)
 
 metadata(file, scope: :global, template: :properties)
 
+all_metadata(file)
+
 update_metadata(file, updates, scope: :global, template: :properties)
 
 delete_metadata(file, scope: :global, template: :properties)
+
+enterprise_metadata
+
+metadata_schema(scope, template_key)
 ```
 ## Contributing
 

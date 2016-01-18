@@ -24,7 +24,7 @@ Or install it yourself as:
     $ gem install boxr
 
 ## Usage
-Super-fast instructionsÂ:
+Super-fast instructions:
 
 1. go to http://developers.box.com
 2. find or create your Box Content API app for testing

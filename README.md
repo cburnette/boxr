@@ -1,7 +1,7 @@
 # Boxr
 Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.  
 
-The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://developers.box.com/docs/).
+The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://box-content.readme.io/).
 
 The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr/Boxr/Client).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration tests found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
 
@@ -24,7 +24,7 @@ Or install it yourself as:
     $ gem install boxr
 
 ## Usage
-Super-fast instructions:
+Super-fast instructionsÂ:
 
 1. go to http://developers.box.com
 2. find or create your Box Content API app for testing
@@ -47,7 +47,7 @@ There are a few different ways to create a Boxr client.  The simplest is to use 
 ```ruby
 client = Boxr::Client.new('yPDWOvnumUFaKIMrNBg6PGJpWXC0oaFW')
 
-# Alternatively, you can set an environment variable called BOX_DEVELOPER_TOKEN to 
+# Alternatively, you can set an environment variable called BOX_DEVELOPER_TOKEN to
 # the value of your current token. By default, Boxr will look for that.
 
 client = Boxr::Client.new  #uses ENV['BOX_DEVELOPER_TOKEN']
@@ -66,12 +66,12 @@ If you want Boxr to automatically refresh the tokens once the access token becom
 
 ```ruby
 token_refresh_callback = lambda {|access, refresh, identifier| some_method_that_saves_them(access, refresh)}
-client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T', 
+client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
                           refresh_token: 'dvfzfCQoIcRi7r4Yeuar7mZnaghGWexXlX89sBaRy1hS9e5wFroVVOEM6bs0DwPQ',
                           client_id: 'kplh54vfeagt6jmi4kddg4xdswwvrw8y',
                           client_secret: 'sOsm9ZZ8L8svwrn9FsdulLQVwDizKueU',
                           &token_refresh_callback)
-                           
+
 # By default Boxr will look for client_id and client_secret in your environment variables as
 # BOX_CLIENT_ID and BOX_CLIENT_SECRET, respectively.  You can omit the two optional parameters above
 # if those are present.
@@ -79,24 +79,24 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # You can provide another parameter called as_user. Read about what that means here: https://developers.box.com/docs/#users-as-user
 
 # You can provide yet another parameter called identifier. This can be used, for example, to
-# hold the id of the user associated with this Boxr client.  When the callback is invoked this value 
+# hold the id of the user associated with this Boxr client.  When the callback is invoked this value
 # will be provided.
 ```
 Here's the complete method signature to initialize an instance of Boxr::Client
 ```ruby
-initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'], 
-            refresh_token: nil, 
-            client_id: ENV['BOX_CLIENT_ID'], 
+initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],
+            refresh_token: nil,
+            client_id: ENV['BOX_CLIENT_ID'],
             client_secret: ENV['BOX_CLIENT_SECRET'],
             enterprise_id: ENV['BOX_ENTERPRISE_ID'],
-            jwt_private_key: ENV['JWT_PRIVATE_KEY'], 
+            jwt_private_key: ENV['JWT_PRIVATE_KEY'],
             jwt_private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
             jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
-            identifier: nil, 
-            as_user: nil, 
+            identifier: nil,
+            as_user: nil,
             &token_refresh_listener)
 ```
-  
+
 ### A quick example
 Before diving into detailed documentation, let's take a look at how to accomplish a simple task with Boxr.  This script will find a specific folder given its path, upload a file to that folder, and create an open shared link to that file.
 
@@ -112,7 +112,7 @@ puts "Shared Link: #{updated_file.shared_link.url}"
 ```
 
 ### Methods
-#### [OAuth & JWT](https://developers.box.com/docs/#oauth-2)
+#### [OAuth & JWT](https://box-content.readme.io/reference#oauth-2)
 ```ruby
 #NOTE: these are all module methods
 
@@ -130,42 +130,42 @@ Boxr::get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_pass
 
 Boxr::get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], public_key_id: ENV['JWT_PUBLIC_KEY_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 ```
-#### [Folders](https://developers.box.com/docs/#folders)
+#### [Folders](https://box-content.readme.io/reference#folder-object-1)
 ```ruby
 folder_from_path(path)
 
 folder_from_id(folder_id, fields: [])
 alias :folder :folder_from_id
-     
+
 folder_items(folder, fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
-      
+
 root_folder_items(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
-      
+
 create_folder(name, parent)
-     
+
 update_folder(folder, name: nil, description: nil, parent: nil, shared_link: nil,
                 folder_upload_email_access: nil, owned_by: nil, sync_state: nil, tags: nil,
                 can_non_owners_invite: nil, if_match: nil)
 
 move_folder(folder, new_parent, name: nil, if_match: nil)
-     
+
 delete_folder(folder, recursive: false, if_match: nil)
-     
+
 copy_folder(folder, dest_folder, name: nil)
-      
+
 create_shared_link_for_folder(folder, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
-      
+
 disable_shared_link_for_folder(folder)
-     
+
 trash(fields: [], offset: 0, limit: FOLDER_ITEMS_LIMIT)
-      
+
 trashed_folder(folder, fields: [])
-     
+
 delete_trashed_folder(folder)
-      
+
 restore_trashed_folder(folder, name: nil, parent: nil)
 ```
-#### [Files](https://developers.box.com/docs/#files)
+#### [Files](https://box-content.readme.io/reference#file-object)
 ```ruby
 file_from_path(path)
 
@@ -189,12 +189,12 @@ download_file(file, version: nil, follow_redirect: true)
 
 download_url(file, version: nil)
 
-upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil, 
+upload_file(path_to_file, parent, content_created_at: nil, content_modified_at: nil,
             preflight_check: true, send_content_md5: true)
 
 delete_file(file, if_match: nil)
 
-upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true, 
+upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
                             preflight_check: true, if_match: nil)
 
 versions_of_file(file)
@@ -217,67 +217,67 @@ delete_trashed_file(file)
 
 restore_trashed_file(file, name: nil, parent: nil)
 ```
-#### [Comments](https://developers.box.com/docs/#comments)
+#### [Comments](https://box-content.readme.io/reference#comment-object)
 ```ruby
 file_comments(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
-      
+
 add_comment_to_file(file, message: nil, tagged_message: nil)
-     
+
 reply_to_comment(comment, message: nil, tagged_message: nil)
-      
+
 change_comment(comment, message)
-     
+
 comment_from_id(comment_id, fields: [])
 alias :comment :comment_from_id
-      
+
 delete_comment(comment)
 ```
-#### [Collaborations](https://developers.box.com/docs/#collaborations)
+#### [Collaborations](https://box-content.readme.io/reference#collaboration-object)
 ```ruby
 folder_collaborations(folder)
-    
+
 add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
-     
+
 edit_collaboration(collaboration, role: nil, status: nil)
-      
+
 remove_collaboration(collaboration)
-      
+
 collaboration_from_id(collaboration_id, fields: [], status: nil)
 alias :collaboration :collaboration_from_id
-      
+
 pending_collaborations()
 ```
-#### [Events](https://developers.box.com/docs/#events)
+#### [Events](https://box-content.readme.io/reference#events)
 ```ruby
 user_events(stream_position, stream_type: :all, limit: 800)
-      
+
 enterprise_events(created_after: nil, created_before: nil, stream_position: 0, event_type: nil, limit: 500)
 
 enterprise_events_stream(initial_stream_position, event_type: nil, limit: 500, refresh_period: 300)
 ```
-#### [Shared Items](https://developers.box.com/docs/#shared-items)
+#### [Shared Items](https://box-content.readme.io/reference#get-a-shared-item)
 ```ruby
 shared_item(shared_link, shared_link_password: nil)
 ```
-#### [Search](https://developers.box.com/docs/#search)
+#### [Search](https://box-content.readme.io/reference#searching-for-content)
 ```ruby
-search( query=nil, scope: nil, file_extensions: [], 
+search( query=nil, scope: nil, file_extensions: [],
         created_at_range_from_date: nil, created_at_range_to_date: nil,
         updated_at_range_from_date: nil, updated_at_range_to_date: nil,
-        size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil, 
-        owner_user_ids: [], ancestor_folder_ids: [], content_types: [], trash_content: nil, 
+        size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil,
+        owner_user_ids: [], ancestor_folder_ids: [], content_types: [], trash_content: nil,
         mdfilters: nil, type: nil, limit: 30, offset: 0)
 ```
-#### [Users](https://developers.box.com/docs/#users)
+#### [Users](https://box-content.readme.io/reference#user-object)
 ```ruby
 current_user(fields: [])
 alias :me :current_user
 
 user_from_id(user_id, fields: [])
 alias :user :user_from_id
-      
+
 all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
-     
+
 create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
             phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
             can_see_managed_users: nil, is_external_collab_restricted: nil, status: nil, timezone: nil,
@@ -297,58 +297,58 @@ remove_email_alias_for_user(user, email_alias)
 
 delete_user(user, notify: nil, force: nil)
 ```
-#### [Groups](https://developers.box.com/docs/#groups)
+#### [Groups](https://box-content.readme.io/reference#group-object)
 ```ruby
 groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
-      
+
 create_group(name)
-     
+
 update_group(group, name)
 alias :rename_group :update_group
 
 delete_group(group)
-     
+
 group_memberships(group, offset: 0, limit: DEFAULT_LIMIT)
-      
+
 group_memberships_for_user(user, offset: 0, limit: DEFAULT_LIMIT)
-      
+
 group_memberships_for_me(offset: 0, limit: DEFAULT_LIMIT)
-      
+
 group_membership_from_id(membership_id)
 alias :group_membership :group_membership_from_id
-     
+
 add_user_to_group(user, group, role: nil)
-      
+
 update_group_membership(membership, role)
-      
+
 delete_group_membership(membership)
-      
+
 group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
 ```
-#### [Tasks](https://developers.box.com/docs/#tasks)
+#### [Tasks](https://box-content.readme.io/reference#task-object-1)
 ```ruby
 file_tasks(file, fields: [])
-      
+
 create_task(file, action: :review, message: nil, due_at: nil)
-      
+
 task_from_id(task_id)
 alias :task :task_from_id
-     
+
 update_task(task, action: :review, message: nil, due_at: nil)
-      
+
 delete_task(task)
-      
+
 task_assignments(task)
-      
+
 create_task_assignment(task, assign_to: nil, assign_to_login: nil)
-      
+
 task_assignment(task)
-      
+
 delete_task_assignment(task)
-      
+
 update_task_assignment(task, message: nil, resolution_state: nil)
 ```
-#### [Metadata](https://developers.box.com/metadata-api/#crud)
+#### [Metadata](https://box-content.readme.io/reference#metadata-object)
 ```ruby
 create_metadata(file, metadata, scope: :global, template: :properties)
 

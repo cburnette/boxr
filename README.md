@@ -153,7 +153,7 @@ delete_folder(folder, recursive: false, if_match: nil)
 
 copy_folder(folder, dest_folder, name: nil)
 
-create_shared_link_for_folder(folder, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+create_shared_link_for_folder(folder, access: nil, unshared_at: nil, password: nil, can_download: nil, can_preview: nil)
 
 disable_shared_link_for_folder(folder)
 
@@ -207,7 +207,7 @@ copy_file(file, parent, name: nil)
 
 thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
 
-create_shared_link_for_file(file, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+create_shared_link_for_file(file, access: nil, unshared_at: nil, password: nil, can_download: nil, can_preview: nil)
 
 disable_shared_link_for_file(file)
 

@@ -97,6 +97,12 @@ module Boxr
       updated_user
     end
 
+    def move_users_folders(source_id, destination_id)
+      uri = "#{USERS_URI}/#{source_id}/folders/0" #Current API supports only 0(root level folder)
+      folder, response = put(uri, {owned_by: {id: destination_id}})
+      folder
+    end
+
     def delete_user(user, notify: nil, force: nil)
       user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}"

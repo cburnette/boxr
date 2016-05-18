@@ -22,7 +22,8 @@ module Boxr
     TASKS_URI = "#{API_URI}/tasks"
     TASK_ASSIGNMENTS_URI = "#{API_URI}/task_assignments"
     SHARED_ITEMS_URI = "#{API_URI}/shared_items"
-    METADATA_URI = "#{API_URI}/files"
+    FILE_METADATA_URI = "#{API_URI}/files"
+    FOLDER_METADATA_URI = "#{API_URI}/folders"
     METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
 

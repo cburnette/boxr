@@ -351,14 +351,18 @@ update_task_assignment(task, message: nil, resolution_state: nil)
 #### [Metadata](https://box-content.readme.io/reference#metadata-object)
 ```ruby
 create_metadata(file, metadata, scope: :global, template: :properties)
+create_folder_metadata(folder, metadata, scope, template)
 
 metadata(file, scope: :global, template: :properties)
+folder_metadata(folder, scope, template)
 
 all_metadata(file)
 
 update_metadata(file, updates, scope: :global, template: :properties)
+update_folder_metadata(folder, updates, scope, template)
 
 delete_metadata(file, scope: :global, template: :properties)
+delete_folder_metadata(folder, scope, template)
 
 enterprise_metadata
 

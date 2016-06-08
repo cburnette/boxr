@@ -1,5 +1,5 @@
 module Boxr
-  
+
   class Client
 
     attr_reader :access_token, :refresh_token, :client_id, :client_secret, :identifier, :as_user_id
@@ -26,6 +26,7 @@ module Boxr
     FOLDER_METADATA_URI = "#{API_URI}/folders"
     METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
+    WEB_LINKS_URI = "#{API_URI}/web_links"
 
 
     DEFAULT_LIMIT = 100
@@ -41,7 +42,7 @@ module Boxr
 
     COMMENT_FIELDS = [:type,:id,:is_reply_comment,:message,:tagged_message,:created_by,:created_at,:item,:modified_at]
     COMMENT_FIELDS_QUERY = COMMENT_FIELDS.join(',')
-    
+
     TASK_FIELDS = [:type,:id,:item,:due_at,:action,:message,:task_assignment_collection,:is_completed,:created_by,:created_at]
     TASK_FIELDS_QUERY = TASK_FIELDS.join(',')
 
@@ -58,18 +59,19 @@ module Boxr
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
 
     VALID_COLLABORATION_ROLES = ['editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner']
-    
+    # VALID_WEB_LINK_URLS = {"http://", "https://"}
 
-    def initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'], 
-                    refresh_token: nil, 
-                    client_id: ENV['BOX_CLIENT_ID'], 
+
+    def initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],
+                    refresh_token: nil,
+                    client_id: ENV['BOX_CLIENT_ID'],
                     client_secret: ENV['BOX_CLIENT_SECRET'],
                     enterprise_id: ENV['BOX_ENTERPRISE_ID'],
-                    jwt_private_key: ENV['JWT_PRIVATE_KEY'], 
+                    jwt_private_key: ENV['JWT_PRIVATE_KEY'],
                     jwt_private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
                     jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
-                    identifier: nil, 
-                    as_user: nil, 
+                    identifier: nil,
+                    as_user: nil,
                     &token_refresh_listener)
 
       @access_token = access_token
@@ -121,7 +123,7 @@ module Boxr
           headers = standard_headers
           BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
         end
-        
+
         if (res.status==200)
           body_json = Oj.load(res.body)
           total_count = body_json["total_count"]
@@ -161,7 +163,7 @@ module Boxr
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers["Content-Type"] = content_type unless content_type.nil?
-        
+
         BOX_CLIENT.put(uri, body: Oj.dump(body), query: query, header: headers)
       end
 
@@ -176,7 +178,7 @@ module Boxr
       res = with_auto_token_refresh do
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
-        
+
         BOX_CLIENT.delete(uri, query: query, header: headers)
       end
 
@@ -282,7 +284,7 @@ module Boxr
       attributes = {}
       attributes[:name] = name unless name.nil?
       attributes[:parent] = {id: parent_id} unless parent_id.nil?
-      
+
       restored_item, response = post(uri, attributes)
       restored_item
     end

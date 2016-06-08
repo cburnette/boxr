@@ -50,7 +50,7 @@ module Boxr
 
       uri = "#{FOLDERS_URI}"
       attributes = {:name => name, :parent => {:id => parent_id}}
-      
+
       created_folder, response = post(uri, attributes)
       created_folder
     end
@@ -71,7 +71,7 @@ module Boxr
       attributes[:folder_upload_email] = {access: folder_upload_email_access} unless folder_upload_email_access.nil?
       attributes[:owned_by] = {id: owned_by_id} unless owned_by_id.nil?
       attributes[:sync_state] = sync_state unless sync_state.nil?
-      attributes[:tags] = tags unless tags.nil? 
+      attributes[:tags] = tags unless tags.nil?
       attributes[:can_non_owners_invite] = can_non_owners_invite unless can_non_owners_invite.nil?
 
       updated_folder, response = put(uri, attributes, if_match: if_match)
@@ -133,7 +133,7 @@ module Boxr
       folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}/trash"
       query = build_fields_query(fields, FOLDER_AND_FILE_FIELDS_QUERY)
-      
+
       folder, response = get(uri, query: query)
       folder
     end

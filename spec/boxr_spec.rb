@@ -18,7 +18,7 @@ describe Boxr::Client do
   BOX_CLIENT = Boxr::Client.new #using ENV['BOX_DEVELOPER_TOKEN']
 
   #uncomment this line to see the HTTP request and response debug info in the rspec output
-  #Boxr::turn_on_debugging
+  # Boxr::turn_on_debugging
 
   BOX_SERVER_SLEEP = 5
   TEST_FOLDER_NAME = 'Boxr Test'
@@ -34,6 +34,8 @@ describe Boxr::Client do
   TEST_USER_NAME = "Test Boxr User"
   TEST_GROUP_NAME= "Test Boxr Group"
   TEST_TASK_MESSAGE = "Please review"
+  TEST_WEB_URL = 'https://www.box.com'
+  TEST_WEB_URL2 = 'https://www.google.com'
 
   before(:each) do
     puts "-----> Resetting Box Environment"
@@ -62,8 +64,8 @@ describe Boxr::Client do
     end
   end
 
-  #use this command to just execute this scenario
-  #rake spec SPEC_OPTS="-e \"invokes folder operations"\"
+  # use this command to just execute this scenario
+  # rake spec SPEC_OPTS="-e \"invokes folder operations"\"
   it 'invokes folder operations' do
     puts "get folder using path"
     folder = BOX_CLIENT.folder_from_path(TEST_FOLDER_NAME)
@@ -241,6 +243,25 @@ describe Boxr::Client do
     puts "trash and permanently delete file"
     BOX_CLIENT.delete_file(NEW_FILE)
     result = BOX_CLIENT.delete_trashed_file(NEW_FILE)
+    expect(result).to eq({})
+  end
+
+  #rake spec SPEC_OPTS="-e \"invokes web links operations"\"
+  it 'invokes web links operations' do
+    puts "create web link"
+    web_link = BOX_CLIENT.create_web_link(TEST_WEB_URL, '0', name: "my new link", description: "link description...")
+    expect(web_link.url).to eq(TEST_WEB_URL)
+
+    puts "get web link"
+    web_link_new = BOX_CLIENT.get_web_link(web_link.id)
+    expect(web_link_new.id).to eq(web_link.id)
+
+    puts "update web link"
+    updated_web_link = BOX_CLIENT.update_web_link(web_link, name: 'new name', description: 'new description', url: TEST_WEB_URL2)
+    expect(updated_web_link.url).to eq(TEST_WEB_URL2)
+
+    puts "delete web link"
+    result = BOX_CLIENT.delete_web_link(web_link.id)
     expect(result).to eq({})
   end
 

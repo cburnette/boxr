@@ -59,7 +59,6 @@ module Boxr
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
 
     VALID_COLLABORATION_ROLES = ['editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner']
-    # VALID_WEB_LINK_URLS = {"http://", "https://"}
 
 
     def initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],

@@ -368,6 +368,16 @@ enterprise_metadata
 
 metadata_schema(scope, template_key)
 ```
+#### [Web Links](https://box-content.readme.io/reference#web-link-object)
+```ruby
+create_web_link(url, parent, name: nil, description: nil)
+
+get_web_link(web_link)
+
+update_web_link(web_link_id, url: nil, parent: nil, name: nil, description: nil)
+
+delete_web_link(web_link)
+```
 ## Contributing
 
 1. Fork it ( https://github.com/cburnette/boxr/fork )

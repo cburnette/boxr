@@ -26,7 +26,7 @@ module Boxr
       web_link
     end
 
-    def update_web_link(web_link_id, url: nil, parent: nil, name: nil, description: nil, if_match: if_match)
+    def update_web_link(web_link_id, url: nil, parent: nil, name: nil, description: nil)
 
       web_link_id = ensure_id(web_link_id)
       parent_id = ensure_id(parent)
@@ -38,7 +38,7 @@ module Boxr
       attributes[:description] = description unless description.nil?
       attributes[:parent] = {id: parent_id} unless parent_id.nil?
 
-      updated_web_link, response = put(uri, attributes, if_match: if_match)
+      updated_web_link, response = put(uri, attributes)
       updated_web_link
     end
 

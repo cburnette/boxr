@@ -36,8 +36,7 @@ module Boxr
                               :size,:path_collection,:created_by,:modified_by,:trashed_at,:purged_at,
                               :content_created_at,:content_modified_at,:owned_by,:shared_link,:folder_upload_email,
                               :parent,:item_status,:item_collection,:sync_state,:has_collaborations,:permissions,:tags,
-                              :sha1,:shared_link,:version_number,:comment_count,:lock,:extension,:is_package,
-                              :expiring_embed_link, :can_non_owners_invite]
+                              :sha1,:shared_link,:version_number,:comment_count,:lock,:extension,:is_package,:can_non_owners_invite]
     FOLDER_AND_FILE_FIELDS_QUERY = FOLDER_AND_FILE_FIELDS.join(',')
 
     COMMENT_FIELDS = [:type,:id,:is_reply_comment,:message,:tagged_message,:created_by,:created_at,:item,:modified_at]

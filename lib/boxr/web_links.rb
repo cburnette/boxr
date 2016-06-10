@@ -9,26 +9,26 @@ module Boxr
 
       attributes = {}
       attributes[:url] = web_link_url
-      attributes[:name] = name unless name.nil?
       attributes[:parent] = {:id => parent_id}
+      attributes[:name] = name unless name.nil?
       attributes[:description] = description unless description.nil?
 
       created_link, response = post(uri, attributes)
       created_link
     end
 
-    def get_web_link(web_link_id)
+    def get_web_link(web_link)
 
-      web_link_id = ensure_id(web_link_id)
+      web_link_id = ensure_id(web_link)
       uri = "#{WEB_LINKS_URI}/#{web_link_id}"
 
       web_link, response = get(uri)
       web_link
     end
 
-    def update_web_link(web_link_id, url: nil, parent: nil, name: nil, description: nil)
+    def update_web_link(web_link, url: nil, parent: nil, name: nil, description: nil)
 
-      web_link_id = ensure_id(web_link_id)
+      web_link_id = ensure_id(web_link)
       parent_id = ensure_id(parent)
       uri = "#{WEB_LINKS_URI}/#{web_link_id}"
 
@@ -42,9 +42,9 @@ module Boxr
       updated_web_link
     end
 
-    def delete_web_link(web_link_id)
+    def delete_web_link(web_link)
 
-      web_link_id = ensure_id(web_link_id)
+      web_link_id = ensure_id(web_link)
       uri = "#{WEB_LINKS_URI}/#{web_link_id}"
 
       result, response = delete(uri)

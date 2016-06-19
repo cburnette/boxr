@@ -1,7 +1,5 @@
 module Boxr
-
   class BoxrError < StandardError
-
     attr_reader :response_body, :type, :status, :code, :help_uri, :box_message, :boxr_message, :request_id
 
     def initialize(status: nil, body: nil, header: nil, boxr_message: nil)
@@ -10,17 +8,17 @@ module Boxr
       @header = header
       @boxr_message = boxr_message
 
-      if(body)
+      if body
         begin
           body_json = Oj.load(body)
 
           if body_json
-            @type = body_json["type"]
-            @box_status = body_json["status"]
-            @code = body_json["code"]
-            @help_uri = body_json["help_uri"]
-            @box_message = body_json["message"]
-            @request_id = body_json["request_id"]
+            @type = body_json['type']
+            @box_status = body_json['status']
+            @code = body_json['code']
+            @help_uri = body_json['help_uri']
+            @box_message = body_json['message']
+            @request_id = body_json['request_id']
           end
         rescue
         end
@@ -29,11 +27,11 @@ module Boxr
 
     def message
       auth_header = @header['WWW-Authenticate'][0] unless @header.nil?
-      if(auth_header && auth_header != [])
+      if auth_header && auth_header != []
         "#{@status}: #{auth_header}"
-      elsif(@box_message)
+      elsif @box_message
         "#{@status}: #{@box_message}"
-      elsif(@boxr_message)
+      elsif @boxr_message
         @boxr_message
       else
         "#{@status}: #{@response_body}"
@@ -44,5 +42,4 @@ module Boxr
       message
     end
   end
-
 end

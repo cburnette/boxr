@@ -152,6 +152,34 @@ module Boxr
       uri = "#{FOLDERS_URI}/#{folder_id}"
       restore_trashed_item(uri, name, parent_id)
     end
+    
+    #404 if not applied
+    def check_watermark_folder(folder)
+      folder_id = ensure_id(folder)
+      uri = "#{FOLDERS_URI}/#{folder_id}/watermark"
+      
+      check_watermark_folder, response = get(uri)
+      check_watermark_folder
+    end
+      
+    def apply_watermark_folder(folder)
+      folder_id = ensure_id(folder)
+      uri = "#{FOLDERS_URI}/#{folder_id}/watermark"
+   
+      attributes = {watermark: {imprint: "default"}}
+      
+      apply_watermark_folder, response = put(uri, attributes)
+      apply_watermark_folder
+    end
+      
+    def remove_watermark_folder(folder)
+      folder_id = ensure_id(folder_id)
+      uri = uri = "#{FOLDERS_URI}/#{folder_id}/watermark"
+   
+      remove_watermark_folder, response = delete(uri)
+      remove_watermark_folder
+    end
+    
 
   end
 end

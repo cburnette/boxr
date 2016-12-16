@@ -247,7 +247,26 @@ module Boxr
       uri = "#{FILES_URI}/#{file_id}"
       restore_trashed_item(uri, name, parent_id)
     end
-
+    
+      #watermark check, if 404 no watermarks
+    def check_watermark(file)
+      file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}/watermark"
+      
+      watermark, response = get(uri)
+      watermark
+    end
+      
+    def apply_watermark(file)
+      file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}/watermark"
+   
+      attributes = {watermark: {imprint: "default"}
+      
+      apply_watermark, response = put(uri, attributes)
+      apply_watermark
+    end
+    
 
     private
 

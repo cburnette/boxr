@@ -26,9 +26,9 @@ module Boxr
     end
     alias :file :file_from_id
 
-    def embed_url(file, showannotations: false, showdownloads: false)
+    def embed_url(file, showannotations: false, showdownload: false)
       file_info = file_from_id(file, fields:[:expiring_embed_link])
-      url = file_info.expiring_embed_link.url + "?showAnnotations=#{showannotations}&showDownloads=#{showdownloads}"
+      url = file_info.expiring_embed_link.url + "?showAnnotations=#{showannotations}&showDownload=#{showdownload}"
       url
     end
     alias :embed_link :embed_url

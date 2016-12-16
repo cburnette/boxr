@@ -266,7 +266,14 @@ module Boxr
       apply_watermark, response = put(uri, attributes)
       apply_watermark
     end
-    
+      
+    def delete_watermark(file)
+      file_id = ensure_id(file)
+      uri = uri = "#{FILES_URI}/#{file_id}/watermark"
+   
+      delete_watermark, response = delete(uri)
+      delete_watermark
+    end
 
     private
 

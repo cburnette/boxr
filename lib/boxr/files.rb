@@ -261,7 +261,7 @@ module Boxr
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}/watermark"
    
-      attributes = {watermark: {imprint: "default"}
+      attributes = {watermark: {imprint: "default"}}
       
       apply_watermark, response = put(uri, attributes)
       apply_watermark

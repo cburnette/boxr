@@ -23,12 +23,13 @@ module Boxr
       collaboration
     end
 
-    def edit_collaboration(collaboration, role: nil, status: nil)
+    def edit_collaboration(collaboration, role: nil, status: nil, expires_at: nil)
       collaboration_id = ensure_id(collaboration)
       uri = "#{COLLABORATIONS_URI}/#{collaboration_id}"
       attributes = {}
       attributes[:role] = validate_role(role) unless role.nil?
       attributes[:status] = status unless status.nil?
+      attributes[:expires_at] = expires_at
 
       updated_collaboration, response = put(uri, attributes)
       updated_collaboration

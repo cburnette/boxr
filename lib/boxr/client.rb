@@ -289,7 +289,7 @@ module Boxr
 
     def create_shared_link(uri, item_id, access, unshared_at, can_download, can_preview)
       attributes = {shared_link: {access: access}}
-      attributes[:shared_link][:unshared_at] = unshared_at.to_datetime.rfc3339 unless unshared_at.nil?
+      attributes[:shared_link][:unshared_at] = (unshared_at.to_datetime.rfc3339 unless unshared_at.nil?)
       attributes[:shared_link][:permissions] = {} unless can_download.nil? && can_preview.nil?
       attributes[:shared_link][:permissions][:can_download] = can_download unless can_download.nil?
       attributes[:shared_link][:permissions][:can_preview] = can_preview unless can_preview.nil?

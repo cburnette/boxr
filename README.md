@@ -111,6 +111,16 @@ updated_file = client.create_shared_link_for_file(file, access: :open)
 puts "Shared Link: #{updated_file.shared_link.url}"
 ```
 
+### NOTE: Using HTTP mocking libraries for testing
+When using HTTP mocking libraries for testing, you may need to set Boxr::BOX_CLIENT to a fresh instance of HTTPClient in your test setup after loading the HTTP mocking library. For example, when using WebMock with RSpec you might could add the following to your RSpec configuration:
+``` ruby
+RSpec.configure do |config|
+  config.before(:suite) do
+    Boxr::BOX_CLIENT = HTTPClient.new
+  end
+end
+```
+
 ### Methods
 #### [OAuth & JWT](https://box-content.readme.io/reference#oauth-2)
 ```ruby

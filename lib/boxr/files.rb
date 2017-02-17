@@ -26,14 +26,16 @@ module Boxr
     end
     alias :file :file_from_id
 
-    def embed_url(file)
+    def embed_url(file, showannotations: false, showdownload: false)
       file_info = file_from_id(file, fields:[:expiring_embed_link])
-      url = file_info.expiring_embed_link.url
+      url = file_info.expiring_embed_link.url + "?showAnnotations=#{showannotations}&showDownload=#{showdownload}"
       url
     end
     alias :embed_link :embed_url
     alias :preview_url :embed_url
     alias :preview_link :embed_url
+    
+   
 
     def update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, lock: nil, if_match: nil)
       file_id = ensure_id(file)
@@ -247,7 +249,33 @@ module Boxr
       uri = "#{FILES_URI}/#{file_id}"
       restore_trashed_item(uri, name, parent_id)
     end
-
+    
+      #404 if no watermarks
+    def check_watermark_file(file)
+      file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}/watermark"
+      
+      watermark, response = get(uri)
+      watermark
+    end
+      
+    def apply_watermark_file(file)
+      file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}/watermark"
+   
+      attributes = {watermark: {imprint: "default"}}
+      
+      apply_watermark, response = put(uri, attributes)
+      apply_watermark
+    end
+      
+    def remove_watermark_file(file)
+      file_id = ensure_id(file)
+      uri = uri = "#{FILES_URI}/#{file_id}/watermark"
+   
+      delete_watermark, response = delete(uri)
+      delete_watermark
+    end
 
     private
 

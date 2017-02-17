@@ -378,6 +378,20 @@ update_web_link(web_link_id, url: nil, parent: nil, name: nil, description: nil)
 
 delete_web_link(web_link)
 ```
+#### [Watermarking](https://box-content.readme.io/reference#watermarking)
+```ruby
+get_watermark_on_file(file_id)
+
+apply_watermark_on_file(file_id)
+
+remove_watermark_on_file(file_id)
+
+get_watermark_on_folder(folder_id)
+
+apply_watermark_on_folder(folder_id)
+
+remove_watermark_on_folder(folder_id)
+```
 ## Contributing
 
 1. Fork it ( https://github.com/cburnette/boxr/fork )

@@ -154,7 +154,7 @@ module Boxr
       processed_response(res)
     end
 
-    def put(uri, body, query: nil, success_codes: [200], content_type: nil, if_match: nil)
+    def put(uri, body, query: nil, success_codes: [200, 201], content_type: nil, if_match: nil)
       uri = Addressable::URI.encode(uri)
 
       res = with_auto_token_refresh do

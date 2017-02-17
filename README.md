@@ -378,7 +378,7 @@ enterprise_metadata
 
 metadata_schema(scope, template_key)
 ```
-```
+
 #### [Watermarking](https://box-content.readme.io/reference#watermarking)
 ```ruby
 get_watermark_on_file(file_id)

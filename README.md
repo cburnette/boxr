@@ -217,6 +217,16 @@ delete_trashed_file(file)
 
 restore_trashed_file(file, name: nil, parent: nil)
 ```
+#### [Web Links](https://box-content.readme.io/reference#web-link-object)
+```ruby
+create_web_link(url, parent, name: nil, description: nil)
+
+get_web_link(web_link)
+
+update_web_link(web_link, url: nil, parent: nil, name: nil, description: nil)
+
+delete_web_link(web_link)
+```
 #### [Comments](https://box-content.readme.io/reference#comment-object)
 ```ruby
 file_comments(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
@@ -368,15 +378,6 @@ enterprise_metadata
 
 metadata_schema(scope, template_key)
 ```
-#### [Web Links](https://box-content.readme.io/reference#web-link-object)
-```ruby
-create_web_link(url, parent, name: nil, description: nil)
-
-get_web_link(web_link)
-
-update_web_link(web_link_id, url: nil, parent: nil, name: nil, description: nil)
-
-delete_web_link(web_link)
 ```
 #### [Watermarking](https://box-content.readme.io/reference#watermarking)
 ```ruby

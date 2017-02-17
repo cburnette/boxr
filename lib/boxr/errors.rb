@@ -12,7 +12,7 @@ module Boxr
 
       if(body)
         begin
-          body_json = Oj.load(body)
+          body_json = JSON.load(body)
 
           if body_json
             @type = body_json["type"]

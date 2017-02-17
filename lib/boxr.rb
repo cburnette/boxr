@@ -1,4 +1,4 @@
-require 'oj'
+require 'json'
 require 'httpclient'
 require 'hashie'
 require 'addressable/template'
@@ -48,8 +48,6 @@ class BoxrMash < Hashie::Mash
 end
 
 module Boxr
-  Oj.default_options = {:mode => :compat }
-
   #The root folder in Box is always identified by 0
   ROOT = 0
 

@@ -120,7 +120,7 @@ module Boxr
         attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
         attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
 
-        body = {attributes: Oj.dump(attributes), file: file}
+        body = {attributes: JSON.dump(attributes), file: file}
 
         file_info, response = post(FILES_UPLOAD_URI, body, process_body: false, content_md5: content_md5)
       end

@@ -14,7 +14,7 @@ module Boxr
           unless mdfilters.is_a? Array  
             mdfilters = [mdfilters]     #if just one mdfilter is specified ensure that it is packaged inside an array
           end
-          mdfilters = Oj.dump(mdfilters) 
+          mdfilters = JSON.dump(mdfilters) 
         end
       end
 

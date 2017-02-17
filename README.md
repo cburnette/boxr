@@ -172,7 +172,7 @@ file_from_path(path)
 file_from_id(file_id, fields: [])
 alias :file :file_from_id
 
-embed_url(file)
+def embed_url(file, show_download: false, show_annotations: false)
 alias :embed_link :embed_url
 alias :preview_url :embed_url
 alias :preview_link :embed_url

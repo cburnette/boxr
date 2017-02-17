@@ -123,7 +123,7 @@ module Boxr
         end
 
         if (res.status==200)
-          body_json = Oj.load(res.body)
+          body_json = JSON.load(res.body)
           total_count = body_json["total_count"]
           offset = offset + limit
 
@@ -138,7 +138,7 @@ module Boxr
 
     def post(uri, body, query: nil, success_codes: [201], process_body: true, content_md5: nil, content_type: nil, if_match: nil)
       uri = Addressable::URI.encode(uri)
-      body = Oj.dump(body) if process_body
+      body = JSON.dump(body) if process_body
 
       res = with_auto_token_refresh do
         headers = standard_headers
@@ -162,7 +162,7 @@ module Boxr
         headers['If-Match'] = if_match unless if_match.nil?
         headers["Content-Type"] = content_type unless content_type.nil?
 
-        BOX_CLIENT.put(uri, body: Oj.dump(body), query: query, header: headers)
+        BOX_CLIENT.put(uri, body: JSON.dump(body), query: query, header: headers)
       end
 
       check_response_status(res, success_codes)
@@ -190,7 +190,7 @@ module Boxr
 
       res = with_auto_token_refresh do
         headers = standard_headers
-        BOX_CLIENT.options(uri, body: Oj.dump(body), header: headers)
+        BOX_CLIENT.options(uri, body: JSON.dump(body), header: headers)
       end
 
       check_response_status(res, success_codes)
@@ -240,7 +240,7 @@ module Boxr
     end
 
     def processed_response(res)
-      body_json = Oj.load(res.body)
+      body_json = JSON.load(res.body)
       return BoxrMash.new(body_json), res
     end
 

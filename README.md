@@ -391,17 +391,17 @@ metadata_schema(scope, template_key)
 
 #### [Watermarking](https://box-content.readme.io/reference#watermarking)
 ```ruby
-get_watermark_on_file(file_id)
+get_watermark_on_file(file)
 
-apply_watermark_on_file(file_id)
+apply_watermark_on_file(file)
 
-remove_watermark_on_file(file_id)
+remove_watermark_on_file(file)
 
-get_watermark_on_folder(folder_id)
+get_watermark_on_folder(folder)
 
-apply_watermark_on_folder(folder_id)
+apply_watermark_on_folder(folder)
 
-remove_watermark_on_folder(folder_id)
+remove_watermark_on_folder(folder)
 ```
 ## Contributing
 

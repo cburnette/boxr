@@ -1,18 +1,18 @@
 module Boxr
   class Client
 
-    def get_watermark_on_file(file_id)
+    def get_watermark_on_file(file)
 
-      file_id = ensure_id(file_id)
+      file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}/watermark"
 
       file, response = get(uri)
       file
     end
 
-    def apply_watermark_on_file(file_id)
+    def apply_watermark_on_file(file)
 
-      file_id = ensure_id(file_id)
+      file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}/watermark"
 
       attributes = {}
@@ -22,27 +22,27 @@ module Boxr
       file
     end
 
-    def remove_watermark_on_file(file_id)
+    def remove_watermark_on_file(file)
 
-      file_id = ensure_id(file_id)
+      file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}/watermark"
 
       result, response = delete(uri)
       result
     end
 
-    def get_watermark_on_folder(folder_id)
+    def get_watermark_on_folder(folder)
 
-      folder_id = ensure_id(folder_id)
+      folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}/watermark"
 
       folder, response = get(uri)
       folder
     end
 
-    def apply_watermark_on_folder(folder_id)
+    def apply_watermark_on_folder(folder)
 
-      folder_id = ensure_id(folder_id)
+      folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}/watermark"
 
       attributes = {}
@@ -52,9 +52,9 @@ module Boxr
       folder
     end
 
-    def remove_watermark_on_folder(folder_id)
+    def remove_watermark_on_folder(folder)
 
-      folder_id = ensure_id(folder_id)
+      folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}/watermark"
 
       result, response = delete(uri)

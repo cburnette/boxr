@@ -207,7 +207,7 @@ module Boxr
     end
 
     def with_auto_token_refresh
-      return yield unless @refresh_token or @jwt_secret_key
+      return yield unless @refresh_token or @jwt_private_key
 
       res = yield
       if res.status == 401

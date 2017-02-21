@@ -39,6 +39,9 @@ module Enumerable
 end
 
 class BoxrMash < Hashie::Mash
+
+  self.disable_warnings
+
   def entries
     self["entries"]
   end

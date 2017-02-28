@@ -217,7 +217,6 @@ module Boxr
             new_tokens = Boxr::refresh_tokens(@refresh_token, client_id: client_id, client_secret: client_secret)
             @access_token = new_tokens.access_token
             @refresh_token = new_tokens.refresh_token
-            @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener
           else
             if @as_user_id
               new_token = Boxr::get_user_token(@as_user_id, private_key: @jwt_private_key, private_key_password: @jwt_private_key_password, public_key_id: @jwt_public_key_id, client_id: @client_id, client_secret: @client_secret)
@@ -227,6 +226,7 @@ module Boxr
               @access_token = new_token.access_token
             end
           end
+          @token_refresh_listener.call(@access_token, @refresh_token, @identifier) if @token_refresh_listener
 
           res = yield
         end
@@ -289,7 +289,7 @@ module Boxr
 
     def create_shared_link(uri, item_id, access, unshared_at, can_download, can_preview)
       attributes = {shared_link: {access: access}}
-      attributes[:shared_link][:unshared_at] = unshared_at.to_datetime.rfc3339 unless unshared_at.nil?
+      attributes[:shared_link][:unshared_at] = (unshared_at.to_datetime.rfc3339 unless unshared_at.nil?)
       attributes[:shared_link][:permissions] = {} unless can_download.nil? && can_preview.nil?
       attributes[:shared_link][:permissions][:can_download] = can_download unless can_download.nil?
       attributes[:shared_link][:permissions][:can_preview] = can_preview unless can_preview.nil?

@@ -92,6 +92,10 @@ describe Boxr::Client do
     puts "create shared link for folder"
     updated_folder = BOX_CLIENT.create_shared_link_for_folder(@test_folder, access: :open)
     expect(updated_folder.shared_link.access).to eq("open")
+
+    puts "create password-protected shared link for folder"
+    updated_folder = BOX_CLIENT.create_shared_link_for_folder(@test_folder, password: 'password')
+    expect(updated_folder.shared_link.is_password_enabled).to eq(true)
     shared_link = updated_folder.shared_link.url
 
     puts "inspect shared link"
@@ -212,6 +216,10 @@ describe Boxr::Client do
     puts "create shared link for file"
     updated_file = BOX_CLIENT.create_shared_link_for_file(test_file, access: :open)
     expect(updated_file.shared_link.access).to eq("open")
+
+    puts "create password-protected shared link for file"
+    updated_file = BOX_CLIENT.create_shared_link_for_file(test_file, password: 'password')
+    expect(updated_file.shared_link.is_password_enabled).to eq(true)
 
     puts "disable shared link for file"
     updated_file = BOX_CLIENT.disable_shared_link_for_file(test_file)

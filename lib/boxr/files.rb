@@ -211,10 +211,10 @@ module Boxr
       thumbnail
     end
 
-    def create_shared_link_for_file(file, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+    def create_shared_link_for_file(file, access: nil, unshared_at: nil, password: nil, can_download: nil, can_preview: nil)
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}"
-      create_shared_link(uri, file_id, access, unshared_at, can_download, can_preview)
+      create_shared_link(uri, file_id, access, unshared_at, password, can_download, can_preview)
     end
 
     def disable_shared_link_for_file(file)

@@ -271,7 +271,13 @@ module Boxr
     end
 
     def ensure_id(item)
-      return item if item.class == String || item.class == Fixnum || item.nil?
+      # Ruby 2.4 unified Fixnum and Bignum into Integer.  This tests for Ruby 2.4
+      if 1.class == Integer
+        return item if item.class == String || item.class == Integer || item.nil?
+      else
+        return item if item.class == String || item.class == Fixnum || item.class == Bignum || item.nil?
+      end
+
       return item.id if item.respond_to?(:id)
       raise BoxrError.new(boxr_message: "Expecting an id of class String or Fixnum, or object that responds to :id")
     end

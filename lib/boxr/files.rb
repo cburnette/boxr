@@ -18,10 +18,9 @@ module Boxr
     end
     
     def get_representation(file_id,representation)
-      headers['x-rep-hints'] = "[#{representation}]"
       file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}?fields=representations"
-      file, response = get(uri, query: query)
+      file, response = get(uri, query: query, x_rep_hints: "[#{representation}]")
       file
     end
 

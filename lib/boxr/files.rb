@@ -18,9 +18,9 @@ module Boxr
     end
     
     def get_representation(file_id,x-rep-hints)
+      headers['x-rep-hints'] = "[#{x-rep-hints}]"
       file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}?fields=representations"
-      
     end
 
     def file_from_id(file_id, fields: [])

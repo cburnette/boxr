@@ -17,7 +17,7 @@ module Boxr
       file
     end
     
-    def get_representation(file_id,representation)
+    def representations(file_id,representation)
       file_id = ensure_id(file_id)
       uri = "#{FILES_URI}/#{file_id}?fields=representations"
       file, response = get(uri, x_rep_hints: "#{representation}")

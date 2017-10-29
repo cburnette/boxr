@@ -112,7 +112,7 @@ puts "Shared Link: #{updated_file.shared_link.url}"
 ```
 
 ### NOTE: Using HTTP mocking libraries for testing
-When using HTTP mocking libraries for testing, you may need to set Boxr::BOX_CLIENT to a fresh instance of HTTPClient in your test setup after loading the HTTP mocking library. For example, when using WebMock with RSpec you might could add the following to your RSpec configuration:
+When using HTTP mocking libraries for testing, you may need to set Boxr::BOX_CLIENT to a fresh instance of HTTPClient in your test setup after loading the HTTP mocking library. For example, when using WebMock with RSpec you might add the following to your RSpec configuration:
 ``` ruby
 RSpec.configure do |config|
   config.before(:suite) do

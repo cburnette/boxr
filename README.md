@@ -1,3 +1,29 @@
+# Greenhouse
+
+## Generate a thumbnail for PDF and word documents
+
+The `document_thumbnail` method generates a thumbnail image of the first page of a pdf or word document.
+```ruby
+client = Boxr::Client.new('{BOX_DEVELOPER_TOKEN}')
+
+thumbnail = client.document_thumbnail(file_id)
+```
+If the image is not yet available a `Boxr::BoxrError` is raised and the error has a status code of 202
+
+```ruby
+def thumbnail(file_id)
+  client = Boxr::Client.new('{BOX_DEVELOPER_TOKEN}')
+  
+  client.document_thumbnail(file_id)
+rescue Boxr::BoxrError => e
+  if e.status == 202
+    # Thumbnail is not yet available   
+  end
+  
+  # An error happened while retrieving the thumbnail
+end
+```
+
 # Boxr
 Boxr is a Ruby client library for the Box V2 Content API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.  
 

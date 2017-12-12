@@ -24,6 +24,15 @@ rescue Boxr::BoxrError => e
 end
 ```
 
+## Generate a PDF for non-pdf files
+
+The `document_pdf` returns a PDF representation of a non-pdf file.
+```ruby
+client = Boxr::Client.new('{BOX_DEVELOPER_TOKEN}')
+
+pdf = client.document_pdf(file_id)
+```
+
 # Boxr
 Boxr is a Ruby client library for the Box V2 Content API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.  
 

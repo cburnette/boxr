@@ -211,6 +211,45 @@ module Boxr
       thumbnail
     end
 
+    def document_thumbnail(file_id)
+      # Get a thumbnail preview of first page of a document
+      # https://developer.box.com/v2.0/reference#fetching-single-page-images-representation
+      response_body = get_representation("#{FILES_URI}/#{file_id}", '[png?dimensions=1024x1024]')
+
+      image, response =
+        get(
+          response_body.representations.entries[0].content.url_template.gsub('{+asset_path}', '1.png'),
+          process_response: false
+        )
+
+      image
+    end
+
+    def document_pdf(file_id)
+      # Get a PDF
+      # https://developer.box.com/v2.0/reference#get-representations
+      response_body = get_representation("#{FILES_URI}/#{file_id}", '[pdf]')
+
+      pdf, response =
+        get(
+          response_body.representations.entries[0].content.url_template.gsub('{+asset_path}', ''),
+          process_response: false
+        )
+
+      pdf
+    end
+
+    def get_representation(url, hint)
+      response_body, response =
+        get(
+          uri,
+          query: { fields: 'representations' },
+          optional_headers: { 'x-rep-hints' => hint }
+        )
+
+      response_body
+    end
+
     def create_shared_link_for_file(file, access: nil, unshared_at: nil, can_download: nil, can_preview: nil, password: nil)
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}"

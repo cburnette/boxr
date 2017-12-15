@@ -6,6 +6,16 @@ module Boxr
       groups = get_all_with_pagination(GROUPS_URI, query: query, offset: 0, limit: DEFAULT_LIMIT)
     end
 
+    def group_from_id(group_id, fields: [])
+      group_id = ensure_id(group_id)
+      uri = "#{GROUPS_URI}/#{group_id}"
+      query = build_fields_query(fields, GROUP_FIELDS_QUERY)
+
+      group, response = get(uri, query: query)
+      group
+    end
+    alias :group :group_from_id
+
     def create_group(name)
       attributes = {name: name}
       new_group, response = post(GROUPS_URI, attributes)

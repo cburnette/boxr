@@ -27,6 +27,7 @@ module Boxr
     METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
     WEB_LINKS_URI = "#{API_URI}/web_links"
+    WEBHOOKS = "#{API_URI}/webhooks"
 
 
     DEFAULT_LIMIT = 100
@@ -58,7 +59,7 @@ module Boxr
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
 
     VALID_COLLABORATION_ROLES = ['editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner']
-
+    
 
     def initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],
                     refresh_token: nil,

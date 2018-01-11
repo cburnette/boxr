@@ -27,6 +27,7 @@ module Boxr
     METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
     WEB_LINKS_URI = "#{API_URI}/web_links"
+    WEBHOOKS_URI = "#{API_URI}/webhooks"
 
 
     DEFAULT_LIMIT = 100
@@ -58,7 +59,7 @@ module Boxr
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
 
     VALID_COLLABORATION_ROLES = ['editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner']
-
+    
 
     def initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],
                     refresh_token: nil,
@@ -90,14 +91,14 @@ module Boxr
 
     private
 
-    def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil, follow_redirect: true)
+    def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil, follow_redirect: true, x_rep_hints: nil)
       uri = Addressable::URI.encode(uri)
 
       res = with_auto_token_refresh do
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers['BoxApi'] = box_api_header unless box_api_header.nil?
-
+        headers['x-rep-hints'] = x_rep_hints unless x_rep_hints.nil?
         BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
       end
 

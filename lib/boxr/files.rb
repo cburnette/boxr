@@ -16,6 +16,13 @@ module Boxr
       raise BoxrError.new(boxr_message: "File not found: '#{file_name}'") if file.nil?
       file
     end
+    
+    def representations(file_id,representation)
+      file_id = ensure_id(file_id)
+      uri = "#{FILES_URI}/#{file_id}?fields=representations"
+      file, response = get(uri, x_rep_hints: "#{representation}")
+      file
+    end
 
     def file_from_id(file_id, fields: [])
       file_id = ensure_id(file_id)

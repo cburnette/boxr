@@ -23,6 +23,7 @@ require 'boxr/events'
 require 'boxr/auth'
 require 'boxr/web_links'
 require 'boxr/watermarking'
+require 'boxr/webhooks'
 
 module Enumerable
   def files

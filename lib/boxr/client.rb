@@ -90,7 +90,7 @@ module Boxr
 
     private
 
-    def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil, follow_redirect: true)
+    def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil, box_api_header: nil, follow_redirect: true, x_rep_hints: nil)
       uri = Addressable::URI.encode(uri)
 
       res = with_auto_token_refresh do

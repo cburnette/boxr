@@ -97,7 +97,8 @@ module Boxr
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers['BoxApi'] = box_api_header unless box_api_header.nil?
-
+        headers['x-rep-hints'] = x_rep_hints unless x_rep_hints.nil?
+        
         BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
       end
 

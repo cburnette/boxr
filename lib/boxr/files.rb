@@ -190,6 +190,13 @@ module Boxr
       new_file, res = post(uri, attributes)
       new_file
     end
+      
+    def representations(file_id,representation)
+      file_id = ensure_id(file_id)
+      uri = "#{FILES_URI}/#{file_id}?fields=representations"
+      file, response = get(uri, x_rep_hints: "#{representation}")
+      file
+    end
 
     def thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
       file_id = ensure_id(file)

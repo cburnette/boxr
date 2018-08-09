@@ -12,7 +12,7 @@ module Boxr
       folder = folder_from_path(path_items.join('/'))
 
       files = folder_items(folder, fields: [:id, :name]).files
-      file = files.select{|f| f.name == file_name}.first
+      file = files.select{|f| f.name.casecmp?(file_name) }.first
       raise BoxrError.new(boxr_message: "File not found: '#{file_name}'") if file.nil?
       file
     end

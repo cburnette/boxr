@@ -79,18 +79,28 @@ module Boxr
         uri = "#{FILES_URI}/#{file_id}/content"
         query = {}
         query[:version] = version unless version.nil?
+
+        start_time = Time.now.to_f
         body_json, response = get(uri, query: query, success_codes: [302,202], process_response: false, follow_redirect: false) #we don't want httpclient to automatically follow the redirect; we need to grab it
+        end_time = Time.now.to_f
+        total_time = end_time - start_time
+        Rails.logger.info("Boxr Download - First Response Status: #{response.status} - Total Time: #{total_time.round(2)}")
 
         if(response.status==302)
           location = response.header['Location'][0]
 
           if(follow_redirect)
+            second_start_time = Time.now.to_f
             file, response = get(location, process_response: false)
+            second_end_time = Time.now.to_f
+            second_total_time = second_end_time - second_start_time
+            Rails.logger.info("Boxr Download - Follow Redirect Response Status: #{response.status} - Total Time: #{second_total_time.round(2)}")
           else
             return location #simply return the url
           end
         elsif(response.status==202)
           retry_after_seconds = response.header['Retry-After'][0]
+          Rails.logger.info("Boxr Download - Retry Res Code: #{response.status} - Retry After Seconds: #{retry_after_seconds}")
           sleep retry_after_seconds.to_i
         end
       end until file

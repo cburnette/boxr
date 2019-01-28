@@ -4,19 +4,19 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'boxr/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "boxr"
+  spec.name          = 'boxr'
   spec.version       = Boxr::VERSION
-  spec.authors       = ["Chad Burnette"]
-  spec.email         = ["chadburnette@me.com"]
-  spec.summary       = "A Ruby client library for the Box V2 Content API."
+  spec.authors       = ['Chad Burnette']
+  spec.email         = ['chadburnette@me.com']
+  spec.summary       = 'A Ruby client library for the Box V2 Content API.'
   spec.description   = ""
-  spec.homepage      = "https://github.com/cburnette/boxr"
-  spec.license       = "MIT"
+  spec.homepage      = 'https://github.com/cburnette/boxr'
+  spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
-  spec.require_paths = ["lib"]
+  spec.require_paths = ['lib']
 
   spec.required_ruby_version = '~> 2.0'
 

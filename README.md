@@ -44,6 +44,7 @@ items.each {|i| puts i.name}
 ### Creating a client
 There are a few different ways to create a Boxr client.  The simplest is to use a Box Developer Token (you generate these from your Box app's General Information page).  They last for 60 minutes and you don't have to go through OAuth2.
 
+#### Basic Client
 ```ruby
 client = Boxr::Client.new('yPDWOvnumUFaKIMrNBg6PGJpWXC0oaFW')
 
@@ -53,6 +54,7 @@ client = Boxr::Client.new('yPDWOvnumUFaKIMrNBg6PGJpWXC0oaFW')
 client = Boxr::Client.new  #uses ENV['BOX_DEVELOPER_TOKEN']
 ```
 
+#### Persistent Client
 The next way is to use an access token retrieved after going through the OAuth2 process.  If your application is going to handle refreshing the tokens in a scheduled way (more on this later) then this is the way to go.
 
 ```ruby
@@ -82,7 +84,42 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # hold the id of the user associated with this Boxr client.  When the callback is invoked this value
 # will be provided.
 ```
-Here's the complete method signature to initialize an instance of Boxr::Client
+
+#### Service Account (App Auth) Client
+
+App Auth allows an app to fully manage the Box accounts of its users; they do not
+have direct login credentials to Box and all operations are performed through the API
+using a JWT grant.
+
+You can get all these keys from your application's JSON configuration file in the [Box Developer Console][dev-console].
+
+```ruby
+# Get the service account client, used to create and manage app user accounts
+# The enterprise ID is pre-populated by the JSON configuration,
+# so you don't need to specify it here
+service_account_client = Boxr::get_enterprise_token(
+  private_key: ENV['JWT_PRIVATE_KEY'],
+  private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+  public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
+  enterprise_id: ENV['BOX_ENTERPRISE_ID'],
+  client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET']
+)
+
+# Get an app user client
+app_user_id = 'id of an application user created by your service_account_client'
+Boxr::get_user_token(app_user_id,
+  private_key: ENV['JWT_PRIVATE_KEY'],
+  private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+  public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
+  client_id: ENV['BOX_CLIENT_ID'],
+  client_secret: ENV['BOX_CLIENT_SECRET']
+)
+```
+
+#### Authenticate Method Signature
+
+Here's the complete method signature to initialize an instance of Boxr::Clientpp Auth Client
+
 ```ruby
 initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],
             refresh_token: nil,

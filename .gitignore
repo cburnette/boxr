@@ -17,3 +17,4 @@
 *.o
 *.a
 mkmf.log
+boxr-secrets.yml

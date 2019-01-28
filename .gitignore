@@ -1,6 +1,5 @@
 /.bundle/
 /.yardoc
-/Gemfile.lock
 /.ruby-gemset
 /.env.test
 /.env

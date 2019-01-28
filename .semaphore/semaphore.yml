@@ -1,0 +1,45 @@
+version: v1.0
+name: Boxr
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+execution_time_limit:
+  minutes: 30
+
+blocks:
+  - name: Bundle caching (do not change)
+    execution_time_limit:
+      minutes: 10
+    task:
+      secrets:
+        - name: boxr-secrets
+      jobs:
+        - name: bundle install & cache
+          commands:
+            - checkout --use-cache
+            - sem-version ruby $(cat .ruby-version)
+            - gem install bundler --no-document --version $(tail -n 1 Gemfile.lock) | sed -e 's/^[[:space:]]*//'
+            - cache restore gems-$(checksum Gemfile.lock)
+            - bundle install --frozen --deployment
+            - cache store gems-$(checksum Gemfile.lock) vendor/bundle
+        - name: audit
+          commands:
+            - bundle exec bundle-audit check --update
+  - name: Unit tests
+    execution_time_limit:
+      minutes: 15
+    task:
+      secrets:
+        - name: boxr-secrets
+      prologue:
+        commands:
+          - checkout --use-cache
+          - sem-version ruby $(cat .ruby-version)
+          - gem install bundler --no-document --version $(tail -n 1 Gemfile.lock) | sed -e 's/^[[:space:]]*//'
+          - cache restore gems-$(checksum Gemfile.lock)
+          - bundle install --frozen --deployment
+      jobs:
+        - name: RSpec
+          commands:
+            - bundle exec rspec

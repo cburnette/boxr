@@ -4,7 +4,7 @@ module Boxr
     def current_user(fields: [])
       uri = "#{USERS_URI}/me"
       query = build_fields_query(fields, USER_FIELDS_QUERY)
-      
+
       user, response = get(uri, query: query)
       user
     end
@@ -14,7 +14,7 @@ module Boxr
       user_id = ensure_id(user_id)
       uri = "#{USERS_URI}/#{user_id}"
       query = build_fields_query(fields, USER_FIELDS_QUERY)
-      
+
       user, response = get(uri, query: query)
       user
     end
@@ -30,7 +30,7 @@ module Boxr
       else
         query[:offset] = offset
         query[:limit] = limit
-        
+
         users, response = get(uri, query: query)
         users['entries']
       end
@@ -49,7 +49,7 @@ module Boxr
       attributes[:language] = language unless language.nil?
       attributes[:is_sync_enabled] = is_sync_enabled unless is_sync_enabled.nil?
       attributes[:job_title] = job_title unless job_title.nil?
-      attributes[:phone] = phone unless phone.nil? 
+      attributes[:phone] = phone unless phone.nil?
       attributes[:address] = address unless address.nil?
       attributes[:space_amount] = space_amount unless space_amount.nil?
       attributes[:tracking_codes] = tracking_codes unless tracking_codes.nil?
@@ -57,7 +57,7 @@ module Boxr
       attributes[:is_external_collab_restricted] = is_external_collab_restricted unless is_external_collab_restricted.nil?
       attributes[:status] = status unless status.nil?
       attributes[:timezone] = timezone unless timezone.nil?
-      attributes[:is_exempt_from_device_limits] = is_exempt_from_device_limits unless is_exempt_from_device_limits.nil? 
+      attributes[:is_exempt_from_device_limits] = is_exempt_from_device_limits unless is_exempt_from_device_limits.nil?
       attributes[:is_exempt_from_login_verification] = is_exempt_from_login_verification unless is_exempt_from_login_verification.nil?
       attributes[:is_platform_access_only] = is_platform_access_only unless is_platform_access_only.nil?
 
@@ -73,9 +73,9 @@ module Boxr
       user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}"
       query = {notify: notify} unless notify.nil?
-      
+
       attributes = {}
-      attributes[:enterprise] = nil if enterprise.nil? #this is a special condition where setting this to nil means to roll this user out of the enterprise 
+      attributes[:enterprise] = nil if enterprise.nil? #this is a special condition where setting this to nil means to roll this user out of the enterprise
       attributes[:name] = name unless name.nil?
       attributes[:role] = role unless role.nil?
       attributes[:language] = language unless language.nil?
@@ -107,32 +107,5 @@ module Boxr
       result, response = delete(uri, query: query)
       result
     end
-
-    def email_aliases_for_user(user)
-      user_id = ensure_id(user)
-      uri = "#{USERS_URI}/#{user_id}/email_aliases"
-
-      aliases, response = get(uri)
-      aliases['entries']
-    end
-
-    def add_email_alias_for_user(user, email)
-      user_id = ensure_id(user)
-      uri = "#{USERS_URI}/#{user_id}/email_aliases"
-      attributes = {email: email}
-
-      updated_user, response = post(uri, attributes)
-      updated_user
-    end
-
-    def remove_email_alias_for_user(user, email_alias)
-      user_id = ensure_id(user)
-      email_alias_id = ensure_id(email_alias)
-      uri = "#{USERS_URI}/#{user_id}/email_aliases/#{email_alias_id}"
-
-      result, response = delete(uri)
-      result
-    end
-
   end
 end

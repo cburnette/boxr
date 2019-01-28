@@ -23,8 +23,6 @@ blocks:
             - cache restore gems-$(checksum Gemfile.lock)
             - bundle install --frozen --deployment
             - cache store gems-$(checksum Gemfile.lock) vendor/bundle
-        - name: audit
-          commands:
             - bundle exec bundle-audit check --update
   - name: Unit tests
     execution_time_limit:

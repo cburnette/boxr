@@ -145,6 +145,5 @@ module Boxr
       result, response = delete(uri)
       result
     end
-
   end
 end

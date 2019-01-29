@@ -97,12 +97,13 @@ You can get all these keys from your application's JSON configuration file in th
 # Get the service account client, used to create and manage app user accounts
 # The enterprise ID is pre-populated by the JSON configuration,
 # so you don't need to specify it here
-enterprise_token = Boxr::get_enterprise_token
+enterprise_token = Boxr::get_enterprise_token.access_token
 service_account_client = Boxr::Client.new(enterprise_token) 
 
 # Get an app user client
-app_user_id = 'id of an application user created by your service_account_client'
-app_user_token = Boxr::get_user_token(app_user_id, is_platform_access_only: true)
+app_user        = service_account_client.create_user('User Name', 'some@email.com', is_platform_access_only: true))
+app_user_id     = app_user.id
+app_user_token  = Boxr::get_user_token(app_user_id, is_platform_access_only: true).access_token
 app_user_client = Boxr::Client.new(app_user_token)
 ```
 

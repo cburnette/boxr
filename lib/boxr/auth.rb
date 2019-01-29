@@ -2,6 +2,7 @@ module Boxr
   JWT_GRANT_TYPE='urn:ietf:params:oauth:grant-type:jwt-bearer'
   TOKEN_EXCHANGE_TOKEN_TYPE='urn:ietf:params:oauth:token-type:access_token'
   TOKEN_EXCHANGE_GRANT_TYPE='urn:ietf:params:oauth:grant-type:token-exchange'
+  UI_ELEMENT_SCOPES=%w(annotation_edit annotation_view_all annotation_view_self base_explorer base_picker base_preview base_upload item_delete item_download item_preview item_rename item_share item_upload)
 
 
   def self.oauth_url(state, host: 'app.box.com', response_type: 'code', scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
@@ -66,6 +67,10 @@ module Boxr
     }
     params[:resource] = resource_url unless resource_url.nil?
     auth_post(uri, URI.encode_www_form(params))
+  end
+
+  def self.downscope_token_for_box_ui_element(subject_token, folder_id)
+    downscope_token(subject_token, scopes: UI_ELEMENT_SCOPES, folder_id: folder_id)
   end
 
   class << self

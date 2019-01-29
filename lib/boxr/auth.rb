@@ -1,20 +1,22 @@
 module Boxr
+  JWT_GRANT_TYPE='urn:ietf:params:oauth:grant-type:jwt-bearer'
+  TOKEN_EXCHANGE_TOKEN_TYPE='urn:ietf:params:oauth:token-type:access_token'
+  TOKEN_EXCHANGE_GRANT_TYPE='urn:ietf:params:oauth:grant-type:token-exchange'
 
-  JWT_GRANT_TYPE="urn:ietf:params:oauth:grant-type:jwt-bearer"
 
-  def self.oauth_url(state, host: "app.box.com", response_type: "code", scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
+  def self.oauth_url(state, host: 'app.box.com', response_type: 'code', scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
     template = Addressable::Template.new("https://{host}/api/oauth2/authorize{?query*}")
 
-    query = {"response_type" => "#{response_type}", "state" => "#{state}", "client_id" => "#{client_id}"}
-    query["scope"] = "#{scope}" unless scope.nil?
-    query["folder_id"] = "#{folder_id}" unless folder_id.nil?
-    
-    uri = template.expand({"host" => "#{host}", "query" => query})
+    query = { 'response_type' => "#{response_type}", 'state' => "#{state}", 'client_id' => "#{client_id}" }
+    query['scope'] = "#{scope}" unless scope.nil?
+    query['folder_id'] = "#{folder_id}" unless folder_id.nil?
+
+    uri = template.expand({'host' => "#{host}", "query" => query})
     uri
   end
 
   def self.get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
-    uri = "https://api.box.com/oauth2/token"
+    uri = 'https://api.box.com/oauth2/token'
     body = "grant_type=#{grant_type}&client_id=#{client_id}&client_secret=#{client_secret}"
     body = body + "&code=#{code}" unless code.nil?
     body = body + "&scope=#{scope}" unless scope.nil?
@@ -25,10 +27,10 @@ module Boxr
   end
 
   def self.get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
-                                public_key_id: ENV['JWT_PUBLIC_KEY_ID'], enterprise_id: ENV['BOX_ENTERPRISE_ID'], 
+                                public_key_id: ENV['JWT_PUBLIC_KEY_ID'], enterprise_id: ENV['BOX_ENTERPRISE_ID'],
                                 client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
-    assertion = jwt_assertion(unlocked_private_key, client_id, enterprise_id, "enterprise", public_key_id)
+    assertion = jwt_assertion(unlocked_private_key, client_id, enterprise_id, 'enterprise', public_key_id)
     get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, client_id: client_id, client_secret: client_secret)
   end
 
@@ -40,17 +42,30 @@ module Boxr
   end
 
   def self.refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
-    uri = "https://api.box.com/oauth2/token"
+    uri = 'https://api.box.com/oauth2/token'
     body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{client_id}&client_secret=#{client_secret}"
 
     auth_post(uri, body)
   end
 
   def self.revoke_tokens(token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
-    uri = "https://api.box.com/oauth2/revoke"
+    uri = 'https://api.box.com/oauth2/revoke'
     body = "client_id=#{client_id}&client_secret=#{client_secret}&token=#{token}"
 
     auth_post(uri, body)
+  end
+
+  def self.downscope_token(subject_token, scopes:, folder_id: nil)
+    resource_url = !!folder_id ? "#{Boxr::Client::FOLDERS_URI}/#{folder_id}" : nil
+    uri = 'https://api.box.com/oauth2/token'
+    params = {
+      subject_token: subject_token,
+      subject_token_type: TOKEN_EXCHANGE_TOKEN_TYPE,
+      scope: scopes.join(' '),
+      grant_type: TOKEN_EXCHANGE_GRANT_TYPE
+    }
+    params[:resource] = resource_url unless resource_url.nil?
+    auth_post(uri, URI.encode_www_form(params))
   end
 
   class << self
@@ -74,7 +89,7 @@ module Boxr
 
     additional_headers = {}
     additional_headers['kid'] = public_key_id unless public_key_id.nil?
-    
+
     JWT.encode(payload, private_key, "RS256", additional_headers)
   end
 
@@ -83,7 +98,7 @@ module Boxr
 
     res = BOX_CLIENT.post(uri, body: body)
 
-    if(res.status==200)
+    if(res.status == 200)
       body_json = JSON.load(res.body)
       return BoxrMash.new(body_json)
     else

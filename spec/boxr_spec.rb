@@ -54,7 +54,7 @@ describe Boxr::Client do
       BOX_CLIENT.delete_user(u, force: true)
     end
     sleep BOX_SERVER_SLEEP
-    test_user = BOX_CLIENT.create_user(TEST_USER_NAME, login: TEST_USER_LOGIN)
+    test_user = BOX_CLIENT.create_user(TEST_USER_NAME, login: TEST_USER_LOGIN, is_platform_access_only: true)
     @test_user = test_user
 
     all_groups = BOX_CLIENT.groups
@@ -506,24 +506,33 @@ describe Boxr::Client do
   it "invokes file metadata operations" do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
 
-    puts "create metadata"
-    meta = {"a" => "hello", "b" => "world"}
+    puts 'create metadata'
+    meta = { 'a' => 'hello', 'b' => 'world' }
     metadata = BOX_CLIENT.create_metadata(test_file, meta)
     expect(metadata.a).to eq("hello")
 
-    puts "update metadata"
-    metadata = BOX_CLIENT.update_metadata(test_file, {op: :replace, path: "/b", value: "there"})
-    expect(metadata.b).to eq("there")
-    metadata = BOX_CLIENT.update_metadata(test_file, [{op: :replace, path: "/b", value: "friend"}])
-    expect(metadata.b).to eq("friend")
+    puts 'update metadata'
+    metadata = BOX_CLIENT.update_metadata(test_file, { op: :replace, path: '/b', value: 'there' })
+    expect(metadata.b).to eq('there')
+    metadata = BOX_CLIENT.update_metadata(test_file, [{ op: :replace, path: '/b', value: 'friend' }])
+    expect(metadata.b).to eq('friend')
 
-    puts "get metadata"
+    puts 'get metadata'
     metadata = BOX_CLIENT.metadata(test_file)
-    expect(metadata.a).to eq("hello")
+    expect(metadata.a).to eq('hello')
 
-    puts "delete metadata"
+    puts 'delete metadata'
     result = BOX_CLIENT.delete_metadata(test_file)
     expect(result).to eq({})
+  end
+
+  it 'requests downscope tokens' do
+    app_user_id = @test_user.id
+    jwt_token = Boxr::get_user_token(app_user_id).access_token
+    scopes = %w(item_upload item_preview base_explorer)
+    downscope_token = Boxr::downscope_token(jwt_token, scopes: scopes)
+    expect(downscope_token.access_token).to_not be_nil
+    expect(downscope_token.restricted_to).to be_kind_of(Array)
   end
 
   #rake spec SPEC_OPTS="-e \"invokes folder metadata operations"\"

@@ -531,6 +531,11 @@ describe Boxr::Client do
     downscope_token = Boxr::downscope_token(jwt_token, scopes: scopes)
     expect(downscope_token.access_token).to_not be_nil
     expect(downscope_token.restricted_to).to be_kind_of(Array)
+
+    app_user_client = Boxr::Client.new(jwt_token)
+    app_user_folder = app_user_client.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
+
+    ui_element_downscope_token = Boxr::downscope_token_for_box_ui_element(jwt_token, app_user_folder.id)
   end
 
   #rake spec SPEC_OPTS="-e \"invokes folder metadata operations"\"

@@ -97,24 +97,13 @@ You can get all these keys from your application's JSON configuration file in th
 # Get the service account client, used to create and manage app user accounts
 # The enterprise ID is pre-populated by the JSON configuration,
 # so you don't need to specify it here
-service_account_client = Boxr::get_enterprise_token(
-  private_key: ENV['JWT_PRIVATE_KEY'],
-  private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
-  public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
-  enterprise_id: ENV['BOX_ENTERPRISE_ID'],
-  client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET']
-)
+enterprise_token = Boxr::get_enterprise_token
+service_account_client = Boxr::Client.new(enterprise_token) 
 
 # Get an app user client
 app_user_id = 'id of an application user created by your service_account_client'
-Boxr::get_user_token(app_user_id,
-  is_platform_access_only: true,
-  private_key: ENV['JWT_PRIVATE_KEY'],
-  private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
-  public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
-  client_id: ENV['BOX_CLIENT_ID'],
-  client_secret: ENV['BOX_CLIENT_SECRET']
-)
+app_user_token = Boxr::get_user_token(app_user_id, is_platform_access_only: true)
+app_user_client = Boxr::Client.new(app_user_token)
 ```
 
 #### Authenticate Method Signature

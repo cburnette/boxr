@@ -36,10 +36,10 @@ describe Boxr::Client do
   TEST_WEB_URL2 = 'https://www.google.com'
 
   before(:each) do
-    puts "-----> Resetting Box Environment"
+    puts '-----> Resetting Box Environment'
     sleep BOX_SERVER_SLEEP
     root_folders = BOX_CLIENT.root_folder_items.folders
-    test_folder = root_folders.find{|f| f.name == TEST_FOLDER_NAME}
+    test_folder = root_folders.find{ |f| f.name == TEST_FOLDER_NAME }
     if(test_folder)
       BOX_CLIENT.delete_folder(test_folder, recursive: true)
     end
@@ -47,7 +47,7 @@ describe Boxr::Client do
     @test_folder = new_folder
 
     all_users = BOX_CLIENT.all_users
-    test_users = all_users.select{|u| u.name == TEST_USER_NAME}
+    test_users = all_users.select{ |u| u.name == TEST_USER_NAME }
     test_users.each do |u|
       BOX_CLIENT.delete_user(u, force: true)
     end
@@ -56,10 +56,9 @@ describe Boxr::Client do
     @test_user = test_user
 
     all_groups = BOX_CLIENT.groups
-    test_group = all_groups.find{|g| g.name == TEST_GROUP_NAME}
-    if(test_group)
-      BOX_CLIENT.delete_group(test_group)
-    end
+    test_group = all_groups.find{ |g| g.name == TEST_GROUP_NAME }
+
+    BOX_CLIENT.delete_group(test_group) if test_group
   end
 
   # use this command to just execute this scenario
@@ -570,5 +569,32 @@ describe Boxr::Client do
     puts "perform search"
     results = BOX_CLIENT.search("sdlfjuwnsljsdfuqpoiqweouyvnnadsfkjhiuweruywerbjvhvkjlnasoifyukhenlwdflnsdvoiuawfydfjh")
     expect(results).to eq([])
+  end
+
+  it 'invokes webhook operations' do
+    puts 'create webhooks'
+    resource_id = @test_folder.id
+    type = 'folder'
+    triggers= ['FOLDER.RENAMED']
+    address =  'https://example.com'
+    new_webhook = BOX_CLIENT.create_webhook(resource_id, type, triggers, address)
+    new_webhook_id = new_webhook.id
+    expect(new_webhook.created_at).to_not be_empty
+
+    puts 'get webhooks'
+    all_webhooks = BOX_CLIENT.webhooks
+    expect(all_webhooks.entries.first.id).to eq(new_webhook_id)
+
+    single_webhook  = BOX_CLIENT.webhook(new_webhook_id)
+    expect(single_webhook.id).to eq(new_webhook_id)
+
+    puts 'update webhooks'
+    new_address = 'https://foo.com'
+    updated_webhook  = BOX_CLIENT.update_webhook(new_webhook, { address: new_address })
+    expect(updated_webhook.address).to eq(new_address)
+
+    puts 'delete webhooks'
+    deleted_webhook  = BOX_CLIENT.delete_webhook(updated_webhook)
+    expect(deleted_webhook).to be_empty
   end
 end

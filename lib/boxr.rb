@@ -22,6 +22,7 @@ require 'boxr/metadata'
 require 'boxr/events'
 require 'boxr/auth'
 require 'boxr/web_links'
+require 'boxr/webhooks'
 require 'boxr/watermarking'
 
 class BoxrCollection < Array

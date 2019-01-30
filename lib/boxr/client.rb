@@ -27,6 +27,7 @@ module Boxr
     METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
     WEB_LINKS_URI = "#{API_URI}/web_links"
+    WEBHOOKS_URI = "#{API_URI}/webhooks"
 
 
     DEFAULT_LIMIT = 100
@@ -241,7 +242,7 @@ module Boxr
 
     def processed_response(res)
       body_json = JSON.load(res.body)
-      return BoxrMash.new(body_json), res
+      [BoxrMash.new(body_json), res]
     end
 
     def build_fields_query(fields, all_fields_query)

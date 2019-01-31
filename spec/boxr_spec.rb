@@ -251,7 +251,6 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes web links operations"\"
   it 'invokes web links operations' do
     puts "create web link"
     web_link = BOX_CLIENT.create_web_link(TEST_WEB_URL, '0', name: "my new link", description: "link description...")
@@ -300,26 +299,24 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes user operations"\"
-  it "invokes user operations" do
-    puts "inspect current user"
+  it 'invokes user operations' do
+    puts 'inspect current user'
     user = BOX_CLIENT.current_user
     expect(user.status).to eq('active')
     user = BOX_CLIENT.me(fields: [:role])
     expect(user.role).to_not be_nil
 
-    puts "inspect a user"
+    puts 'inspect a user'
     user = BOX_CLIENT.user(@test_user)
     expect(user.id).to eq(@test_user.id)
 
-    puts "delete user"
+    puts 'delete user'
     result = BOX_CLIENT.delete_user(@test_user, force: true)
     expect(result).to eq({})
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes group operations"\"
-  it "invokes group operations" do
-    puts "create group"
+  it 'invokes group operations' do
+    puts 'create group'
     group = BOX_CLIENT.create_group(TEST_GROUP_NAME)
     expect(group.name).to eq(TEST_GROUP_NAME)
 
@@ -374,115 +371,112 @@ describe Boxr::Client do
     group_collaboration = BOX_CLIENT.add_collaboration(@test_folder, {id: test_group.id, type: :group}, :editor)
     expect(group_collaboration.accessible_by.id).to eq(test_group.id)
 
-    puts "delete group"
+    puts 'delete group'
     response = BOX_CLIENT.delete_group(test_group)
     expect(response).to eq({})
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes comment operations"\"
-  it "invokes comment operations" do
+  it 'invokes comment operations' do
     new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
     test_file = new_file
 
-    puts "add comment to file"
+    puts 'add comment to file'
     comment = BOX_CLIENT.add_comment_to_file(test_file, message: COMMENT_MESSAGE)
     expect(comment.message).to eq(COMMENT_MESSAGE)
     COMMENT = comment
 
-    puts "reply to comment"
+    puts 'reply to comment'
     reply = BOX_CLIENT.reply_to_comment(COMMENT, message: REPLY_MESSAGE)
     expect(reply.message).to eq(REPLY_MESSAGE)
 
-    puts "get file comments"
+    puts 'get file comments'
     comments = BOX_CLIENT.file_comments(test_file)
     expect(comments.count).to eq(2)
 
-    puts "update a comment"
+    puts 'update a comment'
     comment = BOX_CLIENT.change_comment(COMMENT, CHANGED_COMMENT_MESSAGE)
     expect(comment.message).to eq(CHANGED_COMMENT_MESSAGE)
 
-    puts "get comment info"
+    puts 'get comment info'
     comment = BOX_CLIENT.comment(COMMENT)
     expect(comment.id).to eq(COMMENT.id)
 
-    puts "delete comment"
+    puts 'delete comment'
     result = BOX_CLIENT.delete_comment(COMMENT)
     expect(result).to eq({})
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes collaborations operations"\"
-  it "invokes collaborations operations" do
-    puts "add collaboration"
+  it 'invokes collaborations operations' do
+    puts 'add collaboration'
     collaboration = BOX_CLIENT.add_collaboration(@test_folder, {id: @test_user.id, type: :user}, :viewer_uploader)
     expect(collaboration.accessible_by.id).to eq(@test_user.id)
     COLLABORATION = collaboration
 
-    puts "inspect collaboration"
+    puts 'inspect collaboration'
     collaboration = BOX_CLIENT.collaboration(COLLABORATION)
     expect(collaboration.id).to eq(COLLABORATION.id)
 
-    puts "edit collaboration"
-    collaboration = BOX_CLIENT.edit_collaboration(COLLABORATION, role: "viewer uploader")
-    expect(collaboration.role).to eq("viewer uploader")
+    puts 'edit collaboration'
+    collaboration = BOX_CLIENT.edit_collaboration(COLLABORATION, role: 'viewer uploader')
+    expect(collaboration.role).to eq('viewer uploader')
 
-    puts "inspect folder collaborations"
+    puts 'inspect folder collaborations'
     collaborations = BOX_CLIENT.folder_collaborations(@test_folder)
     expect(collaborations.count).to eq(1)
     expect(collaborations[0].id).to eq(COLLABORATION.id)
 
-    puts "remove collaboration"
+    puts 'remove collaboration'
     result = BOX_CLIENT.remove_collaboration(COLLABORATION)
     expect(result).to eq({})
     collaborations = BOX_CLIENT.folder_collaborations(@test_folder)
     expect(collaborations.count).to eq(0)
 
-    puts "inspect pending collaborations"
+    puts 'inspect pending collaborations'
     pending_collaborations = BOX_CLIENT.pending_collaborations
     expect(pending_collaborations).to eq([])
 
-    puts "add invalid collaboration"
-    expect { BOX_CLIENT.add_collaboration(@test_folder, {id: @test_user.id, type: :user}, :invalid_role)}.to raise_error
+    puts 'add invalid collaboration'
+    expect { BOX_CLIENT.add_collaboration(@test_folder, { id: @test_user.id, type: :user }, :invalid_role)}.to raise_error
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes task operations"\"
-  it "invokes task operations" do
+  it 'invokes task operations' do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
-    collaboration = BOX_CLIENT.add_collaboration(@test_folder, {id: @test_user.id, type: :user}, :editor)
+    BOX_CLIENT.add_collaboration(@test_folder, { id: @test_user.id, type: :user }, :editor)
 
-    puts "create task"
+    puts 'create task'
     new_task = BOX_CLIENT.create_task(test_file, message: TEST_TASK_MESSAGE)
     expect(new_task.message).to eq(TEST_TASK_MESSAGE)
     TEST_TASK = new_task
 
-    puts "inspect file tasks"
+    puts 'inspect file tasks'
     tasks = BOX_CLIENT.file_tasks(test_file)
     expect(tasks.first.id).to eq(TEST_TASK.id)
 
-    puts "inspect task"
+    puts 'inspect task'
     task = BOX_CLIENT.task(TEST_TASK)
     expect(task.id).to eq(TEST_TASK.id)
 
-    puts "update task"
-    NEW_TASK_MESSAGE = "new task message"
+    puts 'update task'
+    NEW_TASK_MESSAGE = 'new task message'
     updated_task = BOX_CLIENT.update_task(TEST_TASK, message: NEW_TASK_MESSAGE)
     expect(updated_task.message).to eq(NEW_TASK_MESSAGE)
 
-    puts "create task assignment"
+    puts 'create task assignment'
     task_assignment = BOX_CLIENT.create_task_assignment(TEST_TASK, assign_to: @test_user.id)
     expect(task_assignment.assigned_to.id).to eq(@test_user.id)
     TASK_ASSIGNMENT = task_assignment
 
-    puts "inspect task assignment"
+    puts 'inspect task assignment'
     task_assignment = BOX_CLIENT.task_assignment(TASK_ASSIGNMENT)
     expect(task_assignment.id).to eq(TASK_ASSIGNMENT.id)
 
-    puts "inspect task assignments"
+    puts 'inspect task assignments'
     task_assignments = BOX_CLIENT.task_assignments(TEST_TASK)
     expect(task_assignments.count).to eq(1)
     expect(task_assignments[0].id).to eq(TASK_ASSIGNMENT.id)
 
-    #TODO: can't do this test yet because the test user needs to confirm their email address before you can do this
-    puts "update task assignment"
+    # TODO: can't do this test yet because the test user needs to confirm their email address before you can do this
+    puts 'update task assignment'
     expect {
               box_client_as_test_user = Boxr::Client.new(ENV['BOX_DEVELOPER_TOKEN'], as_user_id: @test_user.id)
               new_message = "Updated task message"
@@ -490,17 +484,16 @@ describe Boxr::Client do
               expect(task_assignment.resolution_state).to eq('completed')
             }.to raise_error
 
-    puts "delete task assignment"
+    puts 'delete task assignment'
     result = BOX_CLIENT.delete_task_assignment(TASK_ASSIGNMENT)
     expect(result).to eq({})
 
-    puts "delete task"
+    puts 'delete task'
     result = BOX_CLIENT.delete_task(TEST_TASK)
     expect(result).to eq({})
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes file metadata operations"\"
-  it "invokes file metadata operations" do
+  it 'invokes file metadata operations' do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
 
     puts 'create metadata'
@@ -537,9 +530,8 @@ describe Boxr::Client do
     ui_element_downscope_token = Boxr::downscope_token_for_box_ui_element(jwt_token, app_user_folder.id)
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes folder metadata operations"\"
   #NOTE: this test will fail unless you create a metadata template called 'test' with two attributes: 'a' of type text, and 'b' of type text
-  xit "invokes folder metadata operations" do
+  xit 'invokes folder metadata operations' do
     new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, @test_folder)
 
     puts "create folder metadata"
@@ -562,8 +554,7 @@ describe Boxr::Client do
     expect(result).to eq({})
   end
 
-  #rake spec SPEC_OPTS="-e \"invokes search operations"\"
-  it "invokes search operations" do
+  it 'invokes search operations' do
     #the issue with this test is that Box can take between 5-10 minutes to index any content uploaded; this is just a smoke test
     #so we are searching for something that should return zero results
     puts "perform search"

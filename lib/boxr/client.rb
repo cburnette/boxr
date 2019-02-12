@@ -133,7 +133,7 @@ module Boxr
         end
       end until offset - total_count >= 0
 
-      entries.flatten.map{|i| BoxrMash.new(i)}
+      BoxrCollection.new(entries.flatten.map{ |i| BoxrMash.new(i) })
     end
 
     def post(uri, body, query: nil, success_codes: [201], process_body: true, content_md5: nil, content_type: nil, if_match: nil)

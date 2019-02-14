@@ -1,3 +1,4 @@
+require 'base64'
 module Boxr
 
   class Client
@@ -66,7 +67,7 @@ module Boxr
                     client_id: ENV['BOX_CLIENT_ID'],
                     client_secret: ENV['BOX_CLIENT_SECRET'],
                     enterprise_id: ENV['BOX_ENTERPRISE_ID'],
-                    jwt_private_key: ENV['JWT_PRIVATE_KEY'],
+                    jwt_private_key: Base64.strict_decode64(ENV['JWT_PRIVATE_KEY']),
                     jwt_private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
                     jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
                     identifier: nil,

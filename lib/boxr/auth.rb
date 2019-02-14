@@ -1,3 +1,4 @@
+require 'base64'
 module Boxr
   JWT_GRANT_TYPE='urn:ietf:params:oauth:grant-type:jwt-bearer'
   TOKEN_EXCHANGE_TOKEN_TYPE='urn:ietf:params:oauth:token-type:access_token'
@@ -27,7 +28,7 @@ module Boxr
     auth_post(uri, body)
   end
 
-  def self.get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+  def self.get_enterprise_token(private_key: Base64.strict_decode64(ENV['JWT_PRIVATE_KEY']), private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
                                 public_key_id: ENV['JWT_PUBLIC_KEY_ID'], enterprise_id: ENV['BOX_ENTERPRISE_ID'],
                                 client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
@@ -35,7 +36,7 @@ module Boxr
     get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, client_id: client_id, client_secret: client_secret)
   end
 
-  def self.get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
+  def self.get_user_token(user_id, private_key: Base64.strict_decode64(ENV['JWT_PRIVATE_KEY']), private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
                           public_key_id: ENV['JWT_PUBLIC_KEY_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
     assertion = jwt_assertion(unlocked_private_key, client_id, user_id, "user", public_key_id)

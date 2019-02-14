@@ -31,6 +31,14 @@ Or install it yourself as:
     $ gem install boxr
 
 ## Usage
+
+**Important**
+You must encode your private key and set that as your JWT_PRIVATE_KEY environment variable. To encode, open irb or a Rails console on do the following:
+```
+require 'base64'
+Base64.strict_encode64(private_key)
+```
+
 Super-fast instructions:
 
 1. go to http://developers.box.com

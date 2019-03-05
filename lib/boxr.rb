@@ -2,7 +2,7 @@ require 'json'
 require 'httpclient'
 require 'hashie'
 require 'addressable/template'
-require 'jwt'
+# require 'jwt'
 require 'securerandom'
 
 require 'boxr/version'

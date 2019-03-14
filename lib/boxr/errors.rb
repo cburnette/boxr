@@ -19,8 +19,10 @@ module Boxr
             @box_status = body_json["status"]
             @code = body_json["code"]
             @help_uri = body_json["help_uri"]
-            @box_message = body_json["message"]
             @request_id = body_json["request_id"]
+
+            error_details = body_json['context_info']['errors'].map { |error| error['message'] }.join(', ')
+            @box_message = "#{body_json['message']}, #{error_details}"
           end
         rescue
         end

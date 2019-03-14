@@ -588,4 +588,10 @@ describe Boxr::Client do
     deleted_webhook  = BOX_CLIENT.delete_webhook(updated_webhook)
     expect(deleted_webhook).to be_empty
   end
+
+  it 'shows detailed errors' do
+    expect do
+      BOX_CLIENT.create_folder(nil, @test_folder)
+    end.to raise_error(Boxr::BoxrError, "400: Bad Request, 'name' is required")
+  end
 end

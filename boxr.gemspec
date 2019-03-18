@@ -1,5 +1,6 @@
-# coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+
+lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'boxr/version'
 
@@ -9,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Chad Burnette']
   spec.email         = ['chadburnette@me.com']
   spec.summary       = 'A Ruby client library for the Box V2 Content API.'
-  spec.description   = ""
+  spec.description   = ''
   spec.homepage      = 'https://github.com/cburnette/boxr'
   spec.license       = 'MIT'
 

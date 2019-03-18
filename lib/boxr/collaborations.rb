@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Boxr
   class Client
-
     def folder_collaborations(folder, fields: [])
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
@@ -15,7 +16,7 @@ module Boxr
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
       query[:notify] = notify unless notify.nil?
 
-      attributes = {item: {id: folder_id, type: :folder}}
+      attributes = { item: { id: folder_id, type: :folder } }
       attributes[:accessible_by] = accessible_by
       attributes[:role] = validate_role(role)
 
@@ -52,7 +53,7 @@ module Boxr
       collaboration
     end
 
-    #these are pending collaborations for the current user; use the As-User Header to request for different users
+    # these are pending collaborations for the current user; use the As-User Header to request for different users
     def pending_collaborations(fields: [])
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
       query[:status] = :pending
@@ -60,9 +61,8 @@ module Boxr
       pending_collaborations['entries']
     end
 
-
     private
-    
+
     def validate_role(role)
       case role
       when :previewer_uploader
@@ -75,7 +75,7 @@ module Boxr
 
       role = role.to_s
       raise BoxrError.new(boxr_message: "Invalid collaboration role: '#{role}'") unless VALID_COLLABORATION_ROLES.include?(role)
-      
+
       role
     end
   end

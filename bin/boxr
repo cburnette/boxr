@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'boxr'
 require 'dotenv'; Dotenv.load
 require 'awesome_print'
 require 'irb'
 
-$boxr = Boxr::Client.new #uses ENV['BOX_DEVELOPER_TOKEN']
+$boxr = Boxr::Client.new # uses ENV['BOX_DEVELOPER_TOKEN']
 IRB.start

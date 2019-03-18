@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::WebhookValidator do
@@ -44,9 +46,7 @@ describe Boxr::WebhookValidator do
     context 'valid primary key' do
       let(:headers) do
         { 'Box-Delivery-Timestamp' => 9.minutes.ago.to_s,
-          'Box-Signature-Primary' => "MDM5N2NkMmZkYWVmYzMyODE3Yjc0OTIyNjNiYTQwM2E3OTE2ZTk1MTYzNDZm\nZWQyYTM4YTA3MmIwNjBlMjBlNA==\n"
-
-        }
+          'Box-Signature-Primary' => "MDM5N2NkMmZkYWVmYzMyODE3Yjc0OTIyNjNiYTQwM2E3OTE2ZTk1MTYzNDZm\nZWQyYTM4YTA3MmIwNjBlMjBlNA==\n" }
       end
 
       it 'returns true' do
@@ -58,8 +58,7 @@ describe Boxr::WebhookValidator do
       let(:headers) do
         { 'Box-Delivery-Timestamp' => 9.minutes.ago.to_s,
           'Box-Signature-Primary' => 'bogus',
-          'Box-Signature-Secondary' => "MjhlNjRkZWRjYTg3NDQzODFjMTViNDU4MDJjY2E4Mzk5OTM5NmY2NzU3YjBm\nNTVmOTEzM2Q4MjIxZTQ3YjM1Mg==\n"
-        }
+          'Box-Signature-Secondary' => "MjhlNjRkZWRjYTg3NDQzODFjMTViNDU4MDJjY2E4Mzk5OTM5NmY2NzU3YjBm\nNTVmOTEzM2Q4MjIxZTQ3YjM1Mg==\n" }
       end
 
       it 'returns true' do
@@ -69,23 +68,21 @@ describe Boxr::WebhookValidator do
 
     context 'invalid primary key, invalid secondary key' do
       let(:headers) do
-        { 'Box-Delivery-Timestamp'  => 9.minutes.ago.to_s,
-          'Box-Signature-Primary'   => 'bogus',
-          'Box-Signature-Secondary' => 'also bogus'
-        }
+        { 'Box-Delivery-Timestamp' => 9.minutes.ago.to_s,
+          'Box-Signature-Primary' => 'bogus',
+          'Box-Signature-Secondary' => 'also bogus' }
       end
 
       it 'returns false' do
         expect(subject).to eq(false)
       end
-  end
+    end
 
     context 'no signatures were supplied' do
       let(:headers) do
-        { 'Box-Delivery-Timestamp'  => 9.minutes.ago.to_s,
-          'Box-Signature-Primary'   => nil,
-          'Box-Signature-Secondary' => nil
-        }
+        { 'Box-Delivery-Timestamp' => 9.minutes.ago.to_s,
+          'Box-Signature-Primary' => nil,
+          'Box-Signature-Secondary' => nil }
       end
 
       it 'returns false' do
@@ -93,7 +90,6 @@ describe Boxr::WebhookValidator do
         expect(subject).to eq(false)
       end
     end
-
   end
 
   describe '#valid_message?' do

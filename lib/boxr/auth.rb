@@ -1,29 +1,30 @@
+# frozen_string_literal: true
+
 require 'base64'
 module Boxr
-  JWT_GRANT_TYPE='urn:ietf:params:oauth:grant-type:jwt-bearer'
-  TOKEN_EXCHANGE_TOKEN_TYPE='urn:ietf:params:oauth:token-type:access_token'
-  TOKEN_EXCHANGE_GRANT_TYPE='urn:ietf:params:oauth:grant-type:token-exchange'
-  UI_ELEMENT_SCOPES=%w(annotation_edit annotation_view_all annotation_view_self base_explorer base_picker base_preview base_upload item_delete item_download item_preview item_rename item_share item_upload)
-
+  JWT_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
+  TOKEN_EXCHANGE_TOKEN_TYPE = 'urn:ietf:params:oauth:token-type:access_token'
+  TOKEN_EXCHANGE_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:token-exchange'
+  UI_ELEMENT_SCOPES = %w[annotation_edit annotation_view_all annotation_view_self base_explorer base_picker base_preview base_upload item_delete item_download item_preview item_rename item_share item_upload].freeze
 
   def self.oauth_url(state, host: 'app.box.com', response_type: 'code', scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
-    template = Addressable::Template.new("https://{host}/api/oauth2/authorize{?query*}")
+    template = Addressable::Template.new('https://{host}/api/oauth2/authorize{?query*}')
 
-    query = { 'response_type' => "#{response_type}", 'state' => "#{state}", 'client_id' => "#{client_id}" }
-    query['scope'] = "#{scope}" unless scope.nil?
-    query['folder_id'] = "#{folder_id}" unless folder_id.nil?
+    query = { 'response_type' => response_type.to_s, 'state' => state.to_s, 'client_id' => client_id.to_s }
+    query['scope'] = scope.to_s unless scope.nil?
+    query['folder_id'] = folder_id.to_s unless folder_id.nil?
 
-    uri = template.expand({'host' => "#{host}", "query" => query})
+    uri = template.expand('host' => host.to_s, 'query' => query)
     uri
   end
 
-  def self.get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+  def self.get_tokens(code = nil, grant_type: 'authorization_code', assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     uri = 'https://api.box.com/oauth2/token'
     body = "grant_type=#{grant_type}&client_id=#{client_id}&client_secret=#{client_secret}"
-    body = body + "&code=#{code}" unless code.nil?
-    body = body + "&scope=#{scope}" unless scope.nil?
-    body = body + "&username=#{username}" unless username.nil?
-    body = body + "&assertion=#{assertion}" unless assertion.nil?
+    body += "&code=#{code}" unless code.nil?
+    body += "&scope=#{scope}" unless scope.nil?
+    body += "&username=#{username}" unless username.nil?
+    body += "&assertion=#{assertion}" unless assertion.nil?
 
     auth_post(uri, body)
   end
@@ -39,7 +40,7 @@ module Boxr
   def self.get_user_token(user_id, private_key: Base64.strict_decode64(ENV['JWT_PRIVATE_KEY']), private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'],
                           public_key_id: ENV['JWT_PUBLIC_KEY_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
     unlocked_private_key = unlock_key(private_key, private_key_password)
-    assertion = jwt_assertion(unlocked_private_key, client_id, user_id, "user", public_key_id)
+    assertion = jwt_assertion(unlocked_private_key, client_id, user_id, 'user', public_key_id)
     get_token(grant_type: JWT_GRANT_TYPE, assertion: assertion, client_id: client_id, client_secret: client_secret)
   end
 
@@ -75,20 +76,19 @@ module Boxr
   end
 
   class << self
-    alias :get_token :get_tokens
-    alias :refresh_token :refresh_tokens
-    alias :revoke_token :revoke_tokens
+    alias get_token get_tokens
+    alias refresh_token refresh_tokens
+    alias revoke_token revoke_tokens
   end
 
   private
-
 
   def self.jwt_assertion(private_key, iss, sub, box_sub_type, public_key_id)
     payload = {
       iss: iss,
       sub: sub,
       box_sub_type: box_sub_type,
-      aud: "https://api.box.com/oauth2/token",
+      aud: 'https://api.box.com/oauth2/token',
       jti: SecureRandom.hex(64),
       exp: (Time.now.utc + 10).to_i
     }
@@ -96,7 +96,7 @@ module Boxr
     additional_headers = {}
     additional_headers['kid'] = public_key_id unless public_key_id.nil?
 
-    JWT.encode(payload, private_key, "RS256", additional_headers)
+    JWT.encode(payload, private_key, 'RS256', additional_headers)
   end
 
   def self.auth_post(uri, body)
@@ -104,7 +104,7 @@ module Boxr
 
     res = BOX_CLIENT.post(uri, body: body)
 
-    if(res.status == 200)
+    if res.status == 200
       body_json = JSON.load(res.body)
       return BoxrMash.new(body_json)
     else
@@ -119,5 +119,4 @@ module Boxr
       OpenSSL::PKey::RSA.new(private_key, private_key_password)
     end
   end
-
 end

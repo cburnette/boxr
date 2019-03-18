@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'dotenv'; Dotenv.load
 require 'simplecov'; SimpleCov.start { add_filter "_spec" }
 require 'boxr'

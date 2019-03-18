@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Boxr
   class WebhookValidator
     attr_reader(

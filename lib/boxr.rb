@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'httpclient'
 require 'hashie'
@@ -73,7 +75,7 @@ module Boxr
   BOX_CLIENT.transparent_gzip_decompression = true
   # BOX_CLIENT.ssl_config.add_trust_ca("/Users/cburnette/code/ssh-keys/dev_root_ca.pem")
 
-  def self.turn_on_debugging(device=STDOUT)
+  def self.turn_on_debugging(device = STDOUT)
     BOX_CLIENT.debug_dev = device
     BOX_CLIENT.transparent_gzip_decompression = false
     nil

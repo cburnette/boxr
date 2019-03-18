@@ -1,17 +1,18 @@
+# frozen_string_literal: true
+
 module Boxr
   class Client
-
     def create_metadata(file, metadata, scope: :global, template: :properties)
       file_id = ensure_id(file)
       uri = "#{FILE_METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
-      metadata, response = post(uri, metadata, content_type: "application/json")
+      metadata, response = post(uri, metadata, content_type: 'application/json')
       metadata
     end
 
     def create_folder_metadata(folder, metadata, scope, template)
       folder_id = ensure_id(folder)
       uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata/#{scope}/#{template}"
-      metadata, response = post(uri, metadata, content_type: "application/json")
+      metadata, response = post(uri, metadata, content_type: 'application/json')
       metadata
     end
 
@@ -40,10 +41,10 @@ module Boxr
       file_id = ensure_id(file)
       uri = "#{FILE_METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
 
-      #in the event just one update is specified ensure that it is packaged inside an array
+      # in the event just one update is specified ensure that it is packaged inside an array
       updates = [updates] unless updates.is_a? Array
 
-      metadata, response = put(uri, updates, content_type: "application/json-patch+json")
+      metadata, response = put(uri, updates, content_type: 'application/json-patch+json')
       metadata
     end
 
@@ -51,10 +52,10 @@ module Boxr
       folder_id = ensure_id(folder)
       uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata/#{scope}/#{template}"
 
-      #in the event just one update is specified ensure that it is packaged inside an array
+      # in the event just one update is specified ensure that it is packaged inside an array
       updates = [updates] unless updates.is_a? Array
 
-      metadata, response = put(uri, updates, content_type: "application/json-patch+json")
+      metadata, response = put(uri, updates, content_type: 'application/json-patch+json')
       metadata
     end
 
@@ -83,6 +84,5 @@ module Boxr
       schema, response = get(uri)
       schema
     end
-
   end
 end

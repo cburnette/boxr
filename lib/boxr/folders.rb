@@ -1,17 +1,17 @@
+# frozen_string_literal: true
+
 module Boxr
   class Client
-
     def folder_from_path(path)
-      if(path.start_with?('/'))
-        path = path.slice(1..-1)
-      end
+      path = path.slice(1..-1) if path.start_with?('/')
 
       path_folders = path.split('/')
 
       folder = path_folders.inject(Boxr::ROOT) do |parent_folder, folder_name|
-        folders = folder_items(parent_folder, fields: [:id, :name]).folders
-        folder = folders.select{|f| f.name == folder_name}.first
+        folders = folder_items(parent_folder, fields: %i[id name]).folders
+        folder = folders.select { |f| f.name == folder_name }.first
         raise BoxrError.new(boxr_message: "Folder not found: '#{folder_name}'") if folder.nil?
+
         folder
       end
     end
@@ -24,7 +24,7 @@ module Boxr
       folder, response = get(uri, query: query)
       folder
     end
-    alias :folder :folder_from_id
+    alias folder folder_from_id
 
     def folder_items(folder, fields: [], offset: nil, limit: nil)
       folder_id = ensure_id(folder)
@@ -48,16 +48,16 @@ module Boxr
     def create_folder(name, parent)
       parent_id = ensure_id(parent)
 
-      uri = "#{FOLDERS_URI}"
-      attributes = {:name => name, :parent => {:id => parent_id}}
+      uri = FOLDERS_URI.to_s
+      attributes = { name: name, parent: { id: parent_id } }
 
       created_folder, response = post(uri, attributes)
       created_folder
     end
 
     def update_folder(folder, name: nil, description: nil, parent: nil, shared_link: nil,
-                           folder_upload_email_access: nil, owned_by: nil, sync_state: nil, tags: nil,
-                           can_non_owners_invite: nil, if_match: nil)
+                      folder_upload_email_access: nil, owned_by: nil, sync_state: nil, tags: nil,
+                      can_non_owners_invite: nil, if_match: nil)
       folder_id = ensure_id(folder)
       parent_id = ensure_id(parent)
       owned_by_id = ensure_id(owned_by)
@@ -66,10 +66,10 @@ module Boxr
       attributes = {}
       attributes[:name] = name unless name.nil?
       attributes[:description] = description unless description.nil?
-      attributes[:parent] = {id: parent_id} unless parent_id.nil?
+      attributes[:parent] = { id: parent_id } unless parent_id.nil?
       attributes[:shared_link] = shared_link unless shared_link.nil?
-      attributes[:folder_upload_email] = {access: folder_upload_email_access} unless folder_upload_email_access.nil?
-      attributes[:owned_by] = {id: owned_by_id} unless owned_by_id.nil?
+      attributes[:folder_upload_email] = { access: folder_upload_email_access } unless folder_upload_email_access.nil?
+      attributes[:owned_by] = { id: owned_by_id } unless owned_by_id.nil?
       attributes[:sync_state] = sync_state unless sync_state.nil?
       attributes[:tags] = tags unless tags.nil?
       attributes[:can_non_owners_invite] = can_non_owners_invite unless can_non_owners_invite.nil?
@@ -85,7 +85,7 @@ module Boxr
     def delete_folder(folder, recursive: false, if_match: nil)
       folder_id = ensure_id(folder)
       uri = "#{FOLDERS_URI}/#{folder_id}"
-      query = {:recursive => recursive}
+      query = { recursive: recursive }
 
       result, response = delete(uri, query: query, if_match: if_match)
       result
@@ -96,7 +96,7 @@ module Boxr
       dest_folder_id = ensure_id(dest_folder)
 
       uri = "#{FOLDERS_URI}/#{folder_id}/copy"
-      attributes = {:parent => {:id => dest_folder_id}}
+      attributes = { parent: { id: dest_folder_id } }
       attributes[:name] = name unless name.nil?
 
       new_folder, response = post(uri, attributes)
@@ -152,6 +152,5 @@ module Boxr
       uri = "#{FOLDERS_URI}/#{folder_id}"
       restore_trashed_item(uri, name, parent_id)
     end
-
   end
 end

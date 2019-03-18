@@ -1,19 +1,19 @@
+# frozen_string_literal: true
+
 module Boxr
   class Client
-
     def file_from_path(path)
-      if(path.start_with?('/'))
-        path = path.slice(1..-1)
-      end
+      path = path.slice(1..-1) if path.start_with?('/')
 
       path_items = path.split('/')
       file_name = path_items.slice!(-1)
 
       folder = folder_from_path(path_items.join('/'))
 
-      files = folder_items(folder, fields: [:id, :name]).files
-      file = files.select{|f| f.name == file_name}.first
+      files = folder_items(folder, fields: %i[id name]).files
+      file = files.select { |f| f.name == file_name }.first
       raise BoxrError.new(boxr_message: "File not found: '#{file_name}'") if file.nil?
+
       file
     end
 
@@ -24,16 +24,16 @@ module Boxr
       file, response = get(uri, query: query)
       file
     end
-    alias :file :file_from_id
+    alias file file_from_id
 
     def embed_url(file, show_download: false, show_annotations: false)
-      file_info = file_from_id(file, fields:[:expiring_embed_link])
+      file_info = file_from_id(file, fields: [:expiring_embed_link])
       url = file_info.expiring_embed_link.url + "?showDownload=#{show_download}&showAnnotations=#{show_annotations}"
       url
     end
-    alias :embed_link :embed_url
-    alias :preview_url :embed_url
-    alias :preview_link :embed_url
+    alias embed_link embed_url
+    alias preview_url embed_url
+    alias preview_link embed_url
 
     def update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil, lock: nil, if_match: nil)
       file_id = ensure_id(file)
@@ -43,7 +43,7 @@ module Boxr
       attributes = {}
       attributes[:name] = name unless name.nil?
       attributes[:description] = description unless description.nil?
-      attributes[:parent] = {id: parent_id} unless parent_id.nil?
+      attributes[:parent] = { id: parent_id } unless parent_id.nil?
       attributes[:shared_link] = shared_link unless shared_link.nil?
       attributes[:tags] = tags unless tags.nil?
       attributes[:lock] = lock unless lock.nil?
@@ -53,7 +53,7 @@ module Boxr
     end
 
     def lock_file(file, expires_at: nil, is_download_prevented: false, if_match: nil)
-      lock = {type: "lock"}
+      lock = { type: 'lock' }
       lock[:expires_at] = expires_at.to_datetime.rfc3339 unless expires_at.nil?
       lock[:is_download_prevented] = is_download_prevented unless is_download_prevented.nil?
 
@@ -63,7 +63,7 @@ module Boxr
     def unlock_file(file, if_match: nil)
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}"
-      attributes = {lock: nil}
+      attributes = { lock: nil }
 
       updated_file, response = put(uri, attributes, if_match: if_match)
       updated_file
@@ -79,17 +79,17 @@ module Boxr
         uri = "#{FILES_URI}/#{file_id}/content"
         query = {}
         query[:version] = version unless version.nil?
-        body_json, response = get(uri, query: query, success_codes: [302,202], process_response: false, follow_redirect: false) #we don't want httpclient to automatically follow the redirect; we need to grab it
+        body_json, response = get(uri, query: query, success_codes: [302, 202], process_response: false, follow_redirect: false) # we don't want httpclient to automatically follow the redirect; we need to grab it
 
-        if(response.status==302)
+        if response.status == 302
           location = response.header['Location'][0]
 
-          if(follow_redirect)
+          if follow_redirect
             file, response = get(location, process_response: false)
           else
-            return location #simply return the url
+            return location # simply return the url
           end
-        elsif(response.status==202)
+        elsif response.status == 202
           retry_after_seconds = response.header['Retry-After'][0]
           sleep retry_after_seconds.to_i
         end
@@ -107,7 +107,7 @@ module Boxr
 
       parent_id = ensure_id(parent)
 
-      filename = name ? name : File.basename(path_to_file)
+      filename = name || File.basename(path_to_file)
       preflight_check(path_to_file, filename, parent_id) if preflight_check
 
       file_info = nil
@@ -116,11 +116,11 @@ module Boxr
       File.open(path_to_file) do |file|
         content_md5 = send_content_md5 ? Digest::SHA1.file(file).hexdigest : nil
 
-        attributes = {name: filename, parent: {id: parent_id}}
+        attributes = { name: filename, parent: { id: parent_id } }
         attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
         attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
 
-        body = {attributes: JSON.dump(attributes), file: file}
+        body = { attributes: JSON.dump(attributes), file: file }
 
         file_info, response = post(FILES_UPLOAD_URI, body, process_body: false, content_md5: content_md5)
       end
@@ -162,7 +162,7 @@ module Boxr
       file_version_id = ensure_id(file_version)
 
       uri = "#{FILES_URI}/#{file_id}/versions/current"
-      attributes = {:type => 'file_version', :id => file_version_id}
+      attributes = { type: 'file_version', id: file_version_id }
       new_version, res = post(uri, attributes)
       new_version
     end
@@ -188,7 +188,7 @@ module Boxr
       parent_id = ensure_id(parent)
 
       uri = "#{FILES_URI}/#{file_id}/copy"
-      attributes = {:parent => {:id => parent_id}}
+      attributes = { parent: { id: parent_id } }
       attributes[:name] = name unless name.nil?
       new_file, res = post(uri, attributes)
       new_file
@@ -202,12 +202,12 @@ module Boxr
       query[:min_width] = min_width unless min_width.nil?
       query[:max_height] = max_height unless max_height.nil?
       query[:max_width] = max_width unless max_width.nil?
-      body, response = get(uri, query: query, success_codes: [302,202,200], process_response: false)
+      body, response = get(uri, query: query, success_codes: [302, 202, 200], process_response: false)
 
-      if(response.status==202 || response.status==302)
+      if response.status == 202 || response.status == 302
         location = response.header['Location'][0]
         thumbnail, response = get(location, process_response: false)
-      else #200
+      else # 200
         thumbnail = body
       end
 
@@ -251,22 +251,20 @@ module Boxr
       restore_trashed_item(uri, name, parent_id)
     end
 
-
     private
 
     def preflight_check(path_to_file, filename, parent_id)
       size = File.size(path_to_file)
 
-      #TODO: need to make sure that figuring out the filename from the path_to_file works for people using Windows
-      attributes = {name: filename, parent: {id: "#{parent_id}"}, size: size}
+      # TODO: need to make sure that figuring out the filename from the path_to_file works for people using Windows
+      attributes = { name: filename, parent: { id: parent_id.to_s }, size: size }
       body_json, res = options("#{FILES_URI}/content", attributes)
     end
 
     def preflight_check_new_version_of_file(path_to_file, file_id)
       size = File.size(path_to_file)
-      attributes = {size: size}
+      attributes = { size: size }
       body_json, res = options("#{FILES_URI}/#{file_id}/content", attributes)
     end
-
   end
 end

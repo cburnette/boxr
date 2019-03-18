@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module Boxr
   class Client
-
     def file_tasks(file, fields: [])
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}/tasks"
@@ -12,7 +13,7 @@ module Boxr
 
     def create_task(file, action: :review, message: nil, due_at: nil)
       file_id = ensure_id(file)
-      attributes = {item: {type: :file, id: file_id}}
+      attributes = { item: { type: :file, id: file_id } }
       attributes[:action] = action unless action.nil?
       attributes[:message] = message unless message.nil?
       attributes[:due_at] = due_at.to_datetime.rfc3339 unless due_at.nil?
@@ -27,7 +28,7 @@ module Boxr
       task, response = get(uri)
       task
     end
-    alias :task :task_from_id
+    alias task task_from_id
 
     def update_task(task, action: :review, message: nil, due_at: nil)
       task_id = ensure_id(task)
@@ -58,9 +59,9 @@ module Boxr
     def create_task_assignment(task, assign_to: nil, assign_to_login: nil)
       task_id = ensure_id(task)
       assign_to_id = ensure_id(assign_to)
-      attributes = {task: {type: :task, id: "#{task_id}"}}
-      
-      attributes[:assign_to] = {} 
+      attributes = { task: { type: :task, id: task_id.to_s } }
+
+      attributes[:assign_to] = {}
       attributes[:assign_to][:login] = assign_to_login unless assign_to_login.nil?
       attributes[:assign_to][:id] = assign_to_id unless assign_to_id.nil?
 
@@ -92,6 +93,5 @@ module Boxr
       updated_task, response = put(uri, attributes)
       updated_task
     end
-
   end
 end

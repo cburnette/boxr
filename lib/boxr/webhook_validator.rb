@@ -53,9 +53,5 @@ module Boxr
     def message_age
       current_time - delivery_time
     end
-
-    def regenerated_primary_signature
-
-    end
   end
 end

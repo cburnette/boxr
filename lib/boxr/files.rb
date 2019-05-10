@@ -128,8 +128,8 @@ module Boxr
       file_info.entries[0]
     end
 
-    def upload_new_version_of_file(path_to_file, file, name: nil, content_modified_at: nil, send_content_md5: true,
-                                    preflight_check: true, if_match: nil)
+    def upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
+                                    preflight_check: true, if_match: nil, name: nil)
       filename = name ? name : File.basename(path_to_file)
 
       file_id = ensure_id(file)

@@ -10,7 +10,7 @@ The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr
 Boxr follows Semantic Versioning since version 1.5.0
 
 ## Requirements
-This gem requires Ruby 2.0.0 or higher.  The integration tests are currently being run using MRI Ruby 2.0.0-p643 and MRI Ruby 2.2.0.
+This gem requires Ruby 2.0.0 or higher.
 
 ## Installation
 Add this line to your application's Gemfile:

@@ -13,7 +13,7 @@ module Boxr
     def add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
-      query[:notify] = :notify unless notify.nil?
+      query[:notify] = notify unless notify.nil?
 
       attributes = {item: {id: folder_id, type: :folder}}
       attributes[:accessible_by] = accessible_by

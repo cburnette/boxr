@@ -1,12 +1,16 @@
 # Boxr
-Boxr is a Ruby client library for the Box V2 Content API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.  
+Boxr is a Ruby client library for the Box V2 Content API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.
 
 The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://box-content.readme.io/).
 
 The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr/Boxr/Client).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration tests found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
 
+## Versioning
+
+Boxr follows Semantic Versioning since version 1.5.0
+
 ## Requirements
-This gem requires Ruby 2.0.0 or higher.  The integration tests are currently being run using MRI Ruby 2.0.0-p643 and MRI Ruby 2.2.0.
+This gem requires Ruby 2.0.0 or higher.
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -76,7 +80,7 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # BOX_CLIENT_ID and BOX_CLIENT_SECRET, respectively.  You can omit the two optional parameters above
 # if those are present.
 
-# You can provide another parameter called as_user. Read about what that means here: https://developers.box.com/docs/#users-as-user
+# You can provide another parameter called as_user. Read about what that means here: https://developer.box.com/reference#as-user-1
 
 # You can provide yet another parameter called identifier. This can be used, for example, to
 # hold the id of the user associated with this Boxr client.  When the callback is invoked this value
@@ -298,10 +302,12 @@ alias :user :user_from_id
 
 all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
 
-create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
+
+create_user(name, login: nil, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
             phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
             can_see_managed_users: nil, is_external_collab_restricted: nil, status: nil, timezone: nil,
-            is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil)
+            is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil,
+            is_platform_access_only: nil)
 
 
 update_user(user, notify: nil, enterprise: true, name: nil, role: nil, language: nil, is_sync_enabled: nil,

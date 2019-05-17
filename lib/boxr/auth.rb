@@ -5,7 +5,7 @@ module Boxr
   JWT_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
   TOKEN_EXCHANGE_TOKEN_TYPE = 'urn:ietf:params:oauth:token-type:access_token'
   TOKEN_EXCHANGE_GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:token-exchange'
-  UI_ELEMENT_SCOPES = %w[annotation_edit annotation_view_all annotation_view_self base_explorer base_picker base_preview base_upload item_delete item_download item_preview item_rename item_share item_upload].freeze
+  UI_ELEMENT_SCOPES = %w[annotation_edit annotation_view_all annotation_view_self base_explorer base_picker base_preview base_upload item_delete item_download item_preview item_rename item_share item_upload item_readwrite].freeze
 
   def self.oauth_url(state, host: 'app.box.com', response_type: 'code', scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
     template = Addressable::Template.new('https://{host}/api/oauth2/authorize{?query*}')

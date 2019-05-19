@@ -109,7 +109,7 @@ module Boxr
     end
 
     # As of writing, API only supports a root source folder (0)
-    def move_users_folder(user, source_folder = {id: 0}, destination_user)
+    def move_users_folder(user, source_folder = 0, destination_user)
       user_id = ensure_id(user)
       destination_user_id = ensure_id(destination_user)
       source_folder_id = ensure_id(source_folder)

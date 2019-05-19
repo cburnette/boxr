@@ -322,6 +322,8 @@ add_email_alias_for_user(user, email)
 remove_email_alias_for_user(user, email_alias)
 
 delete_user(user, notify: nil, force: nil)
+
+move_users_folder(user, source_folder = 0, destination_user)
 ```
 #### [Groups](https://box-content.readme.io/reference#group-object)
 ```ruby

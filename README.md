@@ -1,4 +1,7 @@
 # Boxr
+
+[![Gem Version](https://badge.fury.io/rb/boxr.svg)](https://badge.fury.io/rb/boxr)
+
 Boxr is a Ruby client library for the Box V2 Content API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.
 
 The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://box-content.readme.io/).

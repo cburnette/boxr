@@ -1,5 +1,5 @@
 require 'dotenv'; Dotenv.load
-require 'simplecov'; SimpleCov.start
+require 'simplecov'; SimpleCov.start { add_filter "_spec" }
 require 'boxr'
 require 'awesome_print'
 

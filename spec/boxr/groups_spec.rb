@@ -12,6 +12,10 @@ describe 'group operations' do
     test_group = groups.find{|g| g.name == TEST_GROUP_NAME}
     expect(test_group).to_not be_nil
 
+    puts "get group info"
+    group_info = BOX_CLIENT.group(test_group)
+    expect(group_info.id).to eq(test_group.id)
+
     puts "update group"
     new_name = "Test Boxr Group Renamed"
     group = BOX_CLIENT.update_group(test_group, new_name)

@@ -16,7 +16,7 @@ module Boxr
   end
 
   def self.get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
-    uri = "https://api.box.com/oauth2/token"
+    uri = Boxr::Client::AUTH_URI
     body = "grant_type=#{grant_type}&client_id=#{client_id}&client_secret=#{client_secret}"
     body = body + "&code=#{code}" unless code.nil?
     body = body + "&scope=#{scope}" unless scope.nil?
@@ -42,44 +42,29 @@ module Boxr
   end
 
   def self.refresh_tokens(refresh_token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
-    uri = "https://api.box.com/oauth2/token"
+    uri = Boxr::Client::AUTH_URI
     body = "grant_type=refresh_token&refresh_token=#{refresh_token}&client_id=#{client_id}&client_secret=#{client_secret}"
 
     auth_post(uri, body)
   end
 
   def self.revoke_tokens(token, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
-    uri = "https://api.box.com/oauth2/revoke"
+    uri = Boxr::Client::REVOKE_AUTH_URI
     body = "client_id=#{client_id}&client_secret=#{client_secret}&token=#{token}"
 
     auth_post(uri, body)
   end
 
-  # Exchange a fully-scoped token for one that is down-scoped to specific permissions,
-  # defined by the scopes passed in.  You can optionally restrict the token to a
-  # particular file.
-  #
-  # @param [String] subject_token The fully-scoped token to exchange
-  #
-  # @param [Array<String>] scopes A list of the scopes to allow in the new token
-  #
-  # @param [Integer, String] file (Optional) The ID of a file resource to restrict
-  #   the token to
-  # @return [BoxrMash]
-  def self.exchange_token(subject_token, scopes:, file: nil)
-    resource_url = ( file.present? ) ? "#{Boxr::Client::FILES_URI}/#{file}" : nil
-    uri = "https://api.box.com/oauth2/token"
+  # Exchange an existing token for a lesser-scoped token
+  def self.exchange_token(subject_token, scope, resource_id: nil, resource_type: :file)
+    uri = Boxr::Client::AUTH_URI
+    resouce_uri = resource_type == :file ? Boxr::Client::FILES_URI : Boxr::Client::FOLDERS_URI
+    resource_url = "#{resouce_uri}/#{resource_id}"
 
-    params = {
-      subject_token: subject_token,
-      subject_token_type: TOKEN_EXCHANGE_TOKEN_TYPE,
-      scope: scopes.join(' '),
-      grant_type: TOKEN_EXCHANGE_GRANT_TYPE
-    }
+    body = "subject_token=#{subject_token}&subject_token_type=#{TOKEN_EXCHANGE_TOKEN_TYPE}&scope=#{scope}&grant_type=#{TOKEN_EXCHANGE_GRANT_TYPE}"
+    body = body + "&resource=#{resource_url}" unless resource_id.nil?
 
-    params[:resource] = resource_url unless resource_url.nil?
-
-    auth_post(uri, params.to_query)
+    auth_post(uri, body)
   end
 
   class << self
@@ -96,7 +81,7 @@ module Boxr
       iss: iss,
       sub: sub,
       box_sub_type: box_sub_type,
-      aud: "https://api.box.com/oauth2/token",
+      aud: Boxr::Client::AUTH_URI,
       jti: SecureRandom.hex(64),
       exp: (Time.now.utc + 10).to_i
     }
@@ -127,5 +112,4 @@ module Boxr
       OpenSSL::PKey::RSA.new(private_key, private_key_password)
     end
   end
-
 end

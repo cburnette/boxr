@@ -8,6 +8,8 @@ module Boxr
     #UPLOAD_URI = "https://upload.wcheng.inside-box.net/api/2.0"
 
     API_URI = "https://api.box.com/2.0"
+    AUTH_URI = "https://api.box.com/oauth2/token"
+    REVOKE_AUTH_URI = "https://api.box.com/oauth2/revoke"
     UPLOAD_URI = "https://upload.box.com/api/2.0"
     FILES_URI = "#{API_URI}/files"
     FILES_UPLOAD_URI = "#{UPLOAD_URI}/files/content"

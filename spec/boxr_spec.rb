@@ -10,7 +10,11 @@ describe Boxr::Client do
 
   #REQUIRED BOX SETTINGS
   # 1. The developer token used must have admin or co-admin priviledges
+  # 1.5 In the admin settings, advanced features must be enabled (perform as user and create user access tokens)
   # 2. Enterprise settings must allow Admin and Co-admins to permanently delete content in Trash
+  # 3. In Box Admin settings, you must authorize the app.
+  #   - Admin Console > Enterprise Settings > Apps > Custom Applications > Authorize New App. Insert you client ID (API key)
+  #   - You may need to re-authorize the app if you're running into issues with user tokens
 
   #follow the directions in .env.example to set up your BOX_DEVELOPER_TOKEN
   #keep in mind it is only valid for 60 minutes

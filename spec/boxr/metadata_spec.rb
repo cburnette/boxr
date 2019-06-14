@@ -29,6 +29,8 @@ describe 'file metadata operations' do
   #NOTE: this test will fail unless you create a metadata template called 'test' with two attributes: 'a' of type text, and 'b' of type text
   it "invokes folder metadata operations" do
     new_folder = BOX_CLIENT.create_folder(SUB_FOLDER_NAME, @test_folder)
+    fields = [{displayName: "a", type: "string"},{displayName: "b", type: "string"}]
+    metadata_template = BOX_CLIENT.create_metadata_template("test", fields: fields)
 
     puts "create folder metadata"
     meta = {"a" => "hello", "b" => "world"}
@@ -47,6 +49,25 @@ describe 'file metadata operations' do
 
     puts "delete folder metadata"
     result = BOX_CLIENT.delete_folder_metadata(new_folder, "enterprise", "test")
+    expect(result).to eq({})
+
+    puts "cleanup metadata template"
+    template_key = metadata_template["templateKey"]
+    scope = metadata_template["scope"]
+    BOX_CLIENT.delete_metadata_template(scope, template_key)
+  end
+
+  #rake spec SPEC_OPTS="-e \"invokes metadata template operations"\"
+  it "invokes metadata template operations" do
+    puts "create metadata template"
+    metadata_template = BOX_CLIENT.create_metadata_template("Test Template")
+    expect(metadata_template["displayName"]).to eq("Test Template")
+
+    template_key = metadata_template["templateKey"]
+    scope = metadata_template["scope"]
+
+    puts "delete metadata template"
+    result = BOX_CLIENT.delete_metadata_template(scope, template_key)
     expect(result).to eq({})
   end
 end

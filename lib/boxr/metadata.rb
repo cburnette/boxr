@@ -84,5 +84,26 @@ module Boxr
       schema
     end
 
+    def create_metadata_template(scope, templateKey, displayName, fields: [], hidden: nil)
+      uri = "#{METADATA_TEMPLATES_URI}/schema"
+      schema = {
+        templateKey: templateKey,
+        scope: scope,
+        displayName: displayName,
+        fields: fields
+      }
+      
+      schema[:hidden] = hidden unless hidden.nil?
+
+      metadata, response = post(uri, schema, content_type: "application/json")
+      metadata
+    end
+
+    def update_metadata(scope, templateKey, operations: [])
+      uri = "#{METADATA_TEMPLATES_URI}/#{scope}/#{template_key}/schema"
+
+      metadata, response = put(uri, operations, content_type: "application/json")
+      metadata
+    end
   end
 end

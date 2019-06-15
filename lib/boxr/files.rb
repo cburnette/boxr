@@ -87,6 +87,7 @@ module Boxr
 
           if(follow_redirect)
             file_content, response = get(location, process_response: false)
+            return file_content
           else
             return location #simply return the url
           end
@@ -95,8 +96,6 @@ module Boxr
           sleep retry_after_seconds.to_i
         end
       end until file_content
-
-      file_content
     end
 
     def download_url(file, version: nil)

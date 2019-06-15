@@ -57,6 +57,9 @@ describe "file operations" do
     expect(FileUtils.identical?("./spec/test_files/#{TEST_FILE_NAME}","./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")).to eq(true)
     File.delete("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")
 
+    puts "download invalid file"
+    expect { BOX_CLIENT.download_file('INVALID_FILE_NAME.pdf') }.to raise_exception(Boxr::BoxrError)
+
     puts "upload new version of file"
     new_version = BOX_CLIENT.upload_new_version_of_file("./spec/test_files/#{TEST_FILE_NAME}", test_file)
     expect(new_version.id).to eq(test_file.id)

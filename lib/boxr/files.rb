@@ -76,25 +76,27 @@ module Boxr
     def download_file(file, version: nil, follow_redirect: true)
       file_id = ensure_id(file)
 
-      uri = "#{FILES_URI}/#{file_id}/content"
-      query = {}
-      query[:version] = version unless version.nil?
-      body_json, response = get(uri, query: query, success_codes: [302,202], process_response: false, follow_redirect: false) #we don't want httpclient to automatically follow the redirect; we need to grab it
+      begin
+        uri = "#{FILES_URI}/#{file_id}/content"
+        query = {}
+        query[:version] = version unless version.nil?
+        body_json, response = get(uri, query: query, success_codes: [302,202], process_response: false, follow_redirect: false) #we don't want httpclient to automatically follow the redirect; we need to grab it
 
-      if(response.status==302)
-        location = response.header['Location'][0]
+        if(response.status==302)
+          location = response.header['Location'][0]
 
-        if(follow_redirect)
-          file, response = get(location, process_response: false)
-        else
-          return location #simply return the url
+          if(follow_redirect)
+            file_content, response = get(location, process_response: false)
+          else
+            return location #simply return the url
+          end
+        elsif(response.status==202)
+          retry_after_seconds = response.header['Retry-After'][0]
+          sleep retry_after_seconds.to_i
         end
-      elsif(response.status==202)
-        retry_after_seconds = response.header['Retry-After'][0]
-        sleep retry_after_seconds.to_i
-      end
+      end until file_content
 
-      file
+      file_content
     end
 
     def download_url(file, version: nil)

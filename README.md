@@ -395,9 +395,11 @@ update_folder_metadata(folder, updates, scope, template)
 delete_metadata(file, scope: :global, template: :properties)
 delete_folder_metadata(folder, scope, template)
 
-enterprise_metadata
+get_enterprise_templates
+get_metadata_template_by_name(scope, template_key)
 
-metadata_schema(scope, template_key)
+create_metadata_template(display_name, template_key: nil, fields: [], hidden: nil)
+delete_metadata_template(scope, template_key)
 ```
 
 #### [Watermarking](https://box-content.readme.io/reference#watermarking)

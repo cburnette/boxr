@@ -105,12 +105,5 @@ module Boxr
       result, response = delete(uri)
       result
     end
-
-    # def update_metadata(scope, templateKey, operations: [])
-    #   uri = "#{METADATA_TEMPLATES_URI}/#{scope}/#{template_key}/schema"
-
-    #   metadata, response = put(uri, operations, content_type: "application/json")
-    #   metadata
-    # end
   end
 end

@@ -10,7 +10,7 @@ module Boxr
 
       folder = path_folders.inject(Boxr::ROOT) do |parent_folder, folder_name|
         folders = folder_items(parent_folder, fields: [:id, :name]).folders
-        folder = folders.select{|f| f.name == folder_name}.first
+        folder = folders.select{|f| f.name.downcase == folder_name.downcase }.first
         raise BoxrError.new(boxr_message: "Folder not found: '#{folder_name}'") if folder.nil?
         folder
       end

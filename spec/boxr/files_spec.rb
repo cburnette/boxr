@@ -50,12 +50,15 @@ describe "file operations" do
     expect(unlocked_file.lock).to be_nil
 
     puts "download file"
-    file = BOX_CLIENT.download_file(test_file)
+    file_content = BOX_CLIENT.download_file(test_file)
     f = File.open("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}", 'w+')
-    f.write(file)
+    f.write(file_content)
     f.close
     expect(FileUtils.identical?("./spec/test_files/#{TEST_FILE_NAME}","./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")).to eq(true)
     File.delete("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")
+
+    puts "download invalid file"
+    expect { BOX_CLIENT.download_file('INVALID_FILE_NAME.pdf') }.to raise_exception(Boxr::BoxrError)
 
     puts "upload new version of file"
     new_version = BOX_CLIENT.upload_new_version_of_file("./spec/test_files/#{TEST_FILE_NAME}", test_file)

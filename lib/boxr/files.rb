@@ -75,6 +75,7 @@ module Boxr
 
     def download_file(file, version: nil, follow_redirect: true)
       file_id = ensure_id(file)
+
       begin
         uri = "#{FILES_URI}/#{file_id}/content"
         query = {}
@@ -85,7 +86,8 @@ module Boxr
           location = response.header['Location'][0]
 
           if(follow_redirect)
-            file, response = get(location, process_response: false)
+            file_content, response = get(location, process_response: false)
+            return file_content
           else
             return location #simply return the url
           end
@@ -93,9 +95,7 @@ module Boxr
           retry_after_seconds = response.header['Retry-After'][0]
           sleep retry_after_seconds.to_i
         end
-      end until file
-
-      file
+      end until file_content
     end
 
     def download_url(file, version: nil)

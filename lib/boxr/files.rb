@@ -104,26 +104,30 @@ module Boxr
 
     def upload_file(path_to_file, parent, name: nil, content_created_at: nil, content_modified_at: nil,
                     preflight_check: true, send_content_md5: true)
-
-      parent_id = ensure_id(parent)
-
       filename = name ? name : File.basename(path_to_file)
-      preflight_check(path_to_file, filename, parent_id) if preflight_check
-
-      file_info = nil
-      response = nil
 
       File.open(path_to_file) do |file|
-        content_md5 = send_content_md5 ? Digest::SHA1.file(file).hexdigest : nil
-
-        attributes = {name: filename, parent: {id: parent_id}}
-        attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
-        attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
-
-        body = {attributes: JSON.dump(attributes), file: file}
-
-        file_info, response = post(FILES_UPLOAD_URI, body, process_body: false, content_md5: content_md5)
+        upload_file_from_io(file, parent, name: filename, content_created_at: content_created_at, content_modified_at: content_modified_at, preflight_check: preflight_check, send_content_md5: send_content_md5)
       end
+    end
+
+    def upload_file_from_io(io, parent, name:, content_created_at: nil, content_modified_at: nil, preflight_check: true, send_content_md5: true)
+      parent_id = ensure_id(parent)
+
+      preflight_check(io, name, parent_id) if preflight_check
+
+      if send_content_md5
+        content_md5 = Digest::SHA1.hexdigest(io.read)
+        io.rewind
+      end
+
+      attributes = {name: name, parent: {id: parent_id}}
+      attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
+      attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
+
+      body = {attributes: JSON.dump(attributes), file: io}
+
+      file_info, response = post(FILES_UPLOAD_URI, body, process_body: false, content_md5: content_md5)
 
       file_info.entries[0]
     end
@@ -254,8 +258,8 @@ module Boxr
 
     private
 
-    def preflight_check(path_to_file, filename, parent_id)
-      size = File.size(path_to_file)
+    def preflight_check(io, filename, parent_id)
+      size = File.size(io)
 
       #TODO: need to make sure that figuring out the filename from the path_to_file works for people using Windows
       attributes = {name: filename, parent: {id: "#{parent_id}"}, size: size}

@@ -12,6 +12,11 @@ describe "file operations" do
     new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder, name: TEST_FILE_NAME_CUSTOM)
     expect(new_file.name).to eq(TEST_FILE_NAME_CUSTOM)
 
+    puts "upload a file from IO"
+    io = File.open("./spec/test_files/#{TEST_FILE_NAME}")
+    new_file = BOX_CLIENT.upload_file_from_io(io, @test_folder, name: TEST_FILE_NAME_IO)
+    expect(new_file.name).to eq(TEST_FILE_NAME_IO)
+
     puts "get file using path"
     file = BOX_CLIENT.file_from_path("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
     expect(file.id).to eq(test_file.id)

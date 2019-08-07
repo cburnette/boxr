@@ -27,6 +27,7 @@ module Boxr
     METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
     WEB_LINKS_URI = "#{API_URI}/web_links"
+    INTEGRATION = "#{API_URI}/app_integration_assignments"
 
 
     DEFAULT_LIMIT = 100

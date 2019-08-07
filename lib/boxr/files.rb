@@ -1,6 +1,15 @@
 module Boxr
   class Client
 
+    def assign(user,id)
+      attributes = {}
+      
+      attributes[:assignee] = {type: "user", id: user}
+      attributes[:app_integration] = {type: "app_integration", id: id}
+      assignment_info, response = post(INTEGRATION, attributes)
+      assignment_info
+    end
+
     def file_from_path(path)
       if(path.start_with?('/'))
         path = path.slice(1..-1)

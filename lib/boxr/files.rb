@@ -196,13 +196,13 @@ module Boxr
     end
 
     def chunked_upload_part_from_io(io, session_id:, content_range:)
-      io.pos = content_range[0]
-      part_size = content_range[1] - content_range[0] + 1
+      io.pos = content_range.min
+      part_size = content_range.max - content_range.min + 1
       data = io.read(part_size)
       io.rewind
 
       digest = "sha=#{Digest::SHA1.base64digest(data)}"
-      range = "bytes #{content_range[0]}-#{content_range[1]}/#{io.size}"
+      range = "bytes #{content_range.min}-#{content_range.max}/#{io.size}"
 
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       body = data
@@ -251,7 +251,7 @@ module Boxr
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        chunked_upload_file_from_io(file, parent, name: filename, content_created_at: content_created_at, content_modified_at: content_modified_at, preflight_check: preflight_check)
+        chunked_upload_file_from_io(file, parent, name: filename, content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 
@@ -259,13 +259,13 @@ module Boxr
       session = nil
       commit_info = nil
 
-      session = chunked_upload_create_session_new_file_from_io(io, parent, name: name, preflight_check: preflight_check)
+      session = chunked_upload_create_session_new_file_from_io(io, parent, name: name)
 
       content_ranges = []
       offset = 0
       loop do
         limit = [offset + session.part_size, io.size].min - 1
-        content_ranges << [offset, limit]
+        content_ranges << (offset..limit)
         break if limit == io.size - 1
 
         offset = limit + 1

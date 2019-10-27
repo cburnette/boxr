@@ -162,7 +162,7 @@ module Boxr
       end
     end
 
-    def chunked_upload_create_session_new_file_from_io(io, parent, name: nil)
+    def chunked_upload_create_session_new_file_from_io(io, parent, name:)
       parent_id = ensure_id(parent)
 
       uri = "#{UPLOAD_URI}/files/upload_sessions"
@@ -180,7 +180,7 @@ module Boxr
       end
     end
 
-    def chunked_upload_create_session_new_version_from_io(io, file, name: nil)
+    def chunked_upload_create_session_new_version_from_io(io, file, name:)
       file_id = ensure_id(file)
       uri = "#{UPLOAD_URI}/files/#{file_id}/upload_sessions"
       body = {file_size: io.size, file_name: name}
@@ -255,7 +255,7 @@ module Boxr
       end
     end
 
-    def chunked_upload_file_from_io(io, parent, name: nil, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_file_from_io(io, parent, name:, content_created_at: nil, content_modified_at: nil)
       session = nil
       commit_info = nil
 

@@ -154,18 +154,16 @@ module Boxr
       file_info.entries[0]
     end
 
-    def chunked_upload_create_session_new_file(path_to_file, parent, name: nil, preflight_check: true)
+    def chunked_upload_create_session_new_file(path_to_file, parent, name: nil)
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        chunked_upload_create_session_new_file_from_io(file, parent, name: filename, preflight_check: preflight_check)
+        chunked_upload_create_session_new_file_from_io(file, parent, name: filename)
       end
     end
 
-    def chunked_upload_create_session_new_file_from_io(io, parent, name: nil, preflight_check: true)
+    def chunked_upload_create_session_new_file_from_io(io, parent, name: nil)
       parent_id = ensure_id(parent)
-
-      preflight_check(io, name, parent_id) if preflight_check
 
       uri = "#{UPLOAD_URI}/files/upload_sessions"
       body = {folder_id: parent_id, file_size: io.size, file_name: name}
@@ -232,8 +230,7 @@ module Boxr
       abort_info
     end
 
-    def chunked_upload_file(path_to_file, parent, name: nil, content_created_at: nil, content_modified_at: nil,
-                            preflight_check: true)
+    def chunked_upload_file(path_to_file, parent, name: nil, content_created_at: nil, content_modified_at: nil)
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
@@ -241,8 +238,7 @@ module Boxr
       end
     end
 
-    def chunked_upload_file_from_io(io, parent, name: nil, content_created_at: nil, content_modified_at: nil,
-                                    preflight_check: true)
+    def chunked_upload_file_from_io(io, parent, name: nil, content_created_at: nil, content_modified_at: nil)
       session = nil
       commit_info = nil
 

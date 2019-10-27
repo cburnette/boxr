@@ -172,6 +172,23 @@ module Boxr
       session_info
     end
 
+    def chunked_upload_create_session_new_version(path_to_file, file, name: nil)
+      filename = name ? name : File.basename(path_to_file)
+
+      File.open(path_to_file) do |io|
+        chunked_upload_create_session_new_version_from_io(io, file, name: filename)
+      end
+    end
+
+    def chunked_upload_create_session_new_version_from_io(io, file, name: nil)
+      file_id = ensure_id(file)
+      uri = "#{UPLOAD_URI}/files/#{file_id}/upload_sessions"
+      body = {file_size: io.size, file_name: name}
+      session_info, response = post(uri, body, content_type: "application/json")
+
+      session_info
+    end
+
     def chunked_upload_part(path_to_file, session_id:, content_range:)
       File.open(path_to_file) do |file|
         chunked_upload_part_from_io(file, session_id: session_id, content_range: content_range)

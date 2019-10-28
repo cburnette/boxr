@@ -3,6 +3,15 @@ require 'spec_helper'
 #rake spec SPEC_OPTS="-e \"invokes file operations"\"
 describe "file operations" do
   it "invokes file operations" do
+    puts "upload a large file in chunks"
+    new_file = BOX_CLIENT.chunked_upload_file("./spec/test_files/#{TEST_LARGE_FILE_NAME}", @test_folder)
+    expect(new_file.name).to eq(TEST_LARGE_FILE_NAME)
+    test_file = new_file
+
+    puts "upload new version of large file in chunks"
+    new_version = BOX_CLIENT.chunked_upload_new_version_of_file("./spec/test_files/#{TEST_LARGE_FILE_NAME}", test_file)
+    expect(new_version.id).to eq(test_file.id)
+
     puts "upload a file"
     new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
     expect(new_file.name).to eq(TEST_FILE_NAME)

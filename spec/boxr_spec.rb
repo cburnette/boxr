@@ -28,6 +28,7 @@ describe Boxr::Client do
   SUB_FOLDER_NAME = 'sub_folder_1'
   SUB_FOLDER_DESCRIPTION = 'This was created by the Boxr test suite'
   TEST_FILE_NAME = 'test file.txt'
+  TEST_LARGE_FILE_NAME = 'large test file.txt'
   TEST_FILE_NAME_CUSTOM = 'test file custom.txt'
   TEST_FILE_NAME_IO = 'test file io.txt'
   DOWNLOADED_TEST_FILE_NAME = 'downloaded test file.txt'

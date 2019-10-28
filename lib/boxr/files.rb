@@ -272,8 +272,8 @@ module Boxr
     def chunked_upload_new_version_of_file(path_to_file, file, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       filename = name ? name : File.basename(path_to_file)
 
-      File.open(path_to_file) do |file|
-        chunked_upload_new_version_of_file_from_io(file, parent, name: filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
+      File.open(path_to_file) do |io|
+        chunked_upload_new_version_of_file_from_io(io, file, name: filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 

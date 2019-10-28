@@ -31,7 +31,7 @@ module Boxr
 
     def all_folder_metadata(folder)
       folder_id = ensure_id(folder)
-      uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata/"
+      uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata"
       all_metadata, response = get(uri)
       all_metadata
     end

@@ -1,3 +1,5 @@
+require 'parallel'
+
 module Boxr
   class Client
 
@@ -247,41 +249,41 @@ module Boxr
       abort_info
     end
 
-    def chunked_upload_file(path_to_file, parent, name: nil, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_file(path_to_file, parent, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        chunked_upload_file_from_io(file, parent, name: filename, content_created_at: content_created_at, content_modified_at: content_modified_at)
+        chunked_upload_file_from_io(file, parent, name: filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 
-    def chunked_upload_file_from_io(io, parent, name:, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_file_from_io(io, parent, name:, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       session = nil
       file_info = nil
 
       session = chunked_upload_create_session_new_file_from_io(io, parent, name: name)
 
-      file_info = chunked_upload_to_session_from_io(io, session, content_created_at: nil, content_modified_at: nil)
+      file_info = chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       file_info
     ensure
       chunked_upload_abort(session_id: session.id) if file_info.nil? && !session.nil?
     end
 
-    def chunked_upload_new_version_of_file(path_to_file, file, name: nil, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_new_version_of_file(path_to_file, file, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        chunked_upload_new_version_of_file_from_io(file, parent, name: filename, content_created_at: content_created_at, content_modified_at: content_modified_at)
+        chunked_upload_new_version_of_file_from_io(file, parent, name: filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 
-    def chunked_upload_new_version_of_file_from_io(io, file, name:, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_new_version_of_file_from_io(io, file, name:, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       session = nil
       file_info = nil
 
       session = chunked_upload_create_session_new_version_from_io(io, file, name: name)
 
-      file_info = chunked_upload_to_session_from_io(io, session, content_created_at: nil, content_modified_at: nil)
+      file_info = chunked_upload_to_session_from_io(io, session, n_threads: n_threads, content_created_at: nil, content_modified_at: nil)
       file_info
     ensure
       chunked_upload_abort(session_id: session.id) if file_info.nil? && !session.nil?
@@ -388,7 +390,6 @@ module Boxr
       restore_trashed_item(uri, name, parent_id)
     end
 
-
     private
 
     def preflight_check(io, filename, parent_id)
@@ -405,7 +406,7 @@ module Boxr
       body_json, res = options("#{FILES_URI}/#{file_id}/content", attributes)
     end
 
-    def chunked_upload_to_session_from_io(io, session, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       content_ranges = []
       offset = 0
       loop do
@@ -416,14 +417,16 @@ module Boxr
         offset = limit + 1
       end
 
-      parts = content_ranges.each_with_object([]) do |content_range, result|
-        part_info = chunked_upload_part_from_io(io, session_id: session.id, content_range: content_range)
-        result << {part_id: part_info.part_id, offset: part_info.offset, size: part_info.size}
+      parts = Parallel.map(content_ranges, in_threads: n_threads) do |content_range|
+        File.open(io.path) do |io_dup|
+          part_info = chunked_upload_part_from_io(io_dup, session_id: session.id, content_range: content_range)
+
+          {part_id: part_info.part_id, offset: part_info.offset, size: part_info.size}
+        end
       end
 
       commit_info = chunked_upload_commit_from_io(io, session_id: session.id, parts: parts,
-        content_created_at: content_created_at, content_modified_at: content_modified_at)
-
+                                                  content_created_at: content_created_at, content_modified_at: content_modified_at)
       commit_info.entries[0]
     end
 

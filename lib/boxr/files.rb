@@ -436,9 +436,7 @@ module Boxr
 
       parts = Parallel.map(content_ranges, in_threads: n_threads) do |content_range|
         File.open(io.path) do |io_dup|
-          part_info = chunked_upload_part_from_io(io_dup, session.id, content_range)
-
-          {part_id: part_info.part_id, offset: part_info.offset, size: part_info.size}
+          chunked_upload_part_from_io(io_dup, session.id, content_range)
         end
       end
 

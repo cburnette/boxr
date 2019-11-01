@@ -191,7 +191,7 @@ module Boxr
       session_info
     end
 
-    def chunked_upload_get_upload_session(session_id)
+    def chunked_upload_get_session(session_id)
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       session_info, response = get(uri)
 

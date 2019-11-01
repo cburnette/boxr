@@ -160,11 +160,11 @@ module Boxr
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        chunked_upload_create_session_new_file_from_io(file, parent, name: filename)
+        chunked_upload_create_session_new_file_from_io(file, parent, filename)
       end
     end
 
-    def chunked_upload_create_session_new_file_from_io(io, parent, name:)
+    def chunked_upload_create_session_new_file_from_io(io, parent, name)
       parent_id = ensure_id(parent)
 
       uri = "#{UPLOAD_URI}/files/upload_sessions"
@@ -178,11 +178,11 @@ module Boxr
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |io|
-        chunked_upload_create_session_new_version_from_io(io, file, name: filename)
+        chunked_upload_create_session_new_version_from_io(io, file, filename)
       end
     end
 
-    def chunked_upload_create_session_new_version_from_io(io, file, name:)
+    def chunked_upload_create_session_new_version_from_io(io, file, name)
       file_id = ensure_id(file)
       uri = "#{UPLOAD_URI}/files/#{file_id}/upload_sessions"
       body = {file_size: io.size, file_name: name}
@@ -191,13 +191,20 @@ module Boxr
       session_info
     end
 
-    def chunked_upload_part(path_to_file, session_id:, content_range:)
+    def chunked_upload_get_upload_session(session_id)
+      uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
+      session_info, response = get(uri)
+
+      session_info
+    end
+
+    def chunked_upload_part(path_to_file, session_id, content_range)
       File.open(path_to_file) do |file|
-        chunked_upload_part_from_io(file, session_id: session_id, content_range: content_range)
+        chunked_upload_part_from_io(file, session_id, content_range)
       end
     end
 
-    def chunked_upload_part_from_io(io, session_id:, content_range:)
+    def chunked_upload_part_from_io(io, session_id, content_range)
       io.pos = content_range.min
       part_size = content_range.max - content_range.min + 1
       data = io.read(part_size)
@@ -213,13 +220,23 @@ module Boxr
       part_info.part
     end
 
-    def chunked_upload_commit(path_to_file, session_id:, part:, offset:, size:, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+    def chunked_upload_list_parts(session_id, limit: nil, offset: nil)
+      uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}/parts"
+      query = {}
+      query[:limit] = limit unless limit.nil?
+      query[:offset] = offset unless offset.nil?
+      parts_info, response = get(uri, query: query)
+
+      parts_info.entries
+    end
+
+    def chunked_upload_commit(path_to_file, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
       File.open(path_to_file) do |file|
-        chunked_upload_commit_from_io(file, session_id: session_id, part: part, offset: offset, size: size, content_created_at: content_created_at, content_modified_at: content_modified_at, if_match: if_match, if_non_match: if_non_match)
+        chunked_upload_commit_from_io(file, session_id, parts, content_created_at: content_created_at, content_modified_at: content_modified_at, if_match: if_match, if_non_match: if_non_match)
       end
     end
 
-    def chunked_upload_commit_from_io(io, session_id:, parts:, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+    def chunked_upload_commit_from_io(io, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
       io.pos = 0
       digest = Digest::SHA1.new
       while (buf = io.read(8 * 1024**2)) && buf.size > 0
@@ -242,7 +259,7 @@ module Boxr
       commit_info
     end
 
-    def chunked_upload_abort(session_id:)
+    def chunked_upload_abort_session(session_id)
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       abort_info, response = delete(uri)
 
@@ -253,40 +270,40 @@ module Boxr
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        chunked_upload_file_from_io(file, parent, name: filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
+        chunked_upload_file_from_io(file, parent, filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 
-    def chunked_upload_file_from_io(io, parent, name:, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_file_from_io(io, parent, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       session = nil
       file_info = nil
 
-      session = chunked_upload_create_session_new_file_from_io(io, parent, name: name)
+      session = chunked_upload_create_session_new_file_from_io(io, parent, name)
 
       file_info = chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       file_info
     ensure
-      chunked_upload_abort(session_id: session.id) if file_info.nil? && !session.nil?
+      chunked_upload_abort_session(session.id) if file_info.nil? && !session.nil?
     end
 
     def chunked_upload_new_version_of_file(path_to_file, file, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       filename = name ? name : File.basename(path_to_file)
 
       File.open(path_to_file) do |io|
-        chunked_upload_new_version_of_file_from_io(io, file, name: filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
+        chunked_upload_new_version_of_file_from_io(io, file, filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 
-    def chunked_upload_new_version_of_file_from_io(io, file, name:, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_new_version_of_file_from_io(io, file, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       session = nil
       file_info = nil
 
-      session = chunked_upload_create_session_new_version_from_io(io, file, name: name)
+      session = chunked_upload_create_session_new_version_from_io(io, file, name)
 
       file_info = chunked_upload_to_session_from_io(io, session, n_threads: n_threads, content_created_at: nil, content_modified_at: nil)
       file_info
     ensure
-      chunked_upload_abort(session_id: session.id) if file_info.nil? && !session.nil?
+      chunked_upload_abort_session(session.id) if file_info.nil? && !session.nil?
     end
 
     def versions_of_file(file)
@@ -419,13 +436,13 @@ module Boxr
 
       parts = Parallel.map(content_ranges, in_threads: n_threads) do |content_range|
         File.open(io.path) do |io_dup|
-          part_info = chunked_upload_part_from_io(io_dup, session_id: session.id, content_range: content_range)
+          part_info = chunked_upload_part_from_io(io_dup, session.id, content_range)
 
           {part_id: part_info.part_id, offset: part_info.offset, size: part_info.size}
         end
       end
 
-      commit_info = chunked_upload_commit_from_io(io, session_id: session.id, parts: parts,
+      commit_info = chunked_upload_commit_from_io(io, session.id, parts,
                                                   content_created_at: content_created_at, content_modified_at: content_modified_at)
       commit_info.entries[0]
     end

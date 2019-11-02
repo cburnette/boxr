@@ -5,6 +5,10 @@ describe 'auth operations' do
   it "invokes auth operations" do
     private_key = OpenSSL::PKey::RSA.new(File.read(ENV['JWT_PRIVATE_KEY_PATH']), ENV['JWT_PRIVATE_KEY_PASSWORD'])
 
+    puts "get oauth url"
+    oauth_url = Boxr::oauth_url('my_state', scope: 'enterprise', folder_id: 123)
+    expect(oauth_url.to_s).to match("https://app.box.com/api/oauth2/authorize?response_type=code&state=my_state&client_id=#{ENV['BOX_CLIENT_ID']}&scope=enterprise&folder_id=123")
+
     puts "get enterprise token"
     enterprise_token = Boxr::get_enterprise_token(private_key: private_key)
     expect(enterprise_token).to include('access_token', 'expires_in')

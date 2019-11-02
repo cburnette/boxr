@@ -92,8 +92,6 @@ module Boxr
   end
 
   def self.auth_post(uri, body)
-    uri = Addressable::URI.encode(uri)
-
     res = BOX_CLIENT.post(uri, body: body)
 
     if(res.status==200)

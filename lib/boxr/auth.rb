@@ -5,14 +5,13 @@ module Boxr
   TOKEN_EXCHANGE_GRANT_TYPE="urn:ietf:params:oauth:grant-type:token-exchange"
 
   def self.oauth_url(state, host: "app.box.com", response_type: "code", scope: nil, folder_id: nil, client_id: ENV['BOX_CLIENT_ID'])
-    template = Addressable::Template.new("https://{host}/api/oauth2/authorize{?query*}")
+    uri = "https://#{host}/api/oauth2/authorize"
 
-    query = {"response_type" => "#{response_type}", "state" => "#{state}", "client_id" => "#{client_id}"}
-    query["scope"] = "#{scope}" unless scope.nil?
-    query["folder_id"] = "#{folder_id}" unless folder_id.nil?
+    query = "?response_type=#{response_type}&state=#{state}&client_id=#{client_id}"
+    query = query + "&scope=#{scope}" unless scope.nil?
+    query = query + "&folder_id=#{folder_id}" unless folder_id.nil?
 
-    uri = template.expand({"host" => "#{host}", "query" => query})
-    uri
+    uri + query
   end
 
   def self.get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])

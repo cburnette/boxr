@@ -1,7 +1,6 @@
 require 'json'
 require 'httpclient'
 require 'hashie'
-require 'addressable/template'
 require 'jwt'
 require 'securerandom'
 

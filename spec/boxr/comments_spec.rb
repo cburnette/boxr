@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes comment operations"\"
 describe 'comment operations' do
   it "invokes comment operations" do

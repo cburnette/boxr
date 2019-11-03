@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 describe Boxr::Client do
   #PLEASE NOTE
   #These tests are intentionally NOT a series of unit tests.  The goal is to smoke test the entire code base

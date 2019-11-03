@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes auth operations"\"
 describe 'auth operations' do
   it "invokes auth operations" do

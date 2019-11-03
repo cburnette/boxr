@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 # rake spec SPEC_OPTS="-e \"invokes folder operations"\"
 describe "folder operations" do
   it 'invokes folder operations' do

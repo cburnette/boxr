@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes task operations"\"
 describe 'task operations' do
   it "invokes task operations" do

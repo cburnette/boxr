@@ -129,7 +129,7 @@ end
 ```
 
 ### Methods
-#### [OAuth & JWT](https://box-content.readme.io/reference#oauth-2)
+#### [OAuth & JWT](https://developer.box.com/en/reference/resources/access-token/)
 ```ruby
 #NOTE: these are all module methods
 
@@ -147,7 +147,7 @@ Boxr::get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_pass
 
 Boxr::get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], public_key_id: ENV['JWT_PUBLIC_KEY_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 ```
-#### [Folders](https://box-content.readme.io/reference#folder-object-1)
+#### [Folders](https://developer.box.com/en/reference/resources/folder/)
 ```ruby
 folder_from_path(path)
 
@@ -182,7 +182,7 @@ delete_trashed_folder(folder)
 
 restore_trashed_folder(folder, name: nil, parent: nil)
 ```
-#### [Files](https://box-content.readme.io/reference#file-object)
+#### [Files](https://developer.box.com/en/reference/resources/file/)
 ```ruby
 file_from_path(path)
 
@@ -234,7 +234,7 @@ delete_trashed_file(file)
 
 restore_trashed_file(file, name: nil, parent: nil)
 ```
-#### [Web Links](https://box-content.readme.io/reference#web-link-object)
+#### [Web Links](https://developer.box.com/en/reference/resources/web-link/)
 ```ruby
 create_web_link(url, parent, name: nil, description: nil)
 
@@ -244,7 +244,7 @@ update_web_link(web_link, url: nil, parent: nil, name: nil, description: nil)
 
 delete_web_link(web_link)
 ```
-#### [Comments](https://box-content.readme.io/reference#comment-object)
+#### [Comments](https://developer.box.com/en/reference/resources/comment/)
 ```ruby
 file_comments(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
 
@@ -259,7 +259,7 @@ alias :comment :comment_from_id
 
 delete_comment(comment)
 ```
-#### [Collaborations](https://box-content.readme.io/reference#collaboration-object)
+#### [Collaborations](https://developer.box.com/en/reference/resources/collaboration/)
 ```ruby
 folder_collaborations(folder)
 
@@ -274,7 +274,7 @@ alias :collaboration :collaboration_from_id
 
 pending_collaborations()
 ```
-#### [Events](https://box-content.readme.io/reference#events)
+#### [Events](https://developer.box.com/en/reference/resources/event/)
 ```ruby
 user_events(stream_position, stream_type: :all, limit: 800)
 
@@ -282,11 +282,11 @@ enterprise_events(created_after: nil, created_before: nil, stream_position: 0, e
 
 enterprise_events_stream(initial_stream_position, event_type: nil, limit: 500, refresh_period: 300)
 ```
-#### [Shared Items](https://box-content.readme.io/reference#get-a-shared-item)
+#### [Shared Items](https://developer.box.com/en/reference/get-shared-items/)
 ```ruby
 shared_item(shared_link, shared_link_password: nil)
 ```
-#### [Search](https://box-content.readme.io/reference#searching-for-content)
+#### [Search](https://developer.box.com/en/reference/get-search/)
 ```ruby
 search( query=nil, scope: nil, file_extensions: [],
         created_at_range_from_date: nil, created_at_range_to_date: nil,
@@ -295,7 +295,7 @@ search( query=nil, scope: nil, file_extensions: [],
         owner_user_ids: [], ancestor_folder_ids: [], content_types: [], trash_content: nil,
         mdfilters: nil, type: nil, limit: 30, offset: 0)
 ```
-#### [Users](https://box-content.readme.io/reference#user-object)
+#### [Users](https://developer.box.com/en/reference/resources/user/)
 ```ruby
 current_user(fields: [])
 alias :me :current_user
@@ -328,7 +328,7 @@ delete_user(user, notify: nil, force: nil)
 
 move_users_folder(user, source_folder = 0, destination_user)
 ```
-#### [Groups](https://box-content.readme.io/reference#group-object)
+#### [Groups](https://developer.box.com/en/reference/resources/group/)
 ```ruby
 groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
 
@@ -356,7 +356,7 @@ delete_group_membership(membership)
 
 group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
 ```
-#### [Tasks](https://box-content.readme.io/reference#task-object-1)
+#### [Tasks](https://developer.box.com/en/reference/resources/task/)
 ```ruby
 file_tasks(file, fields: [])
 
@@ -379,7 +379,7 @@ delete_task_assignment(task)
 
 update_task_assignment(task, message: nil, resolution_state: nil)
 ```
-#### [Metadata](https://box-content.readme.io/reference#metadata-object)
+#### [Metadata](https://developer.box.com/en/reference/resources/metadata/)
 ```ruby
 create_metadata(file, metadata, scope: :global, template: :properties)
 create_folder_metadata(folder, metadata, scope, template)
@@ -402,7 +402,7 @@ create_metadata_template(display_name, template_key: nil, fields: [], hidden: ni
 delete_metadata_template(scope, template_key)
 ```
 
-#### [Watermarking](https://box-content.readme.io/reference#watermarking)
+#### [Watermarking](https://developer.box.com/en/reference/resources/watermark/)
 ```ruby
 get_watermark_on_file(file)
 

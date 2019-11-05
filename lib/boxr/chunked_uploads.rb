@@ -125,7 +125,7 @@ module Boxr
 
       session = chunked_upload_create_session_new_file_from_io(io, parent, name)
 
-      file_info = chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+      file_info = chunked_upload_to_session_from_io(io, session, n_threads: n_threads, content_created_at: nil, content_modified_at: nil)
       file_info
     ensure
       chunked_upload_abort_session(session.id) if file_info.nil? && !session.nil?

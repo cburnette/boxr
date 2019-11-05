@@ -30,6 +30,20 @@ Or install it yourself as:
 
     $ gem install boxr
 
+If you're going to be using chunked uploads, you will need to add `parallel` if you want to upload multiple chunks concurrently (i.e., `n_threads > 1`). Add to Gemfile:
+
+```ruby
+gem 'parallel', '~> 1.0'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install parallel --version '~> 1.0'
+
 ## Usage
 Super-fast instructions:
 
@@ -233,6 +247,38 @@ trashed_file(file, fields: [])
 delete_trashed_file(file)
 
 restore_trashed_file(file, name: nil, parent: nil)
+```
+#### [Chunked Uploads](https://developer.box.com/en/reference/resources/session-endpoints/)
+```ruby
+chunked_upload_create_session_new_file(path_to_file, parent, name: nil)
+
+chunked_upload_create_session_new_file_from_io(io, parent, name)
+
+chunked_upload_create_session_new_version(path_to_file, file, name: nil)
+
+chunked_upload_create_session_new_version_from_io(io, file, name)
+
+chunked_upload_get_session(session_id)
+
+chunked_upload_part(path_to_file, session_id, content_range)
+
+chunked_upload_part_from_io(io, session_id, content_range)
+
+chunked_upload_list_parts(session_id, limit: nil, offset: nil)
+
+chunked_upload_commit(path_to_file, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+
+chunked_upload_commit_from_io(io, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+
+chunked_upload_abort_session(session_id)
+
+chunked_upload_file(path_to_file, parent, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+
+chunked_upload_file_from_io(io, parent, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+
+chunked_upload_new_version_of_file(path_to_file, file, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+
+chunked_upload_new_version_of_file_from_io(io, file, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
 ```
 #### [Web Links](https://developer.box.com/en/reference/resources/web-link/)
 ```ruby

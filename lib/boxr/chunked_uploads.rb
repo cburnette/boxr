@@ -153,6 +153,8 @@ module Boxr
 
     private
 
+    PARALLEL_GEM_REQUIREMENT = Gem::Requirement.create('~> 1.0').freeze
+
     def chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil, content_modified_at: nil)
       content_ranges = []
       offset = 0
@@ -164,15 +166,31 @@ module Boxr
         offset = limit + 1
       end
 
-      parts = Parallel.map(content_ranges, in_threads: n_threads) do |content_range|
-        File.open(io.path) do |io_dup|
-          chunked_upload_part_from_io(io_dup, session.id, content_range)
+      parts =
+        if n_threads > 1
+          raise BoxrError.new(boxr_message: "parallel chunked uploads requires gem parallel (#{PARALLEL_GEM_REQUIREMENT}) to be loaded") unless gem_parallel_available?
+
+          Parallel.map(content_ranges, in_threads: n_threads) do |content_range|
+            File.open(io.path) do |io_dup|
+              chunked_upload_part_from_io(io_dup, session.id, content_range)
+            end
+          end
+        else
+          content_ranges.map do |content_range|
+            chunked_upload_part_from_io(io, session.id, content_range)
+          end
         end
-      end
 
       commit_info = chunked_upload_commit_from_io(io, session.id, parts,
-        content_created_at: content_created_at, content_modified_at: content_modified_at)
+                                                  content_created_at: content_created_at, content_modified_at: content_modified_at)
       commit_info.entries[0]
+    end
+
+    def gem_parallel_available?
+      gem_spec  = Gem.loaded_specs['parallel']
+      return false if gem_spec.nil?
+
+      PARALLEL_GEM_REQUIREMENT.satisfied_by?(gem_spec.version) && defined?(Parallel)
     end
 
   end

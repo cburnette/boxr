@@ -3,7 +3,6 @@ require 'httpclient'
 require 'hashie'
 require 'addressable/template'
 require 'jwt'
-require 'parallel'
 require 'securerandom'
 
 require 'boxr/version'

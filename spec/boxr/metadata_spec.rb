@@ -18,6 +18,12 @@ describe 'file metadata operations' do
     metadata = BOX_CLIENT.metadata(test_file)
     expect(metadata.a).to eq("hello")
 
+    puts "get all metadata"
+    metadata = BOX_CLIENT.all_metadata(test_file)
+    metadata_entry = metadata['entries'].first
+    expect(metadata_entry['a']).to eq("hello")
+    expect(metadata_entry['b']).to eq("friend")
+
     puts "delete metadata"
     result = BOX_CLIENT.delete_metadata(test_file)
     expect(result).to eq({})
@@ -44,6 +50,12 @@ describe 'file metadata operations' do
     puts "get folder metadata"
     metadata = BOX_CLIENT.folder_metadata(new_folder, "enterprise", "test")
     expect(metadata.a).to eq("hello")
+
+    puts "get all folder metadata"
+    metadata = BOX_CLIENT.all_folder_metadata(new_folder)
+    metadata_entry = metadata['entries'].first
+    expect(metadata_entry['a']).to eq("hello")
+    expect(metadata_entry['b']).to eq("friend")
 
     puts "delete folder metadata"
     result = BOX_CLIENT.delete_folder_metadata(new_folder, "enterprise", "test")

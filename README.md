@@ -434,6 +434,7 @@ metadata(file, scope: :global, template: :properties)
 folder_metadata(folder, scope, template)
 
 all_metadata(file)
+all_folder_metadata(folder)
 
 update_metadata(file, updates, scope: :global, template: :properties)
 update_folder_metadata(folder, updates, scope, template)

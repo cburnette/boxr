@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes user operations"\"
 describe 'user operations' do
   it "invokes user operations" do

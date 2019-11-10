@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes file metadata operations"\"
 describe 'file metadata operations' do
   it "invokes file metadata operations" do

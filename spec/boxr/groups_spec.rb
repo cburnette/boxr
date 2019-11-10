@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes group operations"\"
 describe 'group operations' do
   it "invokes group operations" do

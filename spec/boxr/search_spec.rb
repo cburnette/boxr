@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes search operations"\"
 describe 'search operations' do
   it "invokes search operations" do

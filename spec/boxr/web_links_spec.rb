@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes web links operations"\"
 describe "web links operations" do
   it 'invokes web links operations' do

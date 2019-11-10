@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes file operations"\"
 describe "file operations" do
   it "invokes file operations" do

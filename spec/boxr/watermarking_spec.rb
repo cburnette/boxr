@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes watermarking operations"\"
 describe 'watermarking operations' do
   it 'invokes watermarking operations' do

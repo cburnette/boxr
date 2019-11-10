@@ -30,4 +30,6 @@ RSpec.configure do |config|
       BOX_CLIENT.delete_group(test_group)
     end
   end
+
+  config.filter_run_when_matching :focus
 end

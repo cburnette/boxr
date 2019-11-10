@@ -255,7 +255,6 @@ module Boxr
       restore_trashed_item(uri, name, parent_id)
     end
 
-
     private
 
     def preflight_check(io, filename, parent_id)

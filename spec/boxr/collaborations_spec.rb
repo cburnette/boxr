@@ -1,5 +1,3 @@
-require 'spec_helper'
-
 #rake spec SPEC_OPTS="-e \"invokes collaborations operations"\"
 describe 'collaborations operations' do
   it "invokes collaborations operations" do

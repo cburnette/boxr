@@ -19,6 +19,16 @@ describe "file operations" do
     file = BOX_CLIENT.file_from_path("/#{TEST_FOLDER_NAME}/#{TEST_FILE_NAME}")
     expect(file.id).to eq(test_file.id)
 
+    puts "get file using parent and name"
+    file = BOX_CLIENT.file_from_parent_and_name(test_file.parent.id, TEST_FILE_NAME)
+    expect(file.id).to eq(test_file.id)
+
+    puts "test if file exists"
+    expect(BOX_CLIENT.file_exists?(test_file.id)).to be true
+    expect(BOX_CLIENT.file_exists?(test_file.parent.id, TEST_FILE_NAME)).to be true
+    expect(BOX_CLIENT.file_exists?(test_file.id + '-oops')).to be false
+    expect(BOX_CLIENT.file_exists?(test_file.parent.id, TEST_FILE_NAME + '-oops')).to be false
+
     puts "get file download url"
     download_url = BOX_CLIENT.download_url(test_file)
     expect(download_url).to start_with("https://")

@@ -26,6 +26,25 @@ module Boxr
     end
     alias :file :file_from_id
 
+    def file_from_parent_and_name(parent, name)
+      files = folder_items(parent, fields: [:id, :name]).files
+      file = files.find { |f| f.name == name }
+      file
+    end
+
+    def file_exists?(file_or_parent, name = nil)
+      file =
+        if name.nil?
+          file_from_id(file_or_parent, fields: [:id])
+        else
+          file_from_parent_and_name(file_or_parent, name)
+        end
+
+      !file.nil?
+    rescue BoxrError => error
+      error.status == 404 ? false : raise
+    end
+
     def embed_url(file, show_download: false, show_annotations: false)
       file_info = file_from_id(file, fields:[:expiring_embed_link])
       url = file_info.expiring_embed_link.url + "?showDownload=#{show_download}&showAnnotations=#{show_annotations}"

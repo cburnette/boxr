@@ -56,10 +56,6 @@ describe 'group operations' do
     group_memberships = BOX_CLIENT.group_memberships_for_user(@test_user)
     expect(group_memberships.count).to eq(0)
 
-    puts "inspect group collaborations"
-    group_collaboration = BOX_CLIENT.add_collaboration(@test_folder, {id: test_group.id, type: :group}, :editor)
-    expect(group_collaboration.accessible_by.id).to eq(test_group.id)
-
     puts "delete group"
     response = BOX_CLIENT.delete_group(test_group)
     expect(response).to eq({})

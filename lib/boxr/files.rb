@@ -1,6 +1,15 @@
 module Boxr
   class Client
 
+    def assign(user,id)
+      attributes = {}
+      
+      attributes[:assignee] = {type: "user", id: user}
+      attributes[:app_integration] = {type: "app_integration", id: id}
+      assignment_info, response = post(INTEGRATION, attributes)
+      assignment_info
+    end
+
     def file_from_path(path)
       if(path.start_with?('/'))
         path = path.slice(1..-1)
@@ -196,6 +205,13 @@ module Boxr
       attributes[:name] = name unless name.nil?
       new_file, res = post(uri, attributes)
       new_file
+    end
+      
+    def representations(file_id,representation)
+      file_id = ensure_id(file_id)
+      uri = "#{FILES_URI}/#{file_id}?fields=representations"
+      file, response = get(uri, x_rep_hints: "#{representation}")
+      file
     end
 
     def thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)

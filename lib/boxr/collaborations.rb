@@ -1,27 +1,25 @@
 module Boxr
   class Client
 
-    def file_collaborations(file, fields: [])
+    def file_collaborations(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
       file_id = ensure_id(file)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
       uri = "#{FILES_URI}/#{file_id}/collaborations"
 
-      collaborations, response = get(uri, query: query)
-      collaborations['entries']
+      collaborations = get_all_with_pagination(uri, query: query, offset: offset, limit: limit)
     end
 
-    def folder_collaborations(folder, fields: [])
+    def folder_collaborations(folder, fields: [], offset: 0, limit: DEFAULT_LIMIT)
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
       uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
-
-      collaborations, response = get(uri, query: query)
-      collaborations['entries']
+      collaborations = get_all_with_pagination(uri, query: query, offset: offset, limit: limit)
     end
 
     def group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
       group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}/collaborations"
+
       collaborations = get_all_with_pagination(uri, offset: offset, limit: limit)
     end
 
@@ -75,9 +73,8 @@ module Boxr
       pending_collaborations['entries']
     end
 
-
     private
-    
+
     def validate_role(role)
       case role
       when :previewer_uploader
@@ -90,7 +87,7 @@ module Boxr
 
       role = role.to_s
       raise BoxrError.new(boxr_message: "Invalid collaboration role: '#{role}'") unless VALID_COLLABORATION_ROLES.include?(role)
-      
+
       role
     end
   end

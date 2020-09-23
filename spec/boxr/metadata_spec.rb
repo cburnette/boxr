@@ -76,6 +76,10 @@ describe 'file metadata operations' do
     template_key = metadata_template["templateKey"]
     scope = metadata_template["scope"]
 
+    puts "get metadata template by id"
+    metadata_template = BOX_CLIENT.get_metadata_template_by_id(metadata_template["id"])
+    expect(metadata_template["displayName"]).to eq("Test Template")
+
     puts "delete metadata template"
     result = BOX_CLIENT.delete_metadata_template(scope, template_key)
     expect(result).to eq({})

@@ -444,6 +444,7 @@ delete_folder_metadata(folder, scope, template)
 
 get_enterprise_templates
 get_metadata_template_by_name(scope, template_key)
+get_metadata_template_by_id(template_id)
 
 create_metadata_template(display_name, template_key: nil, fields: [], hidden: nil)
 delete_metadata_template(scope, template_key)

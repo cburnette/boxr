@@ -93,6 +93,13 @@ module Boxr
     end
     alias :get_metadata_template_by_name :metadata_schema
 
+    def get_metadata_template_by_id(template_id)
+      template_id = ensure_id(template_id)
+      uri = "#{METADATA_TEMPLATES_URI}/#{template_id}"
+      schema, response = get(uri)
+      schema
+    end
+
     def create_metadata_template(display_name, template_key: nil, fields: [], hidden: nil)
       uri = "#{METADATA_TEMPLATES_URI}/schema"
       schema = {

@@ -59,6 +59,10 @@ module Boxr
     GROUP_FIELDS = [:type, :id, :name, :created_at, :modified_at]
     GROUP_FIELDS_QUERY = GROUP_FIELDS.join(',')
 
+    WEB_LINK_FIELDS = [:type, :id, :created_at, :created_by, :description, :etag, :item_status, :modified_at, :modified_by,
+                       :name, :owned_by, :parent, :path_collection, :purged_at, :sequence_id, :shared_link, :trashed_at, :url]
+    WEB_LINK_FIELDS_QUERY = WEB_LINK_FIELDS.join(',')
+
     VALID_COLLABORATION_ROLES = ['editor','viewer','previewer','uploader','previewer uploader','viewer uploader','co-owner','owner']
 
 

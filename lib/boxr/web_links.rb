@@ -51,6 +51,16 @@ module Boxr
       result
     end
 
+    def trashed_web_link(web_link, fields: [])
+      web_link_id = ensure_id(web_link)
+      uri = "#{WEB_LINKS_URI}/#{web_link_id}/trash"
+      query = build_fields_query(fields, WEB_LINK_FIELDS_QUERY)
+
+      web_link, response = get(uri, query: query)
+      web_link
+    end
+    alias :get_trashed_web_link :trashed_web_link
+
     private
 
     def verify_url(item)

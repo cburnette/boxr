@@ -24,5 +24,10 @@ describe "web links operations" do
     puts "restore trashed web link"
     restored_web_link = BOX_CLIENT.restore_trashed_web_link(web_link)
     expect(restored_web_link.item_status).to eq("active")
+
+    puts "trash and permanently delete web link"
+    BOX_CLIENT.delete_web_link(web_link)
+    result = BOX_CLIENT.delete_trashed_web_link(web_link)
+    expect(result).to eq({})
   end
 end

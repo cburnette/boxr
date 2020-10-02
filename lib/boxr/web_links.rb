@@ -61,6 +61,13 @@ module Boxr
     end
     alias :get_trashed_web_link :trashed_web_link
 
+    def delete_trashed_web_link(web_link)
+      web_link_id = ensure_id(web_link)
+      uri = "#{WEB_LINKS_URI}/#{web_link_id}/trash"
+      result, response = delete(uri)
+      result
+    end
+
     def restore_trashed_web_link(web_link, name: nil, parent: nil)
       web_link_id = ensure_id(web_link)
       parent_id = ensure_id(parent)

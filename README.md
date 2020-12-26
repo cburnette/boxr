@@ -289,6 +289,12 @@ get_web_link(web_link)
 update_web_link(web_link, url: nil, parent: nil, name: nil, description: nil)
 
 delete_web_link(web_link)
+
+trashed_web_link(web_link, fields: [])
+
+delete_trashed_web_link(web_link)
+
+restore_trashed_web_link(web_link, name: nil, parent: nil)
 ```
 #### [Comments](https://developer.box.com/en/reference/resources/comment/)
 ```ruby

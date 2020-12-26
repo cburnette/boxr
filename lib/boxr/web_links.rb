@@ -51,6 +51,31 @@ module Boxr
       result
     end
 
+    def trashed_web_link(web_link, fields: [])
+      web_link_id = ensure_id(web_link)
+      uri = "#{WEB_LINKS_URI}/#{web_link_id}/trash"
+      query = build_fields_query(fields, WEB_LINK_FIELDS_QUERY)
+
+      web_link, response = get(uri, query: query)
+      web_link
+    end
+    alias :get_trashed_web_link :trashed_web_link
+
+    def delete_trashed_web_link(web_link)
+      web_link_id = ensure_id(web_link)
+      uri = "#{WEB_LINKS_URI}/#{web_link_id}/trash"
+      result, response = delete(uri)
+      result
+    end
+
+    def restore_trashed_web_link(web_link, name: nil, parent: nil)
+      web_link_id = ensure_id(web_link)
+      parent_id = ensure_id(parent)
+
+      uri = "#{WEB_LINKS_URI}/#{web_link_id}"
+      restore_trashed_item(uri, name, parent_id)
+    end
+
     private
 
     def verify_url(item)

@@ -1,10 +1,20 @@
 module Boxr
   class Client
 
-    def groups(fields: [])
+    def groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
       query = build_fields_query(fields, GROUP_FIELDS_QUERY)
-      groups = get_all_with_pagination(GROUPS_URI, query: query, offset: 0, limit: DEFAULT_LIMIT)
+      groups = get_all_with_pagination(GROUPS_URI, query: query, offset: offset, limit: limit)
     end
+
+    def group_from_id(group_id, fields: [])
+      group_id = ensure_id(group_id)
+      uri = "#{GROUPS_URI}/#{group_id}"
+      query = build_fields_query(fields, GROUP_FIELDS_QUERY)
+
+      group, response = get(uri, query: query)
+      group
+    end
+    alias :group :group_from_id
 
     def create_group(name)
       attributes = {name: name}
@@ -29,21 +39,21 @@ module Boxr
       result
     end
 
-    def group_memberships(group)
+    def group_memberships(group, offset: 0, limit: DEFAULT_LIMIT)
       group_id = ensure_id(group)
       uri = "#{GROUPS_URI}/#{group_id}/memberships"
-      memberships = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
+      memberships = get_all_with_pagination(uri, offset: offset, limit: limit)
     end
 
-    def group_memberships_for_user(user)
+    def group_memberships_for_user(user, offset: 0, limit: DEFAULT_LIMIT)
       user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}/memberships"
-      memberships = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
+      memberships = get_all_with_pagination(uri, offset: offset, limit: limit)
     end
 
-    def group_memberships_for_me
+    def group_memberships_for_me(offset: 0, limit: DEFAULT_LIMIT)
       uri = "#{USERS_URI}/me/memberships"
-      memberships = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
+      memberships = get_all_with_pagination(uri, offset: offset, limit: limit)
     end
 
     def group_membership_from_id(membership_id)
@@ -77,12 +87,6 @@ module Boxr
       uri = "#{GROUP_MEMBERSHIPS_URI}/#{membership_id}"
       result, response = delete(uri)
       result
-    end
-
-    def group_collaborations(group)
-      group_id = ensure_id(group)
-      uri = "#{GROUPS_URI}/#{group_id}/collaborations"
-      collaborations = get_all_with_pagination(uri, offset: 0, limit: DEFAULT_LIMIT)
     end
 
   end

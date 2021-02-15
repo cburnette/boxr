@@ -1,21 +1,38 @@
 module Boxr
   class Client
 
-    def folder_collaborations(folder, fields: [])
+    def folder_collaborations(folder, fields: [], offset: 0, limit: DEFAULT_LIMIT)
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
       uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
+      collaborations = get_all_with_pagination(uri, query: query, offset: offset, limit: limit)
+    end
+
+    def file_collaborations(file, fields: [], limit: DEFAULT_LIMIT, marker: nil)
+      file_id = ensure_id(file)
+      query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
+      query[:limit] = limit
+      query[:marker] = marker unless marker.nil?
+
+      uri = "#{FILES_URI}/#{file_id}/collaborations"
 
       collaborations, response = get(uri, query: query)
       collaborations['entries']
     end
 
-    def add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
-      folder_id = ensure_id(folder)
-      query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
-      query[:notify] = :notify unless notify.nil?
+    def group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
+      group_id = ensure_id(group)
+      uri = "#{GROUPS_URI}/#{group_id}/collaborations"
 
-      attributes = {item: {id: folder_id, type: :folder}}
+      collaborations = get_all_with_pagination(uri, offset: offset, limit: limit)
+    end
+
+    def add_collaboration(item, accessible_by, role, fields: [], notify: nil, type: :folder)
+      item_id = ensure_id(item)
+      query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
+      query[:notify] = notify unless notify.nil?
+
+      attributes = {item: {id: item_id, type: type}}
       attributes[:accessible_by] = accessible_by
       attributes[:role] = validate_role(role)
 
@@ -60,9 +77,8 @@ module Boxr
       pending_collaborations['entries']
     end
 
-
     private
-    
+
     def validate_role(role)
       case role
       when :previewer_uploader
@@ -75,7 +91,7 @@ module Boxr
 
       role = role.to_s
       raise BoxrError.new(boxr_message: "Invalid collaboration role: '#{role}'") unless VALID_COLLABORATION_ROLES.include?(role)
-      
+
       role
     end
   end

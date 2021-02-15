@@ -1,4 +1,4 @@
-require 'oj'
+require 'json'
 require 'httpclient'
 require 'hashie'
 require 'addressable/template'
@@ -11,6 +11,7 @@ require 'boxr/client'
 require 'boxr/shared_items'
 require 'boxr/folders'
 require 'boxr/files'
+require 'boxr/chunked_uploads'
 require 'boxr/comments'
 require 'boxr/users'
 require 'boxr/groups'
@@ -21,22 +22,34 @@ require 'boxr/tasks'
 require 'boxr/metadata'
 require 'boxr/events'
 require 'boxr/auth'
+require 'boxr/web_links'
+require 'boxr/watermarking'
 
-module Enumerable
+class BoxrCollection < Array
   def files
-    self.select{|i| i.type == 'file'}
+    collection_for_type('file')
   end
 
   def folders
-    self.select{|i| i.type == 'folder'}
+    collection_for_type('folder')
   end
 
   def web_links
-    self.select{|i| i.type == 'web_link'}
+    collection_for_type('web_link')
+  end
+
+  private
+
+  def collection_for_type(type)
+    items = select { |i| i.type == type }
+    BoxrCollection.new(items)
   end
 end
 
 class BoxrMash < Hashie::Mash
+
+  self.disable_warnings
+
   def entries
     self["entries"]
   end
@@ -47,8 +60,6 @@ class BoxrMash < Hashie::Mash
 end
 
 module Boxr
-  Oj.default_options = {:mode => :compat }
-
   #The root folder in Box is always identified by 0
   ROOT = 0
 
@@ -58,7 +69,7 @@ module Boxr
   BOX_CLIENT.cookie_manager = nil
   BOX_CLIENT.send_timeout = 3600 #one hour; needed for lengthy uploads
   BOX_CLIENT.agent_name = "Boxr/#{Boxr::VERSION}"
-  BOX_CLIENT.transparent_gzip_decompression = true 
+  BOX_CLIENT.transparent_gzip_decompression = true
   #BOX_CLIENT.ssl_config.add_trust_ca("/Users/cburnette/code/ssh-keys/dev_root_ca.pem")
 
   def self.turn_on_debugging(device=STDOUT)

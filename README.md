@@ -1,12 +1,19 @@
 # Boxr
-Boxr is a Ruby client library for the Box V2 Content API that covers 100% of the underlying REST API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.  
 
-The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://box-content.readme.io/).
+[![Gem Version](https://badge.fury.io/rb/boxr.svg)](https://badge.fury.io/rb/boxr)
+
+Boxr is a Ruby client library for the Box V2 Content API.  Box employees affectionately refer to one another as Boxers, hence the name of this gem.
+
+The purpose of this gem is to provide a clear, efficient, and intentional method of interacting with the Box Content API. As with any SDK that wraps a REST API, it is important to fully understand the Box Content API at the REST endpoint level.  You are strongly encouraged to read through the Box documentation located [here](https://developer.box.com/en/reference/).
 
 The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr/Boxr/Client).  You are also encouraged to rely heavily on the source code found in the [lib/boxr](https://github.com/cburnette/boxr/tree/master/lib/boxr) directory of this gem, as well as on the integration tests found [here](https://github.com/cburnette/boxr/blob/master/spec/boxr_spec.rb).
 
+## Versioning
+
+Boxr follows Semantic Versioning since version 1.5.0
+
 ## Requirements
-This gem requires Ruby 2.0.0 or higher.  The integration tests are currently being run using MRI Ruby 2.0.0-p643 and MRI Ruby 2.2.0.
+This gem requires Ruby 2.0.0 or higher.
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -22,6 +29,20 @@ And then execute:
 Or install it yourself as:
 
     $ gem install boxr
+
+If you're going to be using chunked uploads, you will need to add `parallel` if you want to upload multiple chunks concurrently (i.e., `n_threads > 1`). Add to Gemfile:
+
+```ruby
+gem 'parallel', '~> 1.0'
+```
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install parallel --version '~> 1.0'
 
 ## Usage
 Super-fast instructions:
@@ -76,7 +97,7 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 # BOX_CLIENT_ID and BOX_CLIENT_SECRET, respectively.  You can omit the two optional parameters above
 # if those are present.
 
-# You can provide another parameter called as_user. Read about what that means here: https://developers.box.com/docs/#users-as-user
+# You can provide another parameter called as_user. Read about what that means here: https://developer.box.com/reference#as-user-1
 
 # You can provide yet another parameter called identifier. This can be used, for example, to
 # hold the id of the user associated with this Boxr client.  When the callback is invoked this value
@@ -111,8 +132,18 @@ updated_file = client.create_shared_link_for_file(file, access: :open)
 puts "Shared Link: #{updated_file.shared_link.url}"
 ```
 
+### NOTE: Using HTTP mocking libraries for testing
+When using HTTP mocking libraries for testing, you may need to set Boxr::BOX_CLIENT to a fresh instance of HTTPClient in your test setup after loading the HTTP mocking library. For example, when using WebMock with RSpec you might could add the following to your RSpec configuration:
+``` ruby
+RSpec.configure do |config|
+  config.before(:suite) do
+    Boxr::BOX_CLIENT = HTTPClient.new
+  end
+end
+```
+
 ### Methods
-#### [OAuth & JWT](https://box-content.readme.io/reference#oauth-2)
+#### [OAuth & JWT](https://developer.box.com/en/reference/resources/access-token/)
 ```ruby
 #NOTE: these are all module methods
 
@@ -130,7 +161,7 @@ Boxr::get_enterprise_token(private_key: ENV['JWT_PRIVATE_KEY'], private_key_pass
 
 Boxr::get_user_token(user_id, private_key: ENV['JWT_PRIVATE_KEY'], private_key_password: ENV['JWT_PRIVATE_KEY_PASSWORD'], public_key_id: ENV['JWT_PUBLIC_KEY_ID'], client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
 ```
-#### [Folders](https://box-content.readme.io/reference#folder-object-1)
+#### [Folders](https://developer.box.com/en/reference/resources/folder/)
 ```ruby
 folder_from_path(path)
 
@@ -153,7 +184,7 @@ delete_folder(folder, recursive: false, if_match: nil)
 
 copy_folder(folder, dest_folder, name: nil)
 
-create_shared_link_for_folder(folder, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+create_shared_link_for_folder(folder, access: nil, unshared_at: nil, can_download: nil, can_preview: nil, password: nil)
 
 disable_shared_link_for_folder(folder)
 
@@ -165,14 +196,14 @@ delete_trashed_folder(folder)
 
 restore_trashed_folder(folder, name: nil, parent: nil)
 ```
-#### [Files](https://box-content.readme.io/reference#file-object)
+#### [Files](https://developer.box.com/en/reference/resources/file/)
 ```ruby
 file_from_path(path)
 
 file_from_id(file_id, fields: [])
 alias :file :file_from_id
 
-embed_url(file)
+def embed_url(file, show_download: false, show_annotations: false)
 alias :embed_link :embed_url
 alias :preview_url :embed_url
 alias :preview_link :embed_url
@@ -207,7 +238,7 @@ copy_file(file, parent, name: nil)
 
 thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
 
-create_shared_link_for_file(file, access: nil, unshared_at: nil, can_download: nil, can_preview: nil)
+create_shared_link_for_file(file, access: nil, unshared_at: nil, can_download: nil, can_preview: nil, password: nil)
 
 disable_shared_link_for_file(file)
 
@@ -217,7 +248,55 @@ delete_trashed_file(file)
 
 restore_trashed_file(file, name: nil, parent: nil)
 ```
-#### [Comments](https://box-content.readme.io/reference#comment-object)
+#### [Chunked Uploads](https://developer.box.com/en/reference/resources/session-endpoints/)
+```ruby
+chunked_upload_create_session_new_file(path_to_file, parent, name: nil)
+
+chunked_upload_create_session_new_file_from_io(io, parent, name)
+
+chunked_upload_create_session_new_version(path_to_file, file, name: nil)
+
+chunked_upload_create_session_new_version_from_io(io, file, name)
+
+chunked_upload_get_session(session_id)
+
+chunked_upload_part(path_to_file, session_id, content_range)
+
+chunked_upload_part_from_io(io, session_id, content_range)
+
+chunked_upload_list_parts(session_id, limit: nil, offset: nil)
+
+chunked_upload_commit(path_to_file, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+
+chunked_upload_commit_from_io(io, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+
+chunked_upload_abort_session(session_id)
+
+chunked_upload_file(path_to_file, parent, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+
+chunked_upload_file_from_io(io, parent, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+
+chunked_upload_new_version_of_file(path_to_file, file, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+
+chunked_upload_new_version_of_file_from_io(io, file, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+```
+#### [Web Links](https://developer.box.com/en/reference/resources/web-link/)
+```ruby
+create_web_link(url, parent, name: nil, description: nil)
+
+get_web_link(web_link)
+
+update_web_link(web_link, url: nil, parent: nil, name: nil, description: nil)
+
+delete_web_link(web_link)
+
+trashed_web_link(web_link, fields: [])
+
+delete_trashed_web_link(web_link)
+
+restore_trashed_web_link(web_link, name: nil, parent: nil)
+```
+#### [Comments](https://developer.box.com/en/reference/resources/comment/)
 ```ruby
 file_comments(file, fields: [], offset: 0, limit: DEFAULT_LIMIT)
 
@@ -232,7 +311,7 @@ alias :comment :comment_from_id
 
 delete_comment(comment)
 ```
-#### [Collaborations](https://box-content.readme.io/reference#collaboration-object)
+#### [Collaborations](https://developer.box.com/en/reference/resources/collaboration/)
 ```ruby
 folder_collaborations(folder)
 
@@ -247,7 +326,7 @@ alias :collaboration :collaboration_from_id
 
 pending_collaborations()
 ```
-#### [Events](https://box-content.readme.io/reference#events)
+#### [Events](https://developer.box.com/en/reference/resources/event/)
 ```ruby
 user_events(stream_position, stream_type: :all, limit: 800)
 
@@ -255,11 +334,11 @@ enterprise_events(created_after: nil, created_before: nil, stream_position: 0, e
 
 enterprise_events_stream(initial_stream_position, event_type: nil, limit: 500, refresh_period: 300)
 ```
-#### [Shared Items](https://box-content.readme.io/reference#get-a-shared-item)
+#### [Shared Items](https://developer.box.com/en/reference/get-shared-items/)
 ```ruby
 shared_item(shared_link, shared_link_password: nil)
 ```
-#### [Search](https://box-content.readme.io/reference#searching-for-content)
+#### [Search](https://developer.box.com/en/reference/get-search/)
 ```ruby
 search( query=nil, scope: nil, file_extensions: [],
         created_at_range_from_date: nil, created_at_range_to_date: nil,
@@ -268,7 +347,7 @@ search( query=nil, scope: nil, file_extensions: [],
         owner_user_ids: [], ancestor_folder_ids: [], content_types: [], trash_content: nil,
         mdfilters: nil, type: nil, limit: 30, offset: 0)
 ```
-#### [Users](https://box-content.readme.io/reference#user-object)
+#### [Users](https://developer.box.com/en/reference/resources/user/)
 ```ruby
 current_user(fields: [])
 alias :me :current_user
@@ -278,10 +357,12 @@ alias :user :user_from_id
 
 all_users(filter_term: nil, fields: [], offset: 0, limit: DEFAULT_LIMIT)
 
-create_user(login, name, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
+
+create_user(name, login: nil, role: nil, language: nil, is_sync_enabled: nil, job_title: nil,
             phone: nil, address: nil, space_amount: nil, tracking_codes: nil,
             can_see_managed_users: nil, is_external_collab_restricted: nil, status: nil, timezone: nil,
-            is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil)
+            is_exempt_from_device_limits: nil, is_exempt_from_login_verification: nil,
+            is_platform_access_only: nil)
 
 
 update_user(user, notify: nil, enterprise: true, name: nil, role: nil, language: nil, is_sync_enabled: nil,
@@ -296,8 +377,10 @@ add_email_alias_for_user(user, email)
 remove_email_alias_for_user(user, email_alias)
 
 delete_user(user, notify: nil, force: nil)
+
+move_users_folder(user, source_folder = 0, destination_user)
 ```
-#### [Groups](https://box-content.readme.io/reference#group-object)
+#### [Groups](https://developer.box.com/en/reference/resources/group/)
 ```ruby
 groups(fields: [], offset: 0, limit: DEFAULT_LIMIT)
 
@@ -325,7 +408,7 @@ delete_group_membership(membership)
 
 group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)
 ```
-#### [Tasks](https://box-content.readme.io/reference#task-object-1)
+#### [Tasks](https://developer.box.com/en/reference/resources/task/)
 ```ruby
 file_tasks(file, fields: [])
 
@@ -348,21 +431,44 @@ delete_task_assignment(task)
 
 update_task_assignment(task, message: nil, resolution_state: nil)
 ```
-#### [Metadata](https://box-content.readme.io/reference#metadata-object)
+#### [Metadata](https://developer.box.com/en/reference/resources/metadata/)
 ```ruby
 create_metadata(file, metadata, scope: :global, template: :properties)
+create_folder_metadata(folder, metadata, scope, template)
 
 metadata(file, scope: :global, template: :properties)
+folder_metadata(folder, scope, template)
 
 all_metadata(file)
+all_folder_metadata(folder)
 
 update_metadata(file, updates, scope: :global, template: :properties)
+update_folder_metadata(folder, updates, scope, template)
 
 delete_metadata(file, scope: :global, template: :properties)
+delete_folder_metadata(folder, scope, template)
 
-enterprise_metadata
+get_enterprise_templates
+get_metadata_template_by_name(scope, template_key)
+get_metadata_template_by_id(template_id)
 
-metadata_schema(scope, template_key)
+create_metadata_template(display_name, template_key: nil, fields: [], hidden: nil)
+delete_metadata_template(scope, template_key)
+```
+
+#### [Watermarking](https://developer.box.com/en/reference/resources/watermark/)
+```ruby
+get_watermark_on_file(file)
+
+apply_watermark_on_file(file)
+
+remove_watermark_on_file(file)
+
+get_watermark_on_folder(folder)
+
+apply_watermark_on_folder(folder)
+
+remove_watermark_on_folder(folder)
 ```
 ## Contributing
 

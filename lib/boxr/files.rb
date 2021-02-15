@@ -82,7 +82,7 @@ module Boxr
         body_json, response = get(uri, query: query, success_codes: [302,202], follow_redirect: false) #we don't want httpclient to automatically follow the redirect; we need to grab it
 
         if(response.status==302)
-          location = response.header['Location'][0]
+          location = response.header['location'][0]
 
           if(follow_redirect)
             file, response = get(location, process_response: false)
@@ -202,7 +202,7 @@ module Boxr
       body, response = get(uri, query: query, success_codes: [302,202,200], process_response: false)
 
       if(response.status==202 || response.status==302)
-        location = response.header['Location'][0]
+        location = response.header['location'][0]
         thumbnail, response = get(location, process_response: false)
       else #200
         thumbnail = body

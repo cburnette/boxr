@@ -1,0 +1,116 @@
+# frozen_string_literal: true
+
+require 'spec_helper'
+
+def generate_signature(payload, timestamp, key)
+  message_as_bytes = (payload.bytes + timestamp.bytes).pack('U')
+  digest = OpenSSL::HMAC.hexdigest('SHA256', key, message_as_bytes)
+  Base64.encode64(digest)
+end
+
+describe Boxr::WebhookValidator do
+  describe '#verify_delivery_timestamp' do
+    let(:payload) { 'not relevant' }
+    subject { described_class.new(headers, payload).verify_delivery_timestamp }
+    context 'maximum age is under 10 minutes' do
+      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => 5.minutes.ago.to_s } }
+      it 'returns true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context 'maximum age is over 10 minute' do
+      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => 11.minutes.ago.to_s } }
+      it 'returns false' do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context 'no delivery timestamp is supplied' do
+      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => nil } }
+      it 'raises an error' do
+        expect do
+          subject
+        end.to raise_error(RuntimeError, 'Webhook authenticity not verified: invalid timestamp')
+      end
+    end
+
+    context 'bogus timestamp is supplied' do
+      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => 'foo' } }
+      it 'raises an error' do
+        expect do
+          subject
+        end.to raise_error(RuntimeError, 'Webhook authenticity not verified: invalid timestamp')
+      end
+    end
+  end
+
+  describe '#verify_signature' do
+    let(:payload) { 'some data' }
+    let(:timestamp) { 9.minutes.ago.to_s }
+    let(:signature_primary) { generate_signature(payload, timestamp, ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s) }
+    let(:signature_secondary) { generate_signature(payload, timestamp, ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s) }
+    subject { described_class.new(headers, payload).verify_signature }
+
+
+    context 'valid primary key' do
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => signature_primary }
+      end
+
+      it 'returns true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context 'invalid primary key, valid secondary key' do
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => 'invalid',
+          'BOX-SIGNATURE-SECONDARY' => signature_secondary }
+      end
+
+      it 'returns true' do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context 'invalid primary key, invalid secondary key' do
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => 'invalid',
+          'BOX-SIGNATURE-SECONDARY' => 'also invalid' }
+      end
+
+      it 'returns false' do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context 'no signatures were supplied' do
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => nil,
+          'BOX-SIGNATURE-SECONDARY' => nil }
+      end
+
+      it 'returns false' do
+        subject = described_class.new(headers, payload, primary_signature_key: nil, secondary_signature_key: nil).verify_signature
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe '#valid_message?' do
+    let(:headers) { { 'doesnt' => 'matter' } }
+    let(:payload) { 'not relevant' }
+
+    it 'delegates to timestamp and signature verification' do
+      validator = described_class.new(headers, payload)
+      expect(validator).to receive(:verify_delivery_timestamp).and_return(true)
+      expect(validator).to receive(:verify_signature)
+      validator.valid_message?
+    end
+  end
+end

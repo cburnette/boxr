@@ -4,6 +4,7 @@ require 'hashie'
 require 'addressable/template'
 require 'jwt'
 require 'securerandom'
+require 'active_support/all'
 
 require 'boxr/version'
 require 'boxr/errors'
@@ -25,6 +26,7 @@ require 'boxr/auth'
 require 'boxr/web_links'
 require 'boxr/watermarking'
 require 'boxr/webhooks'
+require 'boxr/webhook_validator'
 
 class BoxrCollection < Array
   def files

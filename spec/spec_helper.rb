@@ -2,6 +2,7 @@ require 'dotenv'; Dotenv.load
 require 'simplecov'; SimpleCov.start { add_filter "_spec" }
 require 'boxr'
 require 'awesome_print'
+require 'boxr_spec'
 
 RSpec.configure do |config|
   config.before(:each) do

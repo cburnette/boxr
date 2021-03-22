@@ -13,7 +13,7 @@ module Boxr
 
     MAXIMUM_MESSAGE_AGE = 600 # 10 minutes (in seconds)
 
-    def initialize(headers, payload, primary_signature_key: ENV['BOX_PRIMARY_SIGNATURE_KEY'], secondary_signature_key: ENV['BOX_SECONDARY_SIGNATURE_KEY'])
+    def initialize(headers, payload, primary_signature_key: nil, secondary_signature_key: nil)
       @payload                 = payload
       @timestamp               = headers['BOX-DELIVERY-TIMESTAMP'].to_s
       @primary_signature_key   = primary_signature_key.to_s

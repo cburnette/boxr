@@ -50,8 +50,11 @@ describe Boxr::WebhookValidator do
     let(:timestamp) { 9.minutes.ago.to_s }
     let(:signature_primary) { generate_signature(payload, timestamp, ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s) }
     let(:signature_secondary) { generate_signature(payload, timestamp, ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s) }
-    subject { described_class.new(headers, payload).verify_signature }
-
+    subject { described_class.new(headers,
+                                  payload,
+                                  primary_signature_key: ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s,
+                                  secondary_signature_key: ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s,
+                                  ).verify_signature }
 
     context 'valid primary key' do
       let(:headers) do

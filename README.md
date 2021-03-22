@@ -470,6 +470,20 @@ apply_watermark_on_folder(folder)
 
 remove_watermark_on_folder(folder)
 ```
+
+#### [Webhooks](https://developer.box.com/en/reference/resources/webhook/)
+```ruby
+create_webhook(target_id, target_type, triggers, address)
+
+get_webhooks(marker: nil, limit: nil)
+
+get_webhook(webhook_id)
+
+update_webhook(webhook_id, attributes)
+
+delete_webhook(webhook_id)
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/cburnette/boxr/fork )

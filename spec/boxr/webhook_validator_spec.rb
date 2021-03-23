@@ -13,14 +13,16 @@ describe Boxr::WebhookValidator do
     let(:payload) { 'not relevant' }
     subject { described_class.new(headers, payload).verify_delivery_timestamp }
     context 'maximum age is under 10 minutes' do
-      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => 5.minutes.ago.to_s } }
+      let(:five_minutes_ago) { (Time.now.utc - 300).to_s } # 5 minutes (in seconds)
+      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => five_minutes_ago} }
       it 'returns true' do
         expect(subject).to eq(true)
       end
     end
 
     context 'maximum age is over 10 minute' do
-      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => 11.minutes.ago.to_s } }
+      let(:eleven_minutes_ago) { (Time.now.utc - 660).to_s } # 11 minutes (in seconds)
+      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => eleven_minutes_ago } }
       it 'returns false' do
         expect(subject).to eq(false)
       end
@@ -47,7 +49,7 @@ describe Boxr::WebhookValidator do
 
   describe '#verify_signature' do
     let(:payload) { 'some data' }
-    let(:timestamp) { 9.minutes.ago.to_s }
+    let(:timestamp) { (Time.now.utc - 300).to_s } # 5 minutes ago (in seconds)
     let(:signature_primary) { generate_signature(payload, timestamp, ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s) }
     let(:signature_secondary) { generate_signature(payload, timestamp, ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s) }
     subject { described_class.new(headers,

@@ -4,7 +4,6 @@ require 'hashie'
 require 'addressable/template'
 require 'jwt'
 require 'securerandom'
-require 'active_support/all'
 
 require 'boxr/version'
 require 'boxr/errors'

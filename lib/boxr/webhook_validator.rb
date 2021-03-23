@@ -43,11 +43,11 @@ module Boxr
     private
 
     def current_time
-      Time.current
+      Time.now.utc
     end
 
     def delivery_time
-      Time.parse(timestamp)
+      Time.parse(timestamp).utc
     rescue ArgumentError
       raise('Webhook authenticity not verified: invalid timestamp')
     end

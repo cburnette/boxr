@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
-
 def generate_signature(payload, timestamp, key)
   message_as_bytes = (payload.bytes + timestamp.bytes).pack('U')
   digest = OpenSSL::HMAC.hexdigest('SHA256', key, message_as_bytes)
   Base64.encode64(digest)
 end
 
-describe Boxr::WebhookValidator do
+# rake spec SPEC_OPTS="-e \"Boxr::WebhookValidator"\"
+describe Boxr::WebhookValidator, :skip_reset do
   describe '#verify_delivery_timestamp' do
     let(:payload) { 'not relevant' }
     subject { described_class.new(headers, payload).verify_delivery_timestamp }

@@ -2,10 +2,14 @@ require 'dotenv'; Dotenv.load
 require 'simplecov'; SimpleCov.start { add_filter "_spec" }
 require 'boxr'
 require 'awesome_print'
-require 'boxr_spec'
 
 RSpec.configure do |config|
   config.before(:each) do
+    if test.metadata[:skip_reset]
+      puts "Skipping reset"
+      next
+    end
+
     puts "-----> Resetting Box Environment"
     sleep BOX_SERVER_SLEEP
     root_folders = BOX_CLIENT.root_folder_items.folders

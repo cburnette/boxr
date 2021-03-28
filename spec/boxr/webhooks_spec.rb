@@ -8,7 +8,7 @@ describe "webhook operations" do
     address = 'https://example.com'
     new_webhook = BOX_CLIENT.create_webhook(resource_id, type, triggers, address)
     new_webhook_id = new_webhook.id
-    expect(new_webhook.created_at).to_not be_empty
+    expect(new_webhook.triggers.to_a).to eq(triggers)
 
     puts 'get webhooks'
     all_webhooks = BOX_CLIENT.get_webhooks

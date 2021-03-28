@@ -1,3 +1,3 @@
 module Boxr
-  VERSION = "1.16.0".freeze
+  VERSION = "1.18.0".freeze
 end

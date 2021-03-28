@@ -24,6 +24,8 @@ require 'boxr/events'
 require 'boxr/auth'
 require 'boxr/web_links'
 require 'boxr/watermarking'
+require 'boxr/webhooks'
+require 'boxr/webhook_validator'
 
 class BoxrCollection < Array
   def files

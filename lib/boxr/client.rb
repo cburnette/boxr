@@ -29,7 +29,7 @@ module Boxr
     METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
     WEB_LINKS_URI = "#{API_URI}/web_links"
-
+    WEBHOOKS_URI = "#{API_URI}/webhooks"
 
     DEFAULT_LIMIT = 100
     FOLDER_ITEMS_LIMIT = 1000

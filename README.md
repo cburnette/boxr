@@ -476,6 +476,29 @@ apply_watermark_on_folder(folder)
 
 remove_watermark_on_folder(folder)
 ```
+
+#### [Webhooks](https://developer.box.com/en/reference/resources/webhook/) & [Webhook Signatures](https://developer.box.com/guides/webhooks/handle/setup-signatures/)
+```ruby
+create_webhook(target_id, target_type, triggers, address)
+
+get_webhooks(marker: nil, limit: nil)
+
+get_webhook(webhook_id)
+
+update_webhook(webhook_id, attributes)
+
+delete_webhook(webhook_id)
+
+# When receiving a webhook, it is advised to verify that it was sent by Box
+Boxr::WebhookValidator.new(
+  headers,
+  payload,
+  primary_signature_key: primary_signature_key,
+  secondary_signature_key: secondary_signature_key
+).valid_message?
+
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/cburnette/boxr/fork )

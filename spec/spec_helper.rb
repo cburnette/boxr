@@ -5,6 +5,11 @@ require 'awesome_print'
 
 RSpec.configure do |config|
   config.before(:each) do
+    if test.metadata[:skip_reset]
+      puts "Skipping reset"
+      next
+    end
+
     puts "-----> Resetting Box Environment"
     sleep BOX_SERVER_SLEEP
     root_folders = BOX_CLIENT.root_folder_items.folders

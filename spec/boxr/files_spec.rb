@@ -67,20 +67,25 @@ describe "file operations" do
     new_version = BOX_CLIENT.upload_new_version_of_file("./spec/test_files/#{TEST_FILE_NAME}", test_file)
     expect(new_version.id).to eq(test_file.id)
 
+    puts "upload new version of file from IO"
+    io = File.open("./spec/test_files/#{TEST_FILE_NAME}")
+    new_version = BOX_CLIENT.upload_new_version_of_file_from_io(io, test_file)
+    expect(new_version.id).to eq(test_file.id)
+
     puts "inspect versions of file"
     versions = BOX_CLIENT.versions_of_file(test_file)
-    expect(versions.count).to eq(1) #the reason this is 1 instead of 2 is that Box considers 'versions' to be a versions other than 'current'
+    expect(versions.count).to eq(2) #the reason this is 2 instead of 3 is that Box considers 'versions' to be a versions other than 'current'
     v1 = versions.first
 
     puts "promote old version of file"
     newer_version = BOX_CLIENT.promote_old_version_of_file(test_file, v1)
     versions = BOX_CLIENT.versions_of_file(test_file)
-    expect(versions.count).to eq(2)
+    expect(versions.count).to eq(3)
 
     puts "delete old version of file"
     result = BOX_CLIENT.delete_old_version_of_file(test_file,v1)
     versions = BOX_CLIENT.versions_of_file(test_file)
-    expect(versions.count).to eq(2) #this is still 2 because with Box you can restore a trashed old version
+    expect(versions.count).to eq(3) #this is still 3 because with Box you can restore a trashed old version
 
     puts "get file thumbnail"
     thumb = BOX_CLIENT.thumbnail(test_file)

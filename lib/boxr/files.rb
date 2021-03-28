@@ -136,20 +136,34 @@ module Boxr
                                     preflight_check: true, if_match: nil, name: nil)
       filename = name ? name : File.basename(path_to_file)
 
+      File.open(path_to_file) do |io|
+        upload_new_version_of_file_from_io(io, file, name: filename, content_modified_at: content_modified_at, preflight_check: preflight_check, send_content_md5: send_content_md5, if_match: if_match)
+      end
+    end
+
+    def upload_new_version_of_file_from_io(io, file, name: nil, content_modified_at: nil, send_content_md5: true,
+                                    preflight_check: true, if_match: nil)
+
+      filename = name ? name : file.name
+
       file_id = ensure_id(file)
-      preflight_check_new_version_of_file(path_to_file, file_id) if preflight_check
+      preflight_check_new_version_of_file(io, file_id) if preflight_check
 
       uri = "#{UPLOAD_URI}/files/#{file_id}/content"
       file_info = nil
       response = nil
 
-      File.open(path_to_file) do |file|
-        content_md5 = send_content_md5 ? Digest::SHA1.file(file).hexdigest : nil
-        attributes = {name: filename}
-        attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
-        body = {attributes: JSON.dump(attributes), file: file}
-        file_info, response = post(uri, body, process_body: false, content_md5: content_md5, if_match: if_match)
+      if send_content_md5
+        content_md5 = Digest::SHA1.hexdigest(io.read)
+        io.rewind
       end
+
+      attributes = {name: name}
+      attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
+
+      body = {attributes: JSON.dump(attributes), file: io}
+
+      file_info, response = post(uri, body, process_body: false, content_md5: content_md5, if_match: if_match)
 
       file_info.entries[0]
     end
@@ -265,8 +279,8 @@ module Boxr
       body_json, res = options("#{FILES_URI}/content", attributes)
     end
 
-    def preflight_check_new_version_of_file(path_to_file, file_id)
-      size = File.size(path_to_file)
+    def preflight_check_new_version_of_file(io, file_id)
+      size = File.size(io)
       attributes = {size: size}
       body_json, res = options("#{FILES_URI}/#{file_id}/content", attributes)
     end

@@ -83,7 +83,7 @@ module Boxr
         body_json, response = get(uri, query: query, success_codes: [302,202], process_response: false, follow_redirect: false) #we don't want httpclient to automatically follow the redirect; we need to grab it
 
         if(response.status==302)
-          location = response.header['Location'][0]
+          location = (response.header['Location'] || response.header['location'])[0]
 
           if(follow_redirect)
             file_content, response = get(location, process_response: false)
@@ -92,8 +92,8 @@ module Boxr
             return location #simply return the url
           end
         elsif(response.status==202)
-          retry_after_seconds = response.header['Retry-After'][0]
-          sleep retry_after_seconds.to_i
+          retry_after_seconds = response.header['Retry-After'] || response.header['retry-after']
+          sleep retry_after_seconds[0].to_i
         end
       end until file_content
     end

@@ -32,12 +32,18 @@ module Boxr
       uri = "#{FOLDERS_URI}/#{folder_id}/items"
 
       if offset.nil? || limit.nil?
-        items = get_all_with_pagination(uri, query: query, offset: 0, limit: FOLDER_ITEMS_LIMIT)
+        get_all_with_pagination(uri, query: query, offset: 0, limit: FOLDER_ITEMS_LIMIT)
       else
         query[:offset] = offset
         query[:limit] = limit
-        items, response = get(uri, query: query)
-        items['entries']
+        body, _response = get(uri, query: query)
+
+        BoxrCollection.new(
+          body['entries'],
+          body['offset'],
+          body['limit'],
+          body['total_count']
+        )
       end
     end
 

@@ -28,6 +28,16 @@ require 'boxr/webhooks'
 require 'boxr/webhook_validator'
 
 class BoxrCollection < Array
+  attr_reader :offset, :limit, :total_count
+
+  def initialize(items, offset, limit, total_count)
+    super(items)
+
+    @offset = offset
+    @limit = limit
+    @total_count = total_count
+  end
+
   def files
     collection_for_type('file')
   end
@@ -44,7 +54,9 @@ class BoxrCollection < Array
 
   def collection_for_type(type)
     items = select { |i| i.type == type }
-    BoxrCollection.new(items)
+
+    # FIXME: consider imprvoving this, as @offset, @limit, @tatal_count will have count of all types
+    BoxrCollection.new(items, @offset, @limit, @total_count)
   end
 end
 

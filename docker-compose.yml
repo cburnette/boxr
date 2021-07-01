@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  gem:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_UID=${HOST_USER_UID}
+        - APP_GID=${HOST_GROUP_GID}
+
+    environment:
+      - BUNDLE_PATH=/home/appuser/boxr/.bundle
+      - EDITOR=vi
+    env_file: .env
+
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/home/appuser/boxr
+      - ./.docker/.bundle:/home/appuser/boxr/.bundle

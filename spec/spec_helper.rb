@@ -2,10 +2,11 @@ require 'dotenv'; Dotenv.load
 require 'simplecov'; SimpleCov.start { add_filter "_spec" }
 require 'boxr'
 require 'awesome_print'
+require 'pry'
 
 RSpec.configure do |config|
-  config.before(:each) do
-    if test.metadata[:skip_reset]
+  config.before(:each) do |example|
+    if example.metadata[:skip_reset]
       puts "Skipping reset"
       next
     end

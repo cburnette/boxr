@@ -11,6 +11,7 @@
 /doc/
 /pkg/
 /spec/reports/
+/spec/failed_specs.log
 /tmp/
 *.gem
 *.bundle

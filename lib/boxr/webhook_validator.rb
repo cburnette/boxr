@@ -49,7 +49,7 @@ module Boxr
     def delivery_time
       Time.parse(timestamp).utc
     rescue ArgumentError
-      raise BoxrError.new(boxr_message: "Webhook authenticity not verified: invalid timestamp")
+      raise BoxrError.new(boxr_message: 'Webhook authenticity not verified: invalid timestamp')
     end
 
     def message_age

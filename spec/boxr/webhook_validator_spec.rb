@@ -32,7 +32,7 @@ describe Boxr::WebhookValidator, :skip_reset do
       it 'raises an error' do
         expect do
           subject
-        end.to raise_error(RuntimeError, 'Webhook authenticity not verified: invalid timestamp')
+        end.to raise_error(Boxr::BoxrError, 'Webhook authenticity not verified: invalid timestamp')
       end
     end
 
@@ -41,7 +41,7 @@ describe Boxr::WebhookValidator, :skip_reset do
       it 'raises an error' do
         expect do
           subject
-        end.to raise_error(RuntimeError, 'Webhook authenticity not verified: invalid timestamp')
+        end.to raise_error(Boxr::BoxrError, 'Webhook authenticity not verified: invalid timestamp')
       end
     end
   end

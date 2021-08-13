@@ -26,52 +26,8 @@ require 'boxr/web_links'
 require 'boxr/watermarking'
 require 'boxr/webhooks'
 require 'boxr/webhook_validator'
-
-class BoxrCollection < Array
-  attr_reader :offset, :limit, :total_count
-
-  def initialize(items, offset, limit, total_count)
-    super(items)
-
-    @offset = offset
-    @limit = limit
-    @total_count = total_count
-  end
-
-  def files
-    collection_for_type('file')
-  end
-
-  def folders
-    collection_for_type('folder')
-  end
-
-  def web_links
-    collection_for_type('web_link')
-  end
-
-  private
-
-  def collection_for_type(type)
-    items = select { |i| i.type == type }
-
-    # FIXME: consider imprvoving this, as @offset, @limit, @tatal_count will have count of all types
-    BoxrCollection.new(items, @offset, @limit, @total_count)
-  end
-end
-
-class BoxrMash < Hashie::Mash
-
-  self.disable_warnings
-
-  def entries
-    self["entries"]
-  end
-
-  def size
-    self["size"]
-  end
-end
+require 'boxr/boxr_collection'
+require 'boxr/boxr_mash'
 
 module Boxr
   #The root folder in Box is always identified by 0

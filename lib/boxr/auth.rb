@@ -1,5 +1,4 @@
 module Boxr
-
   JWT_GRANT_TYPE="urn:ietf:params:oauth:grant-type:jwt-bearer"
   TOKEN_EXCHANGE_TOKEN_TYPE="urn:ietf:params:oauth:token-type:access_token"
   TOKEN_EXCHANGE_GRANT_TYPE="urn:ietf:params:oauth:grant-type:token-exchange"
@@ -10,7 +9,7 @@ module Boxr
     query = {"response_type" => "#{response_type}", "state" => "#{state}", "client_id" => "#{client_id}"}
     query["scope"] = "#{scope}" unless scope.nil?
     query["folder_id"] = "#{folder_id}" unless folder_id.nil?
-    query["redirect_uri"] = redirect_uri if redirect_uri.present?
+    query["redirect_uri"] = redirect_uri if redirect_uri
 
     uri = template.expand({"host" => "#{host}", "query" => query})
     uri

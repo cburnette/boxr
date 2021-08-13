@@ -26,4 +26,32 @@ describe 'auth operations' do
     puts "cleanup data"
     BOX_CLIENT.delete_user(second_test_user, force: true)
   end
+
+  describe '.oauth_url' do
+    subject do
+      Boxr.oauth_url(
+        state,
+        host: host,
+        response_type: response_type,
+        scope: scope,
+        folder_id: folder_id,
+        client_id: client_id,
+        redirect_uri: redirect_uri
+      ).to_s
+    end
+
+    let(:state) { '123' }
+    let(:host) { 'app.box.com' }
+    let(:response_type) { 'code' }
+    let(:scope) { 'name,email' }
+    let(:folder_id) { 'somefolderid' }
+    let(:client_id) { 'asdfasdfsadf' }
+    let(:redirect_uri) { 'http://google.com' }
+
+    it do
+      is_expected.to eq(
+        'https://app.box.com/api/oauth2/authorize?response_type=code&state=123&client_id=asdfasdfsadf&scope=name%2Cemail&folder_id=somefolderid&redirect_uri=http%3A%2F%2Fgoogle.com'
+      )
+    end
+  end
 end

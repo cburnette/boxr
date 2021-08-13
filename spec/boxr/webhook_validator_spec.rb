@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 def generate_signature(payload, timestamp, key)
-  message_as_bytes = (payload.bytes + timestamp.bytes).pack('U')
-  digest = OpenSSL::HMAC.hexdigest('SHA256', key, message_as_bytes)
-  Base64.encode64(digest)
+  message_as_bytes = (payload.bytes + timestamp.bytes).pack('U*')
+  digest = OpenSSL::HMAC.digest('SHA256', key, message_as_bytes)
+  Base64.strict_encode64(digest)
 end
 
 # rake spec SPEC_OPTS="-e \"Boxr::WebhookValidator"\"

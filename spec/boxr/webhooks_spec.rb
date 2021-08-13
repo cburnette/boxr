@@ -12,7 +12,7 @@ describe "webhook operations" do
 
     puts 'get webhooks'
     all_webhooks = BOX_CLIENT.get_webhooks
-    expect(all_webhooks.entries.first.id).to eq(new_webhook_id)
+    expect(all_webhooks.entries.map(&:id)).to include(new_webhook_id)
 
     puts 'get webhook'
     single_webhook = BOX_CLIENT.get_webhook(new_webhook_id)

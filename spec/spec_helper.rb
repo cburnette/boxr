@@ -4,7 +4,7 @@ require 'boxr'
 require 'awesome_print'
 
 RSpec.configure do |config|
-  config.before(:each) do
+  config.before(:each) do |test|
     if test.metadata[:skip_reset]
       puts "Skipping reset"
       next

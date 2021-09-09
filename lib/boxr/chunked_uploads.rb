@@ -9,11 +9,13 @@ module Boxr
       end
     end
 
-    def chunked_upload_create_session_new_file_from_io(io, parent, name)
+    def chunked_upload_create_session_new_file_from_io(io, parent, name, io_size: nil)
+      io_size ||= io.size
+
       parent_id = ensure_id(parent)
 
       uri = "#{UPLOAD_URI}/files/upload_sessions"
-      body = {folder_id: parent_id, file_size: io.size, file_name: name}
+      body = {folder_id: parent_id, file_size: io_size, file_name: name}
       session_info, response = post(uri, body, content_type: "application/json")
 
       session_info
@@ -27,10 +29,12 @@ module Boxr
       end
     end
 
-    def chunked_upload_create_session_new_version_from_io(io, file, name)
+    def chunked_upload_create_session_new_version_from_io(io, file, name, io_size: nil)
+      io_size ||= io.size
+
       file_id = ensure_id(file)
       uri = "#{UPLOAD_URI}/files/#{file_id}/upload_sessions"
-      body = {file_size: io.size, file_name: name}
+      body = {file_size: io_size, file_name: name}
       session_info, response = post(uri, body, content_type: "application/json")
 
       session_info
@@ -49,14 +53,17 @@ module Boxr
       end
     end
 
-    def chunked_upload_part_from_io(io, session_id, content_range)
-      io.pos = content_range.min
+    def chunked_upload_part_from_io(io, session_id, content_range, io_size: nil, io_pos: nil)
+      io_size ||= io.size
+      io_pos ||= content_range.min
+
+      io.pos = io_pos
       part_size = content_range.max - content_range.min + 1
       data = io.read(part_size)
       io.rewind
 
       digest = "sha=#{Digest::SHA1.base64digest(data)}"
-      range = "bytes #{content_range.min}-#{content_range.max}/#{io.size}"
+      range = "bytes #{content_range.min}-#{content_range.max}/#{io_size}"
 
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       body = data
@@ -155,25 +162,55 @@ module Boxr
 
     PARALLEL_GEM_REQUIREMENT = Gem::Requirement.create('~> 1.0').freeze
 
-    def chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+    def content_ranges_for(session, io_size)
       content_ranges = []
       offset = 0
       loop do
-        limit = [offset + session.part_size, io.size].min - 1
+        limit = [offset + session.part_size, io_size].min - 1
         content_ranges << (offset..limit)
-        break if limit == io.size - 1
+        break if limit == io_size - 1
 
         offset = limit + 1
       end
 
+      content_ranges
+    end
+
+    def read_io_concurrently(io, content_range, lock)
+      part_size = content_range.max - content_range.min + 1
+      buf = String.new(capacity: part_size)
+
+      pread_supported = io.respond_to?(:pread)
+      if pread_supported
+        begin
+          io.pread(part_size, content_range.min, buf)
+        rescue SystemCallError
+          pread_supported = false
+        end
+      end
+
+      unless pread_supported
+        lock.synchronize do
+          io.pos = content_range.min
+          io.read(part_size, buf)
+        end
+      end
+
+      buf
+    end
+
+    def chunked_upload_to_session_from_io(io, session, n_threads: 1, io_size: nil, content_created_at: nil, content_modified_at: nil)
+      io_size ||= io.size
+
+      content_ranges = content_ranges_for(session, io_size)
       parts =
         if n_threads > 1
           raise BoxrError.new(boxr_message: "parallel chunked uploads requires gem parallel (#{PARALLEL_GEM_REQUIREMENT}) to be loaded") unless gem_parallel_available?
 
+          lock = Mutex.new
           Parallel.map(content_ranges, in_threads: n_threads) do |content_range|
-            File.open(io.path) do |io_dup|
-              chunked_upload_part_from_io(io_dup, session.id, content_range)
-            end
+            data = read_io_concurrently(io, content_range, lock)
+            chunked_upload_part_from_io(StringIO.new(data), session.id, content_range, io_size: io_size, io_pos: 0)
           end
         else
           content_ranges.map do |content_range|

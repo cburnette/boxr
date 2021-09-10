@@ -22,7 +22,7 @@ describe "chunked uploads operations" do
   end
 
   shared_examples "chunked uploads data-upload" do |n_threads:|
-    fit "uploads chunked uploads upload-related operations (threads: #{n_threads})" do
+    it "uploads chunked uploads upload-related operations (threads: #{n_threads})" do
         puts "upload a large file in chunks"
         new_file = BOX_CLIENT.chunked_upload_file("./spec/test_files/#{TEST_LARGE_FILE_NAME}", @test_folder, n_threads: n_threads)
         expect(new_file.name).to eq(TEST_LARGE_FILE_NAME)

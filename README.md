@@ -258,17 +258,17 @@ restore_trashed_file(file, name: nil, parent: nil)
 ```ruby
 chunked_upload_create_session_new_file(path_to_file, parent, name: nil)
 
-chunked_upload_create_session_new_file_from_io(io, parent, name)
+chunked_upload_create_session_new_file_from_io(io, parent, name, io_size: nil)
 
 chunked_upload_create_session_new_version(path_to_file, file, name: nil)
 
-chunked_upload_create_session_new_version_from_io(io, file, name)
+chunked_upload_create_session_new_version_from_io(io, file, name, io_size: nil)
 
 chunked_upload_get_session(session_id)
 
 chunked_upload_part(path_to_file, session_id, content_range)
 
-chunked_upload_part_from_io(io, session_id, content_range)
+chunked_upload_part_from_io(io, session_id, content_range, io_size: nil, io_pos: nil)
 
 chunked_upload_list_parts(session_id, limit: nil, offset: nil)
 

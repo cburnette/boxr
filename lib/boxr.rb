@@ -4,6 +4,7 @@ require 'hashie'
 require 'addressable/template'
 require 'jwt'
 require 'securerandom'
+require 'stringio'
 
 require 'boxr/version'
 require 'boxr/errors'

@@ -30,6 +30,8 @@ describe Boxr::Client do
   TEST_FILE_NAME_CUSTOM = 'test file custom.txt'
   TEST_FILE_NAME_IO = 'test file io.txt'
   DOWNLOADED_TEST_FILE_NAME = 'downloaded test file.txt'
+  ZIP_TEST_FILE_NAME = 'test.zip'
+  DOWNLOADED_ZIP_TEST_FILE_NAME = 'download_test.zip'
   COMMENT_MESSAGE = 'this is a comment'
   REPLY_MESSAGE = 'this is a comment reply'
   CHANGED_COMMENT_MESSAGE = 'this comment has been changed'

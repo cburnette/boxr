@@ -26,6 +26,7 @@ require 'boxr/web_links'
 require 'boxr/watermarking'
 require 'boxr/webhooks'
 require 'boxr/webhook_validator'
+require 'boxr/zip_downloads'
 
 class BoxrCollection < Array
   def files

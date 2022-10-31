@@ -499,6 +499,15 @@ Boxr::WebhookValidator.new(
 
 ```
 
+#### [Zip Downloads](https://developer.box.com/reference/resources/zip-download/)
+```ruby
+# Requests creation of zip archive
+# Returns a download_url and a status_url that can be used to download the archive.
+#
+# Example: create_zip_download([{ id: '1', type: 'file' }, { id: '2', type: 'folder' }])
+create_zip_download(items, download_file_name: nil)
+```
+
 ## Contributing
 
 1. Fork it ( https://github.com/cburnette/boxr/fork )

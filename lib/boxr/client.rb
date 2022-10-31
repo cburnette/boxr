@@ -30,6 +30,7 @@ module Boxr
     EVENTS_URI = "#{API_URI}/events"
     WEB_LINKS_URI = "#{API_URI}/web_links"
     WEBHOOKS_URI = "#{API_URI}/webhooks"
+    ZIP_DOWNLOADS_URI = "#{API_URI}/zip_downloads"
 
     DEFAULT_LIMIT = 100
     FOLDER_ITEMS_LIMIT = 1000

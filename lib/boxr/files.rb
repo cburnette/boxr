@@ -212,13 +212,15 @@ module Boxr
       result
     end
 
-    def copy_file(file, parent, name: nil)
+    def copy_file(file, parent, name: nil, version: nil)
       file_id = ensure_id(file)
       parent_id = ensure_id(parent)
+      version_id = ensure_id(version) unless version.nil?
 
       uri = "#{FILES_URI}/#{file_id}/copy"
       attributes = { parent: { id: parent_id } }
       attributes[:name] = name unless name.nil?
+      attributes[:version] = version_id unless version_id.nil?
       new_file, = post(uri, attributes)
       new_file
     end

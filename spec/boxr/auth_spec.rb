@@ -26,4 +26,20 @@ describe 'auth operations' do
     puts "cleanup data"
     BOX_CLIENT.delete_user(second_test_user, force: true)
   end
+
+end
+
+describe 'additional_fields', :skip_reset do
+	it "works with box_subject_type and box_subject_id" do
+    allow(Boxr).to receive(:auth_post).and_wrap_original { | _m, *args | args }
+		token_response = Boxr.get_tokens(code = nil,
+																			grant_type: 'client_credentials',
+																			box_subject_type: 'enterprise',
+																			box_subject_id: '12345',
+																			client_id: '123456789',
+																			client_secret: '123456789')
+    expect(token_response[1]).to include("grant_type=client_credentials")
+    expect(token_response[1]).to include("client_id=123456789")
+    expect(token_response[1]).to include("box_subject_id=12345")
+	end
 end

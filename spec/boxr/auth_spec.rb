@@ -23,6 +23,15 @@ describe 'auth operations' do
     Boxr::revoke_token(user_token['access_token'])
     expect{user_client.root_folder_items}.to raise_error{Boxr::BoxrError}
 
+    puts 'get_tokens - client_credentials_grant'
+    user_token = Boxr::get_token(code=nil,
+                                 grant_type: 'client_credentials',
+                                 box_subject_type: 'enterprise',
+                                 box_subject_id: ENV['BOX_ENTERPRISE_ID'],
+                                 client_id: ENV['BOX_OAUTH_CLIENT_ID'],
+                                 client_secret: ENV['BOX_OAUTH_CLIENT_SECRET'])
+    expect(user_token).to include('access_token','expires_in')
+
     puts "cleanup data"
     BOX_CLIENT.delete_user(second_test_user, force: true)
   end

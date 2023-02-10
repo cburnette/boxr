@@ -15,13 +15,15 @@ module Boxr
     uri
   end
 
-  def self.get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'])
+  def self.get_tokens(code=nil, grant_type: "authorization_code", assertion: nil, scope: nil, username: nil, client_id: ENV['BOX_CLIENT_ID'], client_secret: ENV['BOX_CLIENT_SECRET'], box_subject_type: nil, box_subject_id: nil)
     uri = Boxr::Client::AUTH_URI
     body = "grant_type=#{grant_type}&client_id=#{client_id}&client_secret=#{client_secret}"
     body = body + "&code=#{code}" unless code.nil?
     body = body + "&scope=#{scope}" unless scope.nil?
     body = body + "&username=#{username}" unless username.nil?
     body = body + "&assertion=#{assertion}" unless assertion.nil?
+    body = body + "&box_subject_type=#{box_subject_type}" unless box_subject_type.nil?
+    body = body + "&box_subject_id=#{box_subject_id}" unless box_subject_id.nil?
 
     auth_post(uri, body)
   end

@@ -2,7 +2,7 @@
 
 module Boxr
   class Client
-    def search(query = nil, scope: nil, file_extensions: [],
+    def search(query = nil, scope: nil, file_extensions: [], fields: [],
                created_at_range_from_date: nil, created_at_range_to_date: nil,
                updated_at_range_from_date: nil, updated_at_range_to_date: nil,
                size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil,
@@ -28,11 +28,13 @@ module Boxr
       owner_user_ids_string = to_comma_separated_string(owner_user_ids)
       ancestor_folder_ids_string = to_comma_separated_string(ancestor_folder_ids)
       content_types_string = to_comma_separated_string(content_types)
+      fields_string = to_comma_separated_string(fields)
 
       search_query = {}
       search_query[:query] = query unless query.nil?
       search_query[:scope] = scope unless scope.nil?
       search_query[:file_extensions] = file_extensions_string unless file_extensions_string.nil?
+      search_query[:fields] = fields_string unless fields_string.nil?
       search_query[:created_at_range] = created_at_range_string unless created_at_range_string.nil?
       search_query[:updated_at_range] = updated_at_range_string unless updated_at_range_string.nil?
       search_query[:size_range] = size_range_string unless size_range_string.nil?

@@ -35,9 +35,8 @@ module Boxr
     end
 
     def generate_signature(key)
-      message_as_bytes = (payload.bytes + timestamp.bytes).pack('U')
-      digest = OpenSSL::HMAC.hexdigest('SHA256', key, message_as_bytes)
-      Base64.encode64(digest)
+      digest = OpenSSL::HMAC.digest("SHA256", key, "#{payload}#{timestamp}")
+      Base64.strict_encode64(digest)
     end
 
     private

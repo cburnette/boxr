@@ -240,7 +240,7 @@ promote_old_version_of_file(file, file_version)
 
 delete_old_version_of_file(file, file_version, if_match: nil)
 
-copy_file(file, parent, name: nil)
+copy_file(file, parent, name: nil, version: nil)
 
 thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
 

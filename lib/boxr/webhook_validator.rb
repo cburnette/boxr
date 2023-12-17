@@ -35,7 +35,7 @@ module Boxr
     end
 
     def generate_signature(key)
-      digest = OpenSSL::HMAC.digest("SHA256", key, "#{payload}#{timestamp}")
+      digest = OpenSSL::HMAC.digest('SHA256', key, "#{payload}#{timestamp}")
       Base64.strict_encode64(digest)
     end
 
@@ -48,7 +48,7 @@ module Boxr
     def delivery_time
       Time.parse(timestamp).utc
     rescue ArgumentError
-      raise BoxrError.new(boxr_message: "Webhook authenticity not verified: invalid timestamp")
+      raise BoxrError.new(boxr_message: 'Webhook authenticity not verified: invalid timestamp')
     end
 
     def message_age

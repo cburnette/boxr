@@ -28,7 +28,7 @@ describe "folder operations" do
     expect(updated_folder.shared_link.access).to eq("open")
 
     puts "create password-protected shared link for folder"
-    updated_folder = BOX_CLIENT.create_shared_link_for_folder(@test_folder, password: 'password')
+    updated_folder = BOX_CLIENT.create_shared_link_for_folder(@test_folder, password: 'Password123%')
     expect(updated_folder.shared_link.is_password_enabled).to eq(true)
     shared_link = updated_folder.shared_link.url
 

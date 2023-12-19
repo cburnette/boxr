@@ -143,7 +143,7 @@ module Boxr
       BoxrCollection.new(entries.flatten.map{ |i| BoxrMash.new(i) })
     end
 
-    def post(uri, body, query: nil, success_codes: [201], process_body: true, digest: nil, content_md5: nil, content_type: nil, if_match: nil, if_non_match: nil)
+    def post(uri, body, query: nil, success_codes: [201, 202], process_body: true, digest: nil, content_md5: nil, content_type: nil, if_match: nil, if_non_match: nil)
       uri = Addressable::URI.encode(uri)
       body = JSON.dump(body) if process_body
 

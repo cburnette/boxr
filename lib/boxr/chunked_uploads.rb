@@ -14,7 +14,7 @@ module Boxr
 
       uri = "#{UPLOAD_URI}/files/upload_sessions"
       body = {folder_id: parent_id, file_size: io.size, file_name: name}
-      session_info, response = post(uri, body, content_type: "application/json", success_codes: [200,202])
+      session_info, response = post(uri, body, content_type: "application/json", success_codes: [200,201,202])
 
       session_info
     end
@@ -31,7 +31,7 @@ module Boxr
       file_id = ensure_id(file)
       uri = "#{UPLOAD_URI}/files/#{file_id}/upload_sessions"
       body = {file_size: io.size, file_name: name}
-      session_info, response = post(uri, body, content_type: "application/json", success_codes: [200,202])
+      session_info, response = post(uri, body, content_type: "application/json", success_codes: [200,201,202])
 
       session_info
     end
@@ -60,7 +60,7 @@ module Boxr
 
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       body = data
-      part_info, response = put(uri, body, process_body: false, digest: digest, content_type: "application/octet-stream", content_range: range, success_codes: [200,202])
+      part_info, response = put(uri, body, process_body: false, digest: digest, content_type: "application/octet-stream", content_range: range, success_codes: [200,201,202])
 
       part_info.part
     end
@@ -99,7 +99,7 @@ module Boxr
         parts: parts,
         attributes: attributes
       }
-      commit_info, response = post(uri, body, process_body: true, digest: digest, content_type: "application/json", if_match: if_match, if_non_match: if_non_match, success_codes: [200,202])
+      commit_info, response = post(uri, body, process_body: true, digest: digest, content_type: "application/json", if_match: if_match, if_non_match: if_non_match, success_codes: [200,201,202])
 
       commit_info
     end

@@ -87,7 +87,7 @@ describe "file operations" do
     versions = BOX_CLIENT.versions_of_file(test_file)
     expect(versions.count).to eq(3) #this is still 3 because with Box you can restore a trashed old version
 
-    puts "get file thumbnail"
+    puts "get file thumbnail" #FIXME: this transiently fails
     thumb = BOX_CLIENT.thumbnail(test_file)
     expect(thumb).not_to be_nil
 
@@ -96,7 +96,7 @@ describe "file operations" do
     expect(updated_file.shared_link.access).to eq("open")
 
     puts "create password-protected shared link for file"
-    updated_file = BOX_CLIENT.create_shared_link_for_file(test_file, password: 'password')
+    updated_file = BOX_CLIENT.create_shared_link_for_file(test_file, password: 'Password123%')
     expect(updated_file.shared_link.is_password_enabled).to eq(true)
 
     puts "disable shared link for file"

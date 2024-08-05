@@ -29,7 +29,7 @@ describe 'collaborations operations' do
     puts "inspect folder collaborations"
     collaborations = BOX_CLIENT.folder_collaborations(@test_folder)
     expect(collaborations.count).to eq(2)
-    expect(collaborations[0].id).to eq(COLLABORATION.id)
+    expect(collaborations.map(&:id)).to include(COLLABORATION.id)
 
     puts "inspect file collaborations"
     collaborations = BOX_CLIENT.file_collaborations(new_file)

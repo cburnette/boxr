@@ -99,7 +99,19 @@ module Boxr
         parts: parts,
         attributes: attributes
       }
-      commit_info, response = post(uri, body, process_body: true, digest: digest, content_type: "application/json", if_match: if_match, if_non_match: if_non_match, success_codes: [200,201,202])
+
+      commit_info, = with_retry_on_202 do
+        post(
+          uri,
+          body,
+          process_body: true,
+          digest: digest,
+          content_type: 'application/json',
+          if_match: if_match,
+          if_non_match: if_non_match,
+          success_codes: [200, 201, 202]
+        )
+      end
 
       commit_info
     end
@@ -193,5 +205,18 @@ module Boxr
       PARALLEL_GEM_REQUIREMENT.satisfied_by?(gem_spec.version) && defined?(Parallel)
     end
 
+    def with_retry_on_202
+      parsed_response = response = nil
+
+      loop do
+        parsed_response, response = yield
+        break if response.status != 202
+
+        retry_after = response.header['retry-after'].to_i
+        sleep retry_after > 0 ? retry_after : 1
+      end
+
+      [parsed_response, response]
+    end
   end
 end

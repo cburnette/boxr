@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 def generate_signature(payload, timestamp, key)
-  message_as_bytes = (payload.bytes + timestamp.bytes).pack('U')
-  digest = OpenSSL::HMAC.hexdigest('SHA256', key, message_as_bytes)
-  Base64.encode64(digest)
+  digest = OpenSSL::HMAC.digest('SHA256', key, "#{payload}#{timestamp}")
+  Base64.strict_encode64(digest)
 end
 
 # rake spec SPEC_OPTS="-e \"Boxr::WebhookValidator"\"
@@ -32,7 +31,7 @@ describe Boxr::WebhookValidator, :skip_reset do
       it 'raises an error' do
         expect do
           subject
-        end.to raise_error(RuntimeError, 'Webhook authenticity not verified: invalid timestamp')
+        end.to raise_error(Boxr::BoxrError, 'Webhook authenticity not verified: invalid timestamp')
       end
     end
 
@@ -41,7 +40,7 @@ describe Boxr::WebhookValidator, :skip_reset do
       it 'raises an error' do
         expect do
           subject
-        end.to raise_error(RuntimeError, 'Webhook authenticity not verified: invalid timestamp')
+        end.to raise_error(Boxr::BoxrError, 'Webhook authenticity not verified: invalid timestamp')
       end
     end
   end

@@ -17,13 +17,13 @@ RSpec.configure do |config|
   end
 
   # Configure WebMock globally
-  config.before(:suite) do
-    # WebMock.disable_net_connect!(allow_localhost: true)
-    # Reset HTTPClient for WebMock compatibility
-    Boxr::BOX_CLIENT = HTTPClient.new
-  end
+  # config.before(:suite) do
+  # WebMock.disable_net_connect!(allow_localhost: true)
+  # Reset HTTPClient for WebMock compatibility
+  # end
 
   config.before(:each, :unit) do
+    Boxr::BOX_CLIENT = HTTPClient.new
     WebMock.enable!
     WebMock.reset!
   end

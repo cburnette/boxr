@@ -1,11 +1,12 @@
 # rake spec SPEC_OPTS="-e \"invokes user operations"\"
+require 'spec_helper'
 describe 'user operations' do
   it 'invokes user operations' do
     puts 'inspect current user'
     user = BOX_CLIENT.current_user
     expect(user.status).to eq('active')
     user = BOX_CLIENT.me(fields: [:role])
-    expect(user.role).to_not be_nil
+    expect(user.role).not_to be_nil
 
     puts 'inspect a user'
     user = BOX_CLIENT.user(@test_user)
@@ -14,7 +15,7 @@ describe 'user operations' do
     puts 'inspect all users'
     all_users = BOX_CLIENT.all_users
     test_user = all_users.find { |u| u.id == @test_user.id }
-    expect(test_user).to_not be_nil
+    expect(test_user).not_to be_nil
 
     # create user is tested in the before method
 

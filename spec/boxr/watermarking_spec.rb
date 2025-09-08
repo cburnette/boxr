@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes watermarking operations"\"
+require 'spec_helper'
 describe 'watermarking operations' do
   it 'invokes watermarking operations' do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)
@@ -6,11 +7,11 @@ describe 'watermarking operations' do
 
     puts 'apply watermark on file'
     watermark = BOX_CLIENT.apply_watermark_on_file(test_file)
-    expect(watermark.watermark).to_not be_nil
+    expect(watermark.watermark).not_to be_nil
 
     puts 'get watermark on file'
     watermark = BOX_CLIENT.get_watermark_on_file(test_file)
-    expect(watermark.watermark).to_not be_nil
+    expect(watermark.watermark).not_to be_nil
 
     puts 'remove watermark on file'
     result = BOX_CLIENT.remove_watermark_on_file(test_file)
@@ -18,11 +19,11 @@ describe 'watermarking operations' do
 
     puts 'apply watermark on folder'
     watermark = BOX_CLIENT.apply_watermark_on_folder(folder)
-    expect(watermark.watermark).to_not be_nil
+    expect(watermark.watermark).not_to be_nil
 
     puts 'get watermark on folder'
     watermark = BOX_CLIENT.get_watermark_on_folder(folder)
-    expect(watermark.watermark).to_not be_nil
+    expect(watermark.watermark).not_to be_nil
 
     puts 'remove watermark on folder'
     result = BOX_CLIENT.remove_watermark_on_folder(folder)

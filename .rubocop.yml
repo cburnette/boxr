@@ -1,5 +1,6 @@
+plugins:
+  - rubocop-rspec
+  - rubocop-rake
+
 Layout/LineLength:
   Max: 100
-
-AllCops:
-  SuggestExtensions: false

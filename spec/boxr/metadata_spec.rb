@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes file metadata operations"\"
+require 'spec_helper'
 describe 'file metadata operations' do
   it 'invokes file metadata operations' do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)

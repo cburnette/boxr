@@ -29,8 +29,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.1'
   spec.add_development_dependency 'rspec', '~> 3.1'
   spec.add_development_dependency 'rubocop', '~> 1.0'
+  spec.add_development_dependency 'rubocop-rake', '~> 0.7.0'
+  spec.add_development_dependency 'rubocop-rspec', '~> 3.0'
   spec.add_development_dependency 'rubyzip', '~> 2.3'
   spec.add_development_dependency 'simplecov', '~> 0.9'
+  spec.add_development_dependency 'webmock', '~> 3.19'
 
   spec.add_runtime_dependency 'addressable', '~> 2.8'
   spec.add_runtime_dependency 'hashie', '>= 3.5', '< 6'

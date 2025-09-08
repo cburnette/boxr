@@ -3,6 +3,7 @@
 require 'zip'
 
 # rake spec SPEC_OPTS="-e \"invokes zip downloads operations"\"
+require 'spec_helper'
 describe 'zip downloads operations' do
   it 'invokes zip downloads operations' do
     test_file_path = "./spec/test_files/#{TEST_FILE_NAME}"

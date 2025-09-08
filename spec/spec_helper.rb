@@ -1,16 +1,41 @@
+# ENV file should be in the root directory
 require 'dotenv'
 Dotenv.load
+
+# For unit tests only
+require 'webmock/rspec'
+require 'awesome_print'
 require 'simplecov'
 SimpleCov.start { add_filter '_spec' }
+
 require 'boxr'
-require 'awesome_print'
+require 'boxr_spec'
 
 RSpec.configure do |config|
-  config.before(:each) do |example|
-    if example.metadata[:skip_reset]
-      puts 'Skipping reset'
-      next
-    end
+  config.define_derived_metadata(file_path: %r{/spec/unit/}) do |metadata|
+    metadata[:unit] = true
+  end
+
+  # Configure WebMock globally
+  config.before(:suite) do
+    # WebMock.disable_net_connect!(allow_localhost: true)
+    # Reset HTTPClient for WebMock compatibility
+    Boxr::BOX_CLIENT = HTTPClient.new
+  end
+
+  config.before(:each, :unit) do
+    WebMock.enable!
+    WebMock.reset!
+  end
+
+  config.after(:each, :unit) do
+    WebMock.disable!
+  end
+
+  config.before do |example|
+    next if example.metadata[:skip_reset]
+
+    next if example.metadata[:unit]
 
     puts '-----> Resetting Box Environment'
     sleep BOX_SERVER_SLEEP

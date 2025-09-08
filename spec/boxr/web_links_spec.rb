@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes web links operations"\"
+require 'spec_helper'
 describe 'web links operations' do
   it 'invokes web links operations' do
     puts 'create web link'

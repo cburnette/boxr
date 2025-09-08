@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes folder operations"\"
+require 'spec_helper'
 describe 'folder operations' do
   it 'invokes folder operations' do
     puts 'get folder using path'
@@ -31,7 +32,7 @@ describe 'folder operations' do
     puts 'create password-protected shared link for folder'
     updated_folder = BOX_CLIENT.create_shared_link_for_folder(@test_folder,
                                                               password: 'Password123%')
-    expect(updated_folder.shared_link.is_password_enabled).to eq(true)
+    expect(updated_folder.shared_link.is_password_enabled).to be(true)
     shared_link = updated_folder.shared_link.url
 
     puts 'inspect shared link'

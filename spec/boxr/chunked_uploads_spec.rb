@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes chunked uploads operations"\"
+require 'spec_helper'
 describe 'chunked uploads operations' do
   it 'invokes chunked uploads operations' do
     puts 'create chunked upload session'

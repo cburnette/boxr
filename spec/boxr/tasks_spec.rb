@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes task operations"\"
+require 'spec_helper'
 describe 'task operations' do
   it 'invokes task operations' do
     test_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)

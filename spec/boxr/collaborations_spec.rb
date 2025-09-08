@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes collaborations operations"\"
+require 'spec_helper'
 describe 'collaborations operations' do
   it 'invokes collaborations operations' do
     puts 'test setup'

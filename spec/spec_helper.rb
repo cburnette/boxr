@@ -1,27 +1,27 @@
-require 'dotenv'; Dotenv.load
-require 'simplecov'; SimpleCov.start { add_filter "_spec" }
+require 'dotenv'
+Dotenv.load
+require 'simplecov'
+SimpleCov.start { add_filter '_spec' }
 require 'boxr'
 require 'awesome_print'
 
 RSpec.configure do |config|
   config.before(:each) do |example|
     if example.metadata[:skip_reset]
-      puts "Skipping reset"
+      puts 'Skipping reset'
       next
     end
 
-    puts "-----> Resetting Box Environment"
+    puts '-----> Resetting Box Environment'
     sleep BOX_SERVER_SLEEP
     root_folders = BOX_CLIENT.root_folder_items.folders
-    test_folder = root_folders.find{|f| f.name == TEST_FOLDER_NAME}
-    if(test_folder)
-      BOX_CLIENT.delete_folder(test_folder, recursive: true)
-    end
+    test_folder = root_folders.find { |f| f.name == TEST_FOLDER_NAME }
+    BOX_CLIENT.delete_folder(test_folder, recursive: true) if test_folder
     new_folder = BOX_CLIENT.create_folder(TEST_FOLDER_NAME, Boxr::ROOT)
     @test_folder = new_folder
 
     all_users = BOX_CLIENT.all_users
-    test_users = all_users.select{|u| u.name == TEST_USER_NAME}
+    test_users = all_users.select { |u| u.name == TEST_USER_NAME }
     test_users.each do |u|
       BOX_CLIENT.delete_user(u, force: true)
     end
@@ -30,10 +30,8 @@ RSpec.configure do |config|
     @test_user = test_user
 
     all_groups = BOX_CLIENT.groups
-    test_group = all_groups.find{|g| g.name == TEST_GROUP_NAME}
-    if(test_group)
-      BOX_CLIENT.delete_group(test_group)
-    end
+    test_group = all_groups.find { |g| g.name == TEST_GROUP_NAME }
+    BOX_CLIENT.delete_group(test_group) if test_group
   end
 
   config.filter_run_when_matching :focus

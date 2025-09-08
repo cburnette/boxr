@@ -12,7 +12,7 @@ describe Boxr::WebhookValidator, :skip_reset do
     subject { described_class.new(headers, payload).verify_delivery_timestamp }
     context 'maximum age is under 10 minutes' do
       let(:five_minutes_ago) { (Time.now.utc - 300).to_s } # 5 minutes (in seconds)
-      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => five_minutes_ago} }
+      let(:headers) { { 'BOX-DELIVERY-TIMESTAMP' => five_minutes_ago } }
       it 'returns true' do
         expect(subject).to eq(true)
       end
@@ -48,13 +48,18 @@ describe Boxr::WebhookValidator, :skip_reset do
   describe '#verify_signature' do
     let(:payload) { 'some data' }
     let(:timestamp) { (Time.now.utc - 300).to_s } # 5 minutes ago (in seconds)
-    let(:signature_primary) { generate_signature(payload, timestamp, ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s) }
-    let(:signature_secondary) { generate_signature(payload, timestamp, ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s) }
-    subject { described_class.new(headers,
-                                  payload,
-                                  primary_signature_key: ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s,
-                                  secondary_signature_key: ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s,
-                                  ).verify_signature }
+    let(:signature_primary) do
+      generate_signature(payload, timestamp, ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s)
+    end
+    let(:signature_secondary) do
+      generate_signature(payload, timestamp, ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s)
+    end
+    subject do
+      described_class.new(headers,
+                          payload,
+                          primary_signature_key: ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s,
+                          secondary_signature_key: ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s).verify_signature
+    end
 
     context 'valid primary key' do
       let(:headers) do
@@ -99,7 +104,8 @@ describe Boxr::WebhookValidator, :skip_reset do
       end
 
       it 'returns false' do
-        subject = described_class.new(headers, payload, primary_signature_key: nil, secondary_signature_key: nil).verify_signature
+        subject = described_class.new(headers, payload, primary_signature_key: nil,
+                                                        secondary_signature_key: nil).verify_signature
         expect(subject).to eq(false)
       end
     end

@@ -515,3 +515,26 @@ create_zip_download(items, download_file_name: nil)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Test Commands
+
+```
+rake spec SPEC_OPTS="-e \"invokes auth operations"\"
+rake spec SPEC_OPTS="-e \"invokes chunked uploads operations"\"
+rake spec SPEC_OPTS="-e \"invokes collaborations operations"\"
+rake spec SPEC_OPTS="-e \"invokes comment operations"\"
+rake spec SPEC_OPTS="-e \"invokes file operations"\"
+rake spec SPEC_OPTS="-e \"invokes folder operations"\"
+rake spec SPEC_OPTS="-e \"invokes group operations"\"
+rake spec SPEC_OPTS="-e \"invokes file metadata operations"\"
+rake spec SPEC_OPTS="-e \"invokes folder metadata operations"\"
+rake spec SPEC_OPTS="-e \"invokes metadata template operations"\"
+rake spec SPEC_OPTS="-e \"invokes search operations"\"
+rake spec SPEC_OPTS="-e \"invokes task operations"\"
+rake spec SPEC_OPTS="-e \"invokes user operations"\"
+rake spec SPEC_OPTS="-e \"invokes watermarking operations"\"
+rake spec SPEC_OPTS="-e \"invokes web links operations"\"
+rake spec SPEC_OPTS="-e \"Boxr::WebhookValidator"\"
+rake spec SPEC_OPTS="-e \"invokes webhook operations"\"
+rake spec SPEC_OPTS="-e \"invokes zip downloads operations"\"
+```

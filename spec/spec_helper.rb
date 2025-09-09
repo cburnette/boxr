@@ -1,35 +1,34 @@
-# ENV file should be in the root directory
 require 'dotenv'
 Dotenv.load
 
 # For unit tests only
-require 'webmock/rspec'
 require 'awesome_print'
 require 'simplecov'
 SimpleCov.start { add_filter '_spec' }
 
+require 'webmock/rspec'
+
 require 'boxr'
 require 'boxr_spec'
+
+# Needed for webmock to work
+Boxr::BOX_CLIENT = HTTPClient.new
 
 RSpec.configure do |config|
   config.define_derived_metadata(file_path: %r{/spec/unit/}) do |metadata|
     metadata[:unit] = true
   end
 
-  # Default (non-unit) tests need an internet connection to run
-  config.before(:suite) do
-    WebMock.disable!
-  end
-
-  config.before(:each, :unit) do
-    WebMock.disable_net_connect!(allow_localhost: true)
-    WebMock.enable!
-    WebMock.reset!
-  end
-
-  config.after(:each, :unit) do
-    WebMock.disable!
-    WebMock.reset!
+  config.before do
+    if self.class.metadata[:unit]
+      Boxr::BOX_CLIENT = HTTPClient.new
+      WebMock.disable_net_connect!(allow_localhost: true)
+      WebMock.enable!
+    else
+      WebMock.enable_net_connect!
+      WebMock.reset!
+      WebMock.disable!
+    end
   end
 
   config.before do |example|

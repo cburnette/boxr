@@ -19,16 +19,18 @@ describe Boxr::Client do
     allow(File).to receive(:basename).with(file_path).and_return('test.txt')
   end
 
-  before do
-    allow(client).to receive_messages(folder_from_path: test_folder,
-                                      folder_items: double('items', files: [test_file]),
-                                      get: [mock_file_info, mock_response],
-                                      put: [test_file, mock_response],
-                                      post: [mock_file_info, mock_response],
-                                      delete: [{}, mock_response],
-                                      options: [{}, mock_response],
-                                      ensure_id: '12345')
-  end
+  # before do
+  #   allow(client).to receive_messages(
+  #     folder_from_path: test_folder,
+  #     folder_items: instance_double(BoxrCollection, files: [test_file]),
+  #     get: [mock_file_info, mock_response],
+  #     put: [test_file, mock_response],
+  #     post: [mock_file_info, mock_response],
+  #     delete: [{}, mock_response],
+  #     options: [{}, mock_response],
+  #     ensure_id: '12345'
+  #   )
+  # end
 
   describe '#file_from_path' do
     it 'finds file with absolute path' do
@@ -42,11 +44,11 @@ describe Boxr::Client do
     end
 
     it 'raises error when file not found' do
-      allow(client).to receive(:folder_items).and_return(double('items', files: []))
+      allow(client).to receive(:folder_items).and_return(instance_double(BoxrCollection, files: []))
+
       expect do
         client.file_from_path('/folder/nonexistent.txt')
-      end.to raise_error(Boxr::BoxrError,
-                         /File not found/)
+      end.to raise_error(Boxr::BoxrError, /File not found/)
     end
 
     it 'handles case-insensitive file matching' do

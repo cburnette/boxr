@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes group operations"\"
+require 'spec_helper'
 describe 'group operations' do
   it 'invokes group operations' do
     puts 'create group'
@@ -8,7 +9,7 @@ describe 'group operations' do
     puts 'inspect groups'
     groups = BOX_CLIENT.groups
     test_group = groups.find { |g| g.name == TEST_GROUP_NAME }
-    expect(test_group).to_not be_nil
+    expect(test_group).not_to be_nil
 
     puts 'get group info'
     group_info = BOX_CLIENT.group(test_group)

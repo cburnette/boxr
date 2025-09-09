@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes search operations"\"
+require 'spec_helper'
 describe 'search operations' do
   it 'invokes search operations' do
     # the issue with this test is that Box can take between 5-10 minutes to index any content uploaded; this is just a smoke test

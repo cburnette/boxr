@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes file operations"\"
+require 'spec_helper'
 describe 'file operations' do
   it 'invokes file operations' do
     puts 'upload a file'
@@ -46,8 +47,8 @@ describe 'file operations' do
                                                   is_download_prevented: true)
     locked_file = BOX_CLIENT.file(locked_file, fields: [:lock])
     expect(locked_file.lock.type).to eq('lock')
-    expect(locked_file.lock.expires_at).to_not be_nil
-    expect(locked_file.lock.is_download_prevented).to eq(true)
+    expect(locked_file.lock.expires_at).not_to be_nil
+    expect(locked_file.lock.is_download_prevented).to be(true)
 
     puts 'unlock file'
     unlocked_file = BOX_CLIENT.unlock_file(locked_file)
@@ -60,7 +61,7 @@ describe 'file operations' do
     f.write(file_content)
     f.close
     expect(FileUtils.identical?("./spec/test_files/#{TEST_FILE_NAME}",
-                                "./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")).to eq(true)
+                                "./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")).to be(true)
     File.delete("./spec/test_files/#{DOWNLOADED_TEST_FILE_NAME}")
 
     puts 'download invalid file'
@@ -101,7 +102,7 @@ describe 'file operations' do
 
     puts 'create password-protected shared link for file'
     updated_file = BOX_CLIENT.create_shared_link_for_file(test_file, password: 'Password123%')
-    expect(updated_file.shared_link.is_password_enabled).to eq(true)
+    expect(updated_file.shared_link.is_password_enabled).to be(true)
 
     puts 'disable shared link for file'
     updated_file = BOX_CLIENT.disable_shared_link_for_file(test_file)

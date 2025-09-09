@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes webhook operations"\"
+require 'spec_helper'
 describe 'webhook operations' do
   it 'invokes webhook operations' do
     puts 'create webhook'

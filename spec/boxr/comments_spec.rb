@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes comment operations"\"
+require 'spec_helper'
 describe 'comment operations' do
   it 'invokes comment operations' do
     new_file = BOX_CLIENT.upload_file("./spec/test_files/#{TEST_FILE_NAME}", @test_folder)

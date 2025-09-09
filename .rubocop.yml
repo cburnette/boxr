@@ -1,5 +1,14 @@
+plugins:
+  - rubocop-rspec
+  - rubocop-rake
+
 Layout/LineLength:
   Max: 100
 
-AllCops:
-  SuggestExtensions: false
+# Due to legacy test format
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+# Disable this rule for RSpec
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false

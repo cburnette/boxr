@@ -1,4 +1,5 @@
 # rake spec SPEC_OPTS="-e \"invokes auth operations"\"
+require 'spec_helper'
 describe 'auth operations' do
   it 'invokes auth operations' do
     private_key = OpenSSL::PKey::RSA.new(File.read(ENV['JWT_PRIVATE_KEY_PATH']),

@@ -4,3 +4,11 @@ plugins:
 
 Layout/LineLength:
   Max: 100
+
+# Due to legacy test format
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+# Disable this rule for RSpec
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false

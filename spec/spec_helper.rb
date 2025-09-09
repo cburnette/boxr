@@ -16,25 +16,24 @@ RSpec.configure do |config|
     metadata[:unit] = true
   end
 
-  # Configure WebMock globally
-  # config.before(:suite) do
-  # WebMock.disable_net_connect!(allow_localhost: true)
-  # Reset HTTPClient for WebMock compatibility
-  # end
+  # Default (non-unit) tests need an internet connection to run
+  config.before(:suite) do
+    WebMock.disable!
+  end
 
   config.before(:each, :unit) do
-    Boxr::BOX_CLIENT = HTTPClient.new
+    WebMock.disable_net_connect!(allow_localhost: true)
     WebMock.enable!
     WebMock.reset!
   end
 
   config.after(:each, :unit) do
     WebMock.disable!
+    WebMock.reset!
   end
 
   config.before do |example|
     next if example.metadata[:skip_reset]
-
     next if example.metadata[:unit]
 
     puts '-----> Resetting Box Environment'

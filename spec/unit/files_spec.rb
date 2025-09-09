@@ -1,15 +1,33 @@
 require 'spec_helper'
 
-describe Boxr::Client, :unit do
+describe Boxr::Client do
   let(:client) { described_class.new }
   let(:test_folder) { double('folder', id: '12345') }
   let(:test_file) { double('file', id: '67890', name: 'test.txt') }
   let(:mock_response) { double('response', status: 200, header: {}) }
-  let(:mock_file_info) { double('file_info', expiring_embed_link: double('link', url: 'https://example.com/embed'), entries: [test_file]) }
+  let(:mock_file_info) do
+    double('file_info',
+           expiring_embed_link: double('link', url: 'https://example.com/embed'),
+           entries: [test_file])
+  end
+
+  let(:file_path) { '/tmp/test.txt' }
+  let(:file_io) { instance_double(File, read: 'content', rewind: nil, size: 1024) }
+
+  def setup_file_io_stubs
+    allow(File).to receive(:open).with(file_path).and_yield(file_io)
+    allow(File).to receive(:basename).with(file_path).and_return('test.txt')
+  end
 
   before do
     allow(client).to receive_messages(folder_from_path: test_folder,
-                                      folder_items: double('items', files: [test_file]), get: [mock_file_info, mock_response], put: [test_file, mock_response], post: [mock_file_info, mock_response], delete: [{}, mock_response], options: [{}, mock_response], ensure_id: '12345')
+                                      folder_items: double('items', files: [test_file]),
+                                      get: [mock_file_info, mock_response],
+                                      put: [test_file, mock_response],
+                                      post: [mock_file_info, mock_response],
+                                      delete: [{}, mock_response],
+                                      options: [{}, mock_response],
+                                      ensure_id: '12345')
   end
 
   describe '#file_from_path' do
@@ -60,14 +78,12 @@ describe Boxr::Client, :unit do
   describe '#embed_url' do
     it 'generates embed URL with default parameters' do
       result = client.embed_url(test_file)
-      expect(result).to include('showDownload=false')
-      expect(result).to include('showAnnotations=false')
+      expect(result).to include('showDownload=false').and include('showAnnotations=false')
     end
 
     it 'generates embed URL with custom parameters' do
       result = client.embed_url(test_file, show_download: true, show_annotations: true)
-      expect(result).to include('showDownload=true')
-      expect(result).to include('showAnnotations=true')
+      expect(result).to include('showDownload=true').and include('showAnnotations=true')
     end
   end
 
@@ -226,12 +242,8 @@ describe Boxr::Client, :unit do
   # end
 
   describe '#upload_file' do
-    let(:file_path) { '/tmp/test.txt' }
-    let(:file_io) { double('file_io', read: 'content', rewind: nil, size: 1024) }
-
     before do
-      allow(File).to receive(:open).with(file_path).and_yield(file_io)
-      allow(File).to receive(:basename).with(file_path).and_return('test.txt')
+      setup_file_io_stubs
     end
 
     it 'uploads file from path' do
@@ -264,40 +276,35 @@ describe Boxr::Client, :unit do
   end
 
   describe '#upload_file_from_io' do
-    let(:io) { double('io', read: 'content', rewind: nil, size: 1024) }
-
     it 'uploads file from IO' do
-      result = client.upload_file_from_io(io, test_folder, name: 'test.txt')
+      result = client.upload_file_from_io(file_io, test_folder, name: 'test.txt')
       expect(result).to eq(test_file)
     end
 
     it 'uploads file with content timestamps' do
       created_at = Time.now
       modified_at = Time.now
-      result = client.upload_file_from_io(io, test_folder, name: 'test.txt',
-                                                           content_created_at: created_at, content_modified_at: modified_at)
+      result = client.upload_file_from_io(file_io, test_folder, name: 'test.txt',
+                                                                content_created_at: created_at, content_modified_at: modified_at)
       expect(result).to eq(test_file)
     end
 
     it 'uploads file with preflight check disabled' do
-      result = client.upload_file_from_io(io, test_folder, name: 'test.txt', preflight_check: false)
+      result = client.upload_file_from_io(file_io, test_folder, name: 'test.txt',
+                                                                preflight_check: false)
       expect(result).to eq(test_file)
     end
 
     it 'uploads file with content md5 disabled' do
-      result = client.upload_file_from_io(io, test_folder, name: 'test.txt',
-                                                           send_content_md5: false)
+      result = client.upload_file_from_io(file_io, test_folder, name: 'test.txt',
+                                                                send_content_md5: false)
       expect(result).to eq(test_file)
     end
   end
 
   describe '#upload_new_version_of_file' do
-    let(:file_path) { '/tmp/test.txt' }
-    let(:file_io) { double('file_io', read: 'content', rewind: nil, size: 1024) }
-
     before do
-      allow(File).to receive(:open).with(file_path).and_yield(file_io)
-      allow(File).to receive(:basename).with(file_path).and_return('test.txt')
+      setup_file_io_stubs
     end
 
     it 'uploads new version from path' do
@@ -324,27 +331,25 @@ describe Boxr::Client, :unit do
   end
 
   describe '#upload_new_version_of_file_from_io' do
-    let(:io) { double('io', read: 'content', rewind: nil, size: 1024) }
-
     it 'uploads new version from IO' do
-      result = client.upload_new_version_of_file_from_io(io, test_file)
+      result = client.upload_new_version_of_file_from_io(file_io, test_file)
       expect(result).to eq(test_file)
     end
 
     it 'uploads new version with custom name' do
-      result = client.upload_new_version_of_file_from_io(io, test_file, name: 'custom.txt')
+      result = client.upload_new_version_of_file_from_io(file_io, test_file, name: 'custom.txt')
       expect(result).to eq(test_file)
     end
 
     it 'uploads new version with content modified timestamp' do
       modified_at = Time.now
-      result = client.upload_new_version_of_file_from_io(io, test_file,
+      result = client.upload_new_version_of_file_from_io(file_io, test_file,
                                                          content_modified_at: modified_at)
       expect(result).to eq(test_file)
     end
 
     it 'uploads new version with if_match' do
-      result = client.upload_new_version_of_file_from_io(io, test_file, if_match: 'etag')
+      result = client.upload_new_version_of_file_from_io(file_io, test_file, if_match: 'etag')
       expect(result).to eq(test_file)
     end
   end
@@ -508,20 +513,20 @@ describe Boxr::Client, :unit do
   end
 
   describe 'private methods' do
-    describe '#preflight_check' do
-      let(:io) { double('io', size: 1024) }
+    before do
+      setup_file_io_stubs
+    end
 
+    describe '#preflight_check' do
       it 'performs preflight check for upload' do
-        client.send(:preflight_check, io, 'test.txt', 'parent_id')
+        client.send(:preflight_check, file_io, 'test.txt', 'parent_id')
         expect(client).to have_received(:options)
       end
     end
 
     describe '#preflight_check_new_version_of_file' do
-      let(:io) { double('io', size: 1024) }
-
       it 'performs preflight check for new version' do
-        client.send(:preflight_check_new_version_of_file, io, 'file_id')
+        client.send(:preflight_check_new_version_of_file, file_io, 'file_id')
         expect(client).to have_received(:options)
       end
     end

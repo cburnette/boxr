@@ -21,7 +21,6 @@ RSpec.configure do |config|
 
   config.before do
     if self.class.metadata[:unit]
-      Boxr::BOX_CLIENT = HTTPClient.new
       WebMock.disable_net_connect!(allow_localhost: true)
       WebMock.enable!
     else

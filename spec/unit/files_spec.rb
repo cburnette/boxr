@@ -19,20 +19,16 @@ describe Boxr::Client do
     allow(File).to receive(:basename).with(file_path).and_return('test.txt')
   end
 
-  # before do
-  #   allow(client).to receive_messages(
-  #     folder_from_path: test_folder,
-  #     folder_items: instance_double(BoxrCollection, files: [test_file]),
-  #     get: [mock_file_info, mock_response],
-  #     put: [test_file, mock_response],
-  #     post: [mock_file_info, mock_response],
-  #     delete: [{}, mock_response],
-  #     options: [{}, mock_response],
-  #     ensure_id: '12345'
-  #   )
-  # end
-
   describe '#file_from_path' do
+    before do
+      allow(client).to receive_messages(
+        folder_from_path: test_folder,
+        folder_items: instance_double(
+          BoxrCollection, files: [test_file]
+        )
+      )
+    end
+
     it 'finds file with absolute path' do
       result = client.file_from_path('/folder/test.txt')
       expect(result).to eq(test_file)
@@ -59,6 +55,10 @@ describe Boxr::Client do
   end
 
   describe '#file_from_id' do
+    before do
+      allow(client).to receive(:get).and_return(mock_file_info)
+    end
+
     it 'retrieves file by ID' do
       result = client.file_from_id('12345')
       expect(result).to eq(mock_file_info)
@@ -71,6 +71,10 @@ describe Boxr::Client do
   end
 
   describe '#file (alias)' do
+    before do
+      allow(client).to receive(:get).and_return(mock_file_info)
+    end
+
     it 'calls file_from_id' do
       result = client.file('12345')
       expect(result).to eq(mock_file_info)
@@ -78,6 +82,10 @@ describe Boxr::Client do
   end
 
   describe '#embed_url' do
+    before do
+      allow(client).to receive(:get).and_return(mock_file_info)
+    end
+
     it 'generates embed URL with default parameters' do
       result = client.embed_url(test_file)
       expect(result).to include('showDownload=false').and include('showAnnotations=false')
@@ -90,6 +98,10 @@ describe Boxr::Client do
   end
 
   describe '#embed_link (alias)' do
+    before do
+      allow(client).to receive(:get).and_return(mock_file_info)
+    end
+
     it 'calls embed_url' do
       result = client.embed_link(test_file)
       expect(result).to include('showDownload=false')
@@ -97,6 +109,10 @@ describe Boxr::Client do
   end
 
   describe '#preview_url (alias)' do
+    before do
+      allow(client).to receive(:get).and_return(mock_file_info)
+    end
+
     it 'calls embed_url' do
       result = client.preview_url(test_file)
       expect(result).to include('showDownload=false')
@@ -104,6 +120,10 @@ describe Boxr::Client do
   end
 
   describe '#preview_link (alias)' do
+    before do
+      allow(client).to receive(:get).and_return(mock_file_info)
+    end
+
     it 'calls embed_url' do
       result = client.preview_link(test_file)
       expect(result).to include('showDownload=false')
@@ -111,6 +131,10 @@ describe Boxr::Client do
   end
 
   describe '#update_file' do
+    before do
+      allow(client).to receive(:put).and_return(test_file)
+    end
+
     it 'updates file with name' do
       result = client.update_file(test_file, name: 'new_name.txt')
       expect(result).to eq(test_file)
@@ -148,6 +172,10 @@ describe Boxr::Client do
   end
 
   describe '#lock_file' do
+    before do
+      allow(client).to receive(:put).and_return(test_file)
+    end
+
     it 'locks file with basic lock' do
       result = client.lock_file(test_file)
       expect(result).to eq(test_file)
@@ -171,6 +199,10 @@ describe Boxr::Client do
   end
 
   describe '#unlock_file' do
+    before do
+      allow(client).to receive(:put).and_return(test_file)
+    end
+
     it 'unlocks file' do
       result = client.unlock_file(test_file)
       expect(result).to eq(test_file)
@@ -183,6 +215,10 @@ describe Boxr::Client do
   end
 
   describe '#move_file' do
+    before do
+      allow(client).to receive(:put).and_return(test_file)
+    end
+
     it 'moves file to new parent' do
       result = client.move_file(test_file, 'new_parent_id')
       expect(result).to eq(test_file)
@@ -246,6 +282,7 @@ describe Boxr::Client do
   describe '#upload_file' do
     before do
       setup_file_io_stubs
+      allow(client).to receive_messages(post: mock_file_info, options: {})
     end
 
     it 'uploads file from path' do
@@ -278,6 +315,10 @@ describe Boxr::Client do
   end
 
   describe '#upload_file_from_io' do
+    before do
+      allow(client).to receive_messages(options: {}, post: mock_file_info)
+    end
+
     it 'uploads file from IO' do
       result = client.upload_file_from_io(file_io, test_folder, name: 'test.txt')
       expect(result).to eq(test_file)
@@ -307,6 +348,7 @@ describe Boxr::Client do
   describe '#upload_new_version_of_file' do
     before do
       setup_file_io_stubs
+      allow(client).to receive_messages(options: {}, post: mock_file_info)
     end
 
     it 'uploads new version from path' do
@@ -333,6 +375,10 @@ describe Boxr::Client do
   end
 
   describe '#upload_new_version_of_file_from_io' do
+    before do
+      allow(client).to receive_messages(options: {}, post: mock_file_info)
+    end
+
     it 'uploads new version from IO' do
       result = client.upload_new_version_of_file_from_io(file_io, test_file)
       expect(result).to eq(test_file)
@@ -357,10 +403,10 @@ describe Boxr::Client do
   end
 
   describe '#versions_of_file' do
-    let(:versions_response) { double('versions', entries: [test_file, test_file]) }
+    let(:versions_response) { instance_double(BoxrMash, entries: [test_file, test_file]) }
 
     before do
-      allow(client).to receive(:get).and_return([versions_response, mock_response])
+      allow(client).to receive(:get).and_return(versions_response)
     end
 
     it 'retrieves file versions' do
@@ -370,6 +416,10 @@ describe Boxr::Client do
   end
 
   describe '#promote_old_version_of_file' do
+    before do
+      allow(client).to receive(:post).and_return(mock_file_info)
+    end
+
     it 'promotes old version to current' do
       result = client.promote_old_version_of_file(test_file, 'version_id')
       expect(result).to eq(mock_file_info)
@@ -377,6 +427,10 @@ describe Boxr::Client do
   end
 
   describe '#delete_file' do
+    before do
+      allow(client).to receive(:delete).and_return({})
+    end
+
     it 'deletes file' do
       result = client.delete_file(test_file)
       expect(result).to eq({})
@@ -389,6 +443,10 @@ describe Boxr::Client do
   end
 
   describe '#delete_old_version_of_file' do
+    before do
+      allow(client).to receive(:delete).and_return({})
+    end
+
     it 'deletes old version' do
       result = client.delete_old_version_of_file(test_file, 'version_id')
       expect(result).to eq({})
@@ -401,6 +459,10 @@ describe Boxr::Client do
   end
 
   describe '#copy_file' do
+    before do
+      allow(client).to receive(:post).and_return(mock_file_info)
+    end
+
     it 'copies file to new parent' do
       result = client.copy_file(test_file, 'parent_id')
       expect(result).to eq(mock_file_info)
@@ -449,6 +511,10 @@ describe Boxr::Client do
   end
 
   describe '#create_shared_link_for_file' do
+    before do
+      allow(client).to receive(:put).and_return(test_file)
+    end
+
     it 'creates shared link with access level' do
       result = client.create_shared_link_for_file(test_file, access: :open)
       expect(result).to eq(test_file)
@@ -472,6 +538,10 @@ describe Boxr::Client do
   end
 
   describe '#disable_shared_link_for_file' do
+    before do
+      allow(client).to receive(:put).and_return(test_file)
+    end
+
     it 'disables shared link' do
       result = client.disable_shared_link_for_file(test_file)
       expect(result).to eq(test_file)
@@ -479,6 +549,10 @@ describe Boxr::Client do
   end
 
   describe '#trashed_file' do
+    before do
+      allow(client).to receive(:get).and_return(mock_file_info)
+    end
+
     it 'retrieves trashed file info' do
       result = client.trashed_file(test_file)
       expect(result).to eq(mock_file_info)
@@ -491,6 +565,10 @@ describe Boxr::Client do
   end
 
   describe '#delete_trashed_file' do
+    before do
+      allow(client).to receive(:delete).and_return({})
+    end
+
     it 'permanently deletes trashed file' do
       result = client.delete_trashed_file(test_file)
       expect(result).to eq({})
@@ -498,6 +576,10 @@ describe Boxr::Client do
   end
 
   describe '#restore_trashed_file' do
+    before do
+      allow(client).to receive(:post).and_return(mock_file_info)
+    end
+
     it 'restores trashed file' do
       result = client.restore_trashed_file(test_file)
       expect(result).to eq(mock_file_info)
@@ -517,6 +599,7 @@ describe Boxr::Client do
   describe 'private methods' do
     before do
       setup_file_io_stubs
+      allow(client).to receive(:options).and_return({})
     end
 
     describe '#preflight_check' do

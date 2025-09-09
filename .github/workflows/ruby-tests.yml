@@ -25,3 +25,5 @@ jobs:
 
     - name: Run unit tests
       run: bundle exec rspec spec/unit/
+      env:
+        BOX_DEVELOPER_TOKEN: test_token

@@ -74,7 +74,7 @@ module Boxr
     private
 
     def verify_url(item)
-      return item if item.instance_of?(String) and (item.include? 'https://' or item.include? 'http://')
+      return item if item.is_a?(String) && (item.include?('https://') || item.include?('http://'))
 
       raise BoxrError.new(boxr_message: "Invalid url. Must include 'http://' or 'https://'")
     end

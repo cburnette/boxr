@@ -2,13 +2,14 @@ require 'spec_helper'
 
 describe Boxr::Client do
   let(:client) { described_class.new }
-  let(:test_folder) { double('folder', id: '12345') }
-  let(:test_file) { double('file', id: '67890', name: 'test.txt') }
-  let(:mock_response) { double('response', status: 200, header: {}) }
+  let(:test_folder) { Hashie::Mash.new(id: '12345') }
+  let(:test_file) { Hashie::Mash.new(id: '67890', name: 'test.txt') }
+  let(:mock_response) { instance_double(HTTP::Message, status: 200, header: {}) }
   let(:mock_file_info) do
-    double('file_info',
-           expiring_embed_link: double('link', url: 'https://example.com/embed'),
-           entries: [test_file])
+    BoxrMash.new(
+      expiring_embed_link: Hashie::Mash.new(url: 'https://example.com/embed'),
+      entries: [test_file]
+    )
   end
 
   let(:file_path) { '/tmp/test.txt' }
@@ -235,49 +236,70 @@ describe Boxr::Client do
     end
   end
 
-  # describe '#download_file' do
-  #   let(:redirect_response) { double('response', status: 302, header: { 'Location' => ['https://download.url'] }) }
-  #   let(:file_content) { 'file content' }
+  describe '#download_file' do
+    let(:redirect_url) { 'https://download.url' }
+    let(:redirect_response) do
+      instance_double(HTTP::Message, status: 302, header: { 'Location' => [redirect_url] })
+    end
+    let(:file_content) { 'file content' }
+    let(:file_content_response) { instance_double(HTTP::Message, status: 200, body: file_content) }
 
-  #   before do
-  #     allow(client).to receive(:get).and_return([nil, redirect_response])
-  #     allow(client).to receive(:get).with('https://download.url',
-  #                                         process_response: false).and_return([file_content,
-  #                                                                              mock_response])
-  #   end
+    before do
+      allow(client).to receive(:get).and_return(
+        [nil, redirect_response], [file_content, file_content_response]
+      )
+    end
 
-  #   it 'downloads file content following redirect' do
-  #     result = client.download_file(test_file)
-  #     expect(result).to eq(file_content)
-  #   end
+    it 'downloads file content following redirect' do
+      result = client.download_file(test_file)
+      expect(result).to eq(file_content)
+    end
 
-  #   it 'downloads file with version' do
-  #     result = client.download_file(test_file, version: 'v1')
-  #     expect(result).to eq(file_content)
-  #   end
+    it 'downloads file with version' do
+      result = client.download_file(test_file, version: 'v1')
+      expect(result).to eq(file_content)
+    end
 
-  #   it 'returns download URL when follow_redirect is false' do
-  #     allow(client).to receive(:get).and_return([nil, redirect_response])
-  #     result = client.download_file(test_file, follow_redirect: false)
-  #     expect(result).to eq('https://download.url')
-  #   end
+    it 'returns download URL when follow_redirect is false' do
+      allow(client).to receive(:get).and_return([nil, redirect_response])
+      result = client.download_file(test_file, follow_redirect: false)
+      expect(result).to eq(redirect_url)
+    end
 
-  #   it 'handles 202 status with retry' do
-  #     retry_response = double('response', status: 202, header: { 'Retry-After' => ['1'] })
-  #     allow(client).to receive(:get).and_return([nil, retry_response], [nil, redirect_response])
-  #     allow(client).to receive(:sleep)
+    context 'when 202 status with retry' do
+      let(:retry_response) do
+        instance_double(HTTP::Message, status: 202, header: { 'Retry-After' => ['1'] })
+      end
 
-  #     expect(client.download_file(test_file)).to eq(file_content)
-  #   end
-  # end
+      before do
+        allow(client).to receive(:get).and_return([nil, retry_response], [nil, redirect_response],
+                                                  [file_content, file_content_response])
+        allow(client).to receive(:sleep) # avoid sleeping in the test
+      end
 
-  # describe '#download_url' do
-  #   it 'returns download URL without following redirect' do
-  #     client.download_url(test_file)
-  #     expect(client).to have_received(:download_file).with(test_file, version: nil,
-  #                                                                     follow_redirect: false)
-  #   end
-  # end
+      it 'handles 202 status with retry' do
+        expect(client.download_file(test_file)).to eq(file_content)
+      end
+    end
+  end
+
+  describe '#download_url' do
+    let(:redirect_url) { 'https://download.url' }
+    let(:redirect_response) do
+      instance_double(HTTP::Message, status: 302, header: { 'Location' => [redirect_url] })
+    end
+    let(:file_content) { 'file content' }
+    let(:file_content_response) { instance_double(HTTP::Message, status: 200, body: file_content) }
+
+    before do
+      allow(client).to receive(:get).and_return([nil, redirect_response],
+                                                [file_content, file_content_response])
+    end
+
+    it 'returns download URL without following redirect' do
+      expect(client.download_url(test_file)).to eq(redirect_url)
+    end
+  end
 
   describe '#upload_file' do
     before do
@@ -325,10 +347,10 @@ describe Boxr::Client do
     end
 
     it 'uploads file with content timestamps' do
-      created_at = Time.now
-      modified_at = Time.now
-      result = client.upload_file_from_io(file_io, test_folder, name: 'test.txt',
-                                                                content_created_at: created_at, content_modified_at: modified_at)
+      result = client.upload_file_from_io(
+        file_io, test_folder,
+        name: 'test.txt', content_created_at: Time.now, content_modified_at: Time.now
+      )
       expect(result).to eq(test_file)
     end
 
@@ -476,7 +498,6 @@ describe Boxr::Client do
 
   describe '#thumbnail' do
     let(:thumbnail_data) { 'thumbnail binary data' }
-    let(:redirect_response) { double('response', status: 302, header: { 'Location' => ['https://thumbnail.url'] }) }
 
     before do
       allow(client).to receive(:get).and_return([thumbnail_data, mock_response])
@@ -488,25 +509,40 @@ describe Boxr::Client do
     end
 
     it 'generates thumbnail with size parameters' do
-      result = client.thumbnail(test_file, min_height: 100, min_width: 100, max_height: 200,
-                                           max_width: 200)
+      result = client.thumbnail(
+        test_file, min_height: 100, min_width: 100, max_height: 200, max_width: 200
+      )
       expect(result).to eq(thumbnail_data)
     end
 
-    it 'handles redirect response' do
-      allow(client).to receive(:get).and_return([nil, redirect_response],
-                                                [thumbnail_data, mock_response])
-      result = client.thumbnail(test_file)
-      expect(result).to eq(thumbnail_data)
+    context 'when redirect response' do
+      let(:redirect_response) do
+        instance_double(
+          HTTP::Message, status: 302, header: { 'Location' => ['https://thumbnail.url'] }
+        )
+      end
+
+      it 'handles redirect response' do
+        allow(client).to receive(:get).and_return([nil, redirect_response],
+                                                  [thumbnail_data, mock_response])
+        expect(client.thumbnail(test_file)).to eq(thumbnail_data)
+      end
     end
 
-    it 'handles 202 status with redirect' do
-      retry_response = double('response', status: 202,
-                                          header: { 'Location' => ['https://thumbnail.url'] })
-      allow(client).to receive(:get).and_return([nil, retry_response],
-                                                [thumbnail_data, mock_response])
-      result = client.thumbnail(test_file)
-      expect(result).to eq(thumbnail_data)
+    context 'when 202 (retry) status with redirect' do
+      let(:retry_response) do
+        instance_double(HTTP::Message, status: 202,
+                                       header: { 'Location' => ['https://thumbnail.url'] })
+      end
+
+      before do
+        allow(client).to receive(:get).and_return([nil, retry_response],
+                                                  [thumbnail_data, mock_response])
+      end
+
+      it 'handles 202 status with redirect' do
+        expect(client.thumbnail(test_file)).to eq(thumbnail_data)
+      end
     end
   end
 

@@ -81,10 +81,8 @@ module Boxr
         query = {}
         query[:version] = version unless version.nil?
         body_json, response = get(uri, query: query, success_codes: [302,202], process_response: false, follow_redirect: false) #we don't want httpclient to automatically follow the redirect; we need to grab it
-
         if(response.status==302)
           location = response.header['Location'][0]
-
           if(follow_redirect)
             file_content, response = get(location, process_response: false)
             return file_content

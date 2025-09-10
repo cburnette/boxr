@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.0'
 
   spec.add_development_dependency 'awesome_print', '~> 1.8'
-  spec.add_development_dependency 'bundler', '~> 2.3'
+  spec.add_development_dependency 'bundler', '~> 2.7'
   spec.add_development_dependency 'dotenv', '~> 2.8'
   spec.add_development_dependency 'lru_redux', '~> 1.1'
   spec.add_development_dependency 'parallel', '~> 1.0'

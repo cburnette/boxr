@@ -22,6 +22,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
+        bundler: 2.7.2
 
     - name: Run unit tests
       run: bundle exec rspec spec/unit/

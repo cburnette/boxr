@@ -7,23 +7,31 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test:
+  test-ruby20:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        ruby-version: ['2.0', '2.7']
-
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/Gemfile.lock.ruby22
     steps:
     - uses: actions/checkout@v4
-
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: ${{ matrix.ruby-version }}
+        ruby-version: '2.0'
         bundler-cache: true
-        bundler: 2.7.2
+    - name: Run unit tests
+      run: bundle exec rspec spec/unit/
+      env:
+        BOX_DEVELOPER_TOKEN: test_token
 
+  test-ruby27:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '2.7'
+        bundler-cache: true
     - name: Run unit tests
       run: bundle exec rspec spec/unit/
       env:

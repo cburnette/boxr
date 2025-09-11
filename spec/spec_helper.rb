@@ -7,6 +7,7 @@ require 'simplecov'
 SimpleCov.start { add_filter '_spec' }
 
 require 'webmock/rspec'
+require 'rspec/support/differ' # Ruby 3.3 compatibility
 
 require 'boxr'
 require 'boxr_spec'

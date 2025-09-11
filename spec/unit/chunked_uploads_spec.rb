@@ -20,6 +20,7 @@ describe Boxr::Client do
 
   def setup_file_io_stubs
     allow(File).to receive(:open).with(file_path).and_yield(file_io)
+    allow(File).to receive(:basename).and_call_original
     allow(File).to receive(:basename).with(file_path).and_return('test.txt')
   end
 

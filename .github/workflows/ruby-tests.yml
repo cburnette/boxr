@@ -22,7 +22,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
-        bundler-version: '2.3'
+        bundler: '2.3'
 
     - name: Run unit tests
       run: bundle exec rspec spec/unit/

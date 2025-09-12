@@ -36,7 +36,6 @@ describe Boxr::Client do
   describe '#collection_items' do
     before do
       allow(client).to receive_messages(
-        ensure_id: '12345',
         build_fields_query: {},
         get_all_with_pagination: mock_collection_items_response
       )
@@ -50,11 +49,6 @@ describe Boxr::Client do
     it 'retrieves collection items with collection ID string' do
       result = client.collection_items('12345')
       expect(result).to eq(mock_collection_items_response)
-    end
-
-    it 'calls ensure_id with collection' do
-      client.collection_items(test_collection)
-      expect(client).to have_received(:ensure_id).with(test_collection)
     end
 
     it 'calls get_all_with_pagination with correct URI' do

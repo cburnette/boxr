@@ -53,7 +53,6 @@ describe Boxr::Client do
 
   describe '#chunked_upload_create_session_new_file_from_io' do
     before do
-      allow(client).to receive(:ensure_id).with(test_folder).and_return('12345')
       allow(client).to receive(:post).and_return([mock_session_info, mock_response])
     end
 
@@ -101,7 +100,6 @@ describe Boxr::Client do
 
   describe '#chunked_upload_create_session_new_version_from_io' do
     before do
-      allow(client).to receive(:ensure_id).with(test_file).and_return('67890')
       allow(client).to receive(:post).and_return([mock_session_info, mock_response])
     end
 

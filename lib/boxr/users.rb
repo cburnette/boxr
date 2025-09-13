@@ -72,7 +72,8 @@ module Boxr
 
       user_id = ensure_id(user)
       uri = "#{USERS_URI}/#{user_id}"
-      query = {notify: notify} unless notify.nil?
+      query = {}
+      query[:notify] = notify unless notify.nil?
 
       attributes = {}
       attributes[:enterprise] = nil if enterprise.nil? #this is a special condition where setting this to nil means to roll this user out of the enterprise

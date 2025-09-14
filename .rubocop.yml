@@ -1,3 +1,6 @@
+AllCops:
+  TargetRubyVersion: 2.7
+
 plugins:
   - rubocop-rspec
   - rubocop-rake
@@ -11,4 +14,7 @@ RSpec/SpecFilePathFormat:
 
 # Disable this rule for RSpec
 RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+Style/Documentation:
   Enabled: false

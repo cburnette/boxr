@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -65,7 +67,8 @@ describe Boxr::Client do
       let(:error_response) { instance_double(HTTP::Message, status: 404, header: {}) }
 
       before do
-        allow(client).to receive(:get).and_raise(Boxr::BoxrError.new(status: 404, body: 'Not found'))
+        allow(client).to receive(:get).and_raise(Boxr::BoxrError.new(status: 404,
+                                                                     body: 'Not found'))
       end
 
       it 'raises BoxrError for invalid shared link' do

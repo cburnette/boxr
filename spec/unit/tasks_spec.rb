@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -73,7 +75,8 @@ describe Boxr::Client do
     end
 
     it 'creates task with all parameters' do
-      result = client.create_task(test_file, action: :review, message: 'Review needed', due_at: due_at)
+      result = client.create_task(test_file, action: :review, message: 'Review needed',
+                                             due_at: due_at)
       expect(result).to eq(test_task)
     end
 
@@ -244,7 +247,8 @@ describe Boxr::Client do
     end
 
     it 'creates task assignment with both assign_to and assign_to_login' do
-      result = client.create_task_assignment(test_task, assign_to: test_user, assign_to_login: 'user@example.com')
+      result = client.create_task_assignment(test_task, assign_to: test_user,
+                                                        assign_to_login: 'user@example.com')
       expect(result).to eq(test_task_assignment)
     end
 
@@ -276,7 +280,8 @@ describe Boxr::Client do
     end
 
     it 'handles both assign_to and assign_to_login' do
-      client.create_task_assignment(test_task, assign_to: test_user, assign_to_login: 'user@example.com')
+      client.create_task_assignment(test_task, assign_to: test_user,
+                                               assign_to_login: 'user@example.com')
       expect(client).to have_received(:post).with(
         Boxr::Client::TASK_ASSIGNMENTS_URI,
         hash_including(
@@ -345,12 +350,14 @@ describe Boxr::Client do
     end
 
     it 'updates task assignment with both parameters' do
-      result = client.update_task_assignment(test_task_assignment, message: 'Done', resolution_state: :completed)
+      result = client.update_task_assignment(test_task_assignment, message: 'Done',
+                                                                   resolution_state: :completed)
       expect(result).to eq(test_task_assignment)
     end
 
     it 'calls put with correct URI and attributes' do
-      client.update_task_assignment(test_task_assignment, message: 'test', resolution_state: :completed)
+      client.update_task_assignment(test_task_assignment, message: 'test',
+                                                          resolution_state: :completed)
       expect(client).to have_received(:put).with(
         "#{Boxr::Client::TASK_ASSIGNMENTS_URI}/assignment123",
         hash_including(message: 'test', resolution_state: :completed)

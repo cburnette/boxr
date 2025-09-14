@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -39,7 +41,7 @@ describe Boxr::Client do
       expect(client).to have_received(:post).with(
         "#{Boxr::Client::FILE_METADATA_URI}/67890/metadata/global/properties",
         metadata,
-        content_type: "application/json"
+        content_type: 'application/json'
       )
     end
 
@@ -51,7 +53,7 @@ describe Boxr::Client do
       expect(client).to have_received(:post).with(
         "#{Boxr::Client::FILE_METADATA_URI}/67890/metadata/enterprise/custom",
         metadata,
-        content_type: "application/json"
+        content_type: 'application/json'
       )
     end
 
@@ -78,7 +80,7 @@ describe Boxr::Client do
       expect(client).to have_received(:post).with(
         "#{Boxr::Client::FOLDER_METADATA_URI}/12345/metadata/enterprise/custom",
         metadata,
-        content_type: "application/json"
+        content_type: 'application/json'
       )
     end
 
@@ -210,7 +212,7 @@ describe Boxr::Client do
       expect(client).to have_received(:put).with(
         "#{Boxr::Client::FILE_METADATA_URI}/67890/metadata/global/properties",
         [update],
-        content_type: "application/json-patch+json"
+        content_type: 'application/json-patch+json'
       )
     end
 
@@ -225,7 +227,7 @@ describe Boxr::Client do
       expect(client).to have_received(:put).with(
         "#{Boxr::Client::FILE_METADATA_URI}/67890/metadata/global/properties",
         updates,
-        content_type: "application/json-patch+json"
+        content_type: 'application/json-patch+json'
       )
     end
 
@@ -237,7 +239,7 @@ describe Boxr::Client do
       expect(client).to have_received(:put).with(
         "#{Boxr::Client::FILE_METADATA_URI}/67890/metadata/enterprise/custom",
         [update],
-        content_type: "application/json-patch+json"
+        content_type: 'application/json-patch+json'
       )
     end
 
@@ -264,7 +266,7 @@ describe Boxr::Client do
       expect(client).to have_received(:put).with(
         "#{Boxr::Client::FOLDER_METADATA_URI}/12345/metadata/enterprise/custom",
         [update],
-        content_type: "application/json-patch+json"
+        content_type: 'application/json-patch+json'
       )
     end
 
@@ -279,7 +281,7 @@ describe Boxr::Client do
       expect(client).to have_received(:put).with(
         "#{Boxr::Client::FOLDER_METADATA_URI}/12345/metadata/enterprise/custom",
         updates,
-        content_type: "application/json-patch+json"
+        content_type: 'application/json-patch+json'
       )
     end
 
@@ -357,14 +359,14 @@ describe Boxr::Client do
       result = client.enterprise_metadata
 
       expect(result).to eq(mock_enterprise_metadata)
-      expect(client).to have_received(:get).with(Boxr::Client::METADATA_TEMPLATES_URI + '/enterprise')
+      expect(client).to have_received(:get).with("#{Boxr::Client::METADATA_TEMPLATES_URI}/enterprise")
     end
 
     it 'aliases to get_enterprise_templates' do
       result = client.get_enterprise_templates
 
       expect(result).to eq(mock_enterprise_metadata)
-      expect(client).to have_received(:get).with(Boxr::Client::METADATA_TEMPLATES_URI + '/enterprise')
+      expect(client).to have_received(:get).with("#{Boxr::Client::METADATA_TEMPLATES_URI}/enterprise")
     end
   end
 
@@ -428,10 +430,10 @@ describe Boxr::Client do
       expect(client).to have_received(:post).with(
         "#{Boxr::Client::METADATA_TEMPLATES_URI}/schema",
         {
-          scope: "enterprise",
-          displayName: "Test Template"
+          scope: 'enterprise',
+          displayName: 'Test Template'
         },
-        content_type: "application/json"
+        content_type: 'application/json'
       )
     end
 
@@ -448,13 +450,13 @@ describe Boxr::Client do
       expect(client).to have_received(:post).with(
         "#{Boxr::Client::METADATA_TEMPLATES_URI}/schema",
         {
-          scope: "enterprise",
-          displayName: "Test Template",
+          scope: 'enterprise',
+          displayName: 'Test Template',
           templateKey: :test_template,
           hidden: false,
           fields: fields
         },
-        content_type: "application/json"
+        content_type: 'application/json'
       )
     end
 
@@ -465,10 +467,10 @@ describe Boxr::Client do
       expect(client).to have_received(:post).with(
         "#{Boxr::Client::METADATA_TEMPLATES_URI}/schema",
         {
-          scope: "enterprise",
-          displayName: "Test Template"
+          scope: 'enterprise',
+          displayName: 'Test Template'
         },
-        content_type: "application/json"
+        content_type: 'application/json'
       )
     end
   end

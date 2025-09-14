@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -35,7 +37,7 @@ describe Boxr::Client do
     end
 
     it 'retrieves groups with custom fields' do
-      fields = [:id, :name]
+      fields = %i[id name]
       result = client.groups(fields: fields)
 
       expect(result).to eq(mock_groups_response)
@@ -75,7 +77,7 @@ describe Boxr::Client do
     end
 
     it 'retrieves group by ID with custom fields' do
-      fields = [:id, :name]
+      fields = %i[id name]
       result = client.group_from_id('12345', fields: fields)
 
       expect(result).to eq(test_group)

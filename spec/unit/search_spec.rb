@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -35,16 +37,16 @@ describe Boxr::Client do
       result = client.search(
         'test query',
         scope: 'user_content',
-        file_extensions: ['pdf', 'doc'],
+        file_extensions: %w[pdf doc],
         created_at_range_from_date: from_date,
         created_at_range_to_date: to_date,
         updated_at_range_from_date: from_date,
         updated_at_range_to_date: to_date,
         size_range_lower_bound_bytes: 1024,
-        size_range_upper_bound_bytes: 1048576,
-        owner_user_ids: ['user1', 'user2'],
-        ancestor_folder_ids: ['folder1', 'folder2'],
-        content_types: ['name', 'description'],
+        size_range_upper_bound_bytes: 1_048_576,
+        owner_user_ids: %w[user1 user2],
+        ancestor_folder_ids: %w[folder1 folder2],
+        content_types: %w[name description],
         trash_content: false,
         mdfilters: mdfilters,
         type: 'file',
@@ -243,7 +245,7 @@ describe Boxr::Client do
     end
 
     it 'handles size range with only upper bound' do
-      result = client.search('test', size_range_upper_bound_bytes: 1048576)
+      result = client.search('test', size_range_upper_bound_bytes: 1_048_576)
 
       expect(result).to eq([test_file, test_folder])
       expect(client).to have_received(:get).with(
@@ -268,7 +270,8 @@ describe Boxr::Client do
     end
 
     it 'handles nil size range parameters' do
-      result = client.search('test', size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil)
+      result = client.search('test', size_range_lower_bound_bytes: nil,
+                                     size_range_upper_bound_bytes: nil)
 
       expect(result).to eq([test_file, test_folder])
       expect(client).to have_received(:get).with(
@@ -343,7 +346,7 @@ describe Boxr::Client do
 
     describe '#build_size_range_field' do
       it 'builds size range with both bounds' do
-        result = client.send(:build_size_range_field, 1024, 1048576)
+        result = client.send(:build_size_range_field, 1024, 1_048_576)
 
         expect(result).to eq('1024,1048576')
       end
@@ -355,7 +358,7 @@ describe Boxr::Client do
       end
 
       it 'builds size range with only upper bound' do
-        result = client.send(:build_size_range_field, nil, 1048576)
+        result = client.send(:build_size_range_field, nil, 1_048_576)
 
         expect(result).to eq(',1048576')
       end
@@ -373,7 +376,7 @@ describe Boxr::Client do
       end
 
       it 'handles float numbers' do
-        result = client.send(:build_size_range_field, 1024.5, 1048576.7)
+        result = client.send(:build_size_range_field, 1024.5, 1_048_576.7)
 
         expect(result).to eq('1024,1048576')
       end

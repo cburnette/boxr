@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -356,8 +358,9 @@ describe Boxr::Client do
 
   describe '#chunked_upload_file_from_io' do
     before do
-      allow(client).to receive(:chunked_upload_create_session_new_file_from_io).and_return(mock_session_info)
-      allow(client).to receive(:chunked_upload_to_session_from_io).and_return(mock_file_info)
+      allow(client).to receive_messages(
+        chunked_upload_create_session_new_file_from_io: mock_session_info, chunked_upload_to_session_from_io: mock_file_info
+      )
       allow(client).to receive(:chunked_upload_abort_session)
     end
 
@@ -437,8 +440,9 @@ describe Boxr::Client do
 
   describe '#chunked_upload_new_version_of_file_from_io' do
     before do
-      allow(client).to receive(:chunked_upload_create_session_new_version_from_io).and_return(mock_session_info)
-      allow(client).to receive(:chunked_upload_to_session_from_io).and_return(mock_file_info)
+      allow(client).to receive_messages(
+        chunked_upload_create_session_new_version_from_io: mock_session_info, chunked_upload_to_session_from_io: mock_file_info
+      )
       allow(client).to receive(:chunked_upload_abort_session)
     end
 

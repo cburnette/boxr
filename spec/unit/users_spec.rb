@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -32,7 +34,7 @@ describe Boxr::Client do
     end
 
     it 'retrieves current user with custom fields' do
-      fields = [:id, :name]
+      fields = %i[id name]
       result = client.current_user(fields: fields)
       expect(result).to eq(test_user)
       expect(client).to have_received(:build_fields_query).with(fields, Boxr::Client::USER_FIELDS_QUERY)
@@ -63,7 +65,7 @@ describe Boxr::Client do
     end
 
     it 'retrieves user by ID with custom fields' do
-      fields = [:id, :name]
+      fields = %i[id name]
       result = client.user_from_id('12345', fields: fields)
       expect(result).to eq(test_user)
       expect(client).to have_received(:build_fields_query).with(fields, Boxr::Client::USER_FIELDS_QUERY)
@@ -102,7 +104,7 @@ describe Boxr::Client do
     end
 
     it 'retrieves all users with custom fields' do
-      fields = [:id, :name]
+      fields = %i[id name]
       result = client.all_users(fields: fields)
       expect(result).to eq(mock_users_response)
       expect(client).to have_received(:build_fields_query).with(fields, Boxr::Client::USER_FIELDS_QUERY)

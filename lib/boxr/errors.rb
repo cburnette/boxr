@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Boxr
   class BoxrError < StandardError
     attr_reader :response_body, :type, :status, :code, :help_uri, :box_message, :boxr_message,
@@ -13,7 +15,7 @@ module Boxr
       return unless body
 
       begin
-        body_json = JSON.load(body)
+        body_json = JSON.parse(body)
 
         if body_json
           @type = body_json['type']

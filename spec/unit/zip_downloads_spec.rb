@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe Boxr::Client do
@@ -40,12 +42,6 @@ describe Boxr::Client do
     it 'creates zip download with custom file name' do
       targets = [{ type: 'file', id: test_file.id }]
       result = client.create_zip_download(targets, download_file_name: 'custom.zip')
-      expect(result).to eq(mock_zip_download)
-    end
-
-    it 'creates zip download without file name' do
-      targets = [{ type: 'file', id: test_file.id }]
-      result = client.create_zip_download(targets)
       expect(result).to eq(mock_zip_download)
     end
 

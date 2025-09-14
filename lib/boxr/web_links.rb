@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 module Boxr
   class Client
     def create_web_link(url, parent, name: nil, description: nil)
       parent_id = ensure_id(parent)
       web_link_url = verify_url(url)
-      uri = "#{WEB_LINKS_URI}"
+      uri = WEB_LINKS_URI.to_s
 
       attributes = {}
       attributes[:url] = web_link_url

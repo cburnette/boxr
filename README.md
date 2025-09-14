@@ -346,7 +346,7 @@ shared_item(shared_link, shared_link_password: nil)
 ```
 #### [Search](https://developer.box.com/en/reference/get-search/)
 ```ruby
-search( query=nil, scope: nil, file_extensions: [],
+search( query=nil, scope: nil, file_extensions: [], fields: [],
         created_at_range_from_date: nil, created_at_range_to_date: nil,
         updated_at_range_from_date: nil, updated_at_range_to_date: nil,
         size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil,

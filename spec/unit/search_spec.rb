@@ -38,6 +38,7 @@ describe Boxr::Client do
         'test query',
         scope: 'user_content',
         file_extensions: %w[pdf doc],
+        fields: %w[id name type],
         created_at_range_from_date: from_date,
         created_at_range_to_date: to_date,
         updated_at_range_from_date: from_date,
@@ -61,6 +62,7 @@ describe Boxr::Client do
           query: 'test query',
           scope: 'user_content',
           file_extensions: 'pdf,doc',
+          fields: 'id,name,type',
           created_at_range: '2023-01-01T00:00:00+00:00,2023-12-31T00:00:00+00:00',
           updated_at_range: '2023-01-01T00:00:00+00:00,2023-12-31T00:00:00+00:00',
           size_range: '1024,1048576',
@@ -102,7 +104,8 @@ describe Boxr::Client do
         file_extensions: [],
         owner_user_ids: [],
         ancestor_folder_ids: [],
-        content_types: []
+        content_types: [],
+        fields: []
       )
 
       expect(result).to eq([test_file, test_folder])
@@ -118,7 +121,8 @@ describe Boxr::Client do
         file_extensions: ['pdf'],
         owner_user_ids: ['user1'],
         ancestor_folder_ids: ['folder1'],
-        content_types: ['name']
+        content_types: ['name'],
+        fields: ['id']
       )
 
       expect(result).to eq([test_file, test_folder])
@@ -130,6 +134,52 @@ describe Boxr::Client do
           owner_user_ids: 'user1',
           ancestor_folder_ids: 'folder1',
           content_types: 'name',
+          fields: 'id',
+          limit: 30,
+          offset: 0
+        }
+      )
+    end
+
+    it 'handles fields parameter with multiple values' do
+      result = client.search('test', fields: %w[id name type size])
+
+      expect(result).to eq([test_file, test_folder])
+      expect(client).to have_received(:get).with(
+        Boxr::Client::SEARCH_URI,
+        query: {
+          query: 'test',
+          fields: 'id,name,type,size',
+          limit: 30,
+          offset: 0
+        }
+      )
+    end
+
+    it 'handles fields parameter as string' do
+      result = client.search('test', fields: 'id,name,type')
+
+      expect(result).to eq([test_file, test_folder])
+      expect(client).to have_received(:get).with(
+        Boxr::Client::SEARCH_URI,
+        query: {
+          query: 'test',
+          fields: 'id,name,type',
+          limit: 30,
+          offset: 0
+        }
+      )
+    end
+
+    it 'handles fields parameter as symbol' do
+      result = client.search('test', fields: :id)
+
+      expect(result).to eq([test_file, test_folder])
+      expect(client).to have_received(:get).with(
+        Boxr::Client::SEARCH_URI,
+        query: {
+          query: 'test',
+          fields: :id,
           limit: 30,
           offset: 0
         }

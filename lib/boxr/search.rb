@@ -8,9 +8,11 @@ module Boxr
                size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil,
                owner_user_ids: [], ancestor_folder_ids: [], content_types: [], trash_content: nil,
                mdfilters: nil, type: nil, limit: 30, offset: 0)
-      if !mdfilters.nil? && !mdfilters.is_a?(String) # if a string is passed in assume it is already formatted correctly
+      # if a string is passed in assume it is already formatted correctly
+      if !mdfilters.nil? && !mdfilters.is_a?(String)
         unless mdfilters.is_a? Array
-          mdfilters = [mdfilters] # if just one mdfilter is specified ensure that it is packaged inside an array
+          # if just one mdfilter is specified ensure that it is packaged inside an array
+          mdfilters = [mdfilters]
         end
         mdfilters = JSON.dump(mdfilters)
       end

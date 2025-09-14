@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'spec_helper'
 def generate_signature(payload, timestamp, key)
   digest = OpenSSL::HMAC.digest('SHA256', key, "#{payload}#{timestamp}")
   Base64.strict_encode64(digest)

@@ -22,7 +22,7 @@ describe Boxr::Client do
 
     it 'retrieves folder collaborations' do
       result = client.folder_collaborations(test_folder)
-      expect(result).to eq(mock_collaborations_response)
+      expect(result).to eq([test_collaboration, test_collaboration])
     end
 
     it 'retrieves folder collaborations with fields' do
@@ -38,7 +38,7 @@ describe Boxr::Client do
                                                  hash_including(query: hash_including(limit: 50)))
     end
 
-    it 'retrieves folder collaborations with marker' do
+    it 'retrieves file collaborations with marker' do
       client.folder_collaborations(test_folder, marker: 'marker123')
       expect(client).to have_received(:get).with(anything,
                                                  hash_including(query: hash_including(marker: 'marker123')))

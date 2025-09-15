@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'awesome_print', '~> 1.8'
   spec.add_development_dependency 'bundler', '~> 2.3' # Keep this locked for Ruby 2.0 compatibility
   spec.add_development_dependency 'dotenv', '~> 2.8'
-  spec.add_development_dependency 'lru_redux', '~> 1.1'
+  spec.add_development_dependency "sin_lru_redux", "~> 2.5"
   spec.add_development_dependency 'parallel', '~> 1.0'
   spec.add_development_dependency 'rake', '~> 13.1'
   spec.add_development_dependency 'rspec', '~> 3.13.1'

@@ -496,6 +496,11 @@ describe Boxr::Client do
       result = client.copy_file(test_file, 'parent_id', name: 'copy.txt')
       expect(result).to eq(mock_file_info)
     end
+
+    it 'copies file with version' do
+      result = client.copy_file(test_file, 'parent_id', version: 'version_id')
+      expect(result).to eq(mock_file_info)
+    end
   end
 
   describe '#thumbnail' do

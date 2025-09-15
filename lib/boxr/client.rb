@@ -80,6 +80,7 @@ module Boxr
                    jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
                    identifier: nil,
                    as_user: nil,
+                   proxy: nil,
                    &token_refresh_listener)
       @access_token = access_token
       raise BoxrError.new(boxr_message: 'Access token cannot be nil') if @access_token.nil?
@@ -94,6 +95,7 @@ module Boxr
       @identifier = identifier
       @as_user_id = ensure_id(as_user)
       @token_refresh_listener = token_refresh_listener
+      BOX_CLIENT.proxy = proxy unless proxy.nil?
     end
 
     private

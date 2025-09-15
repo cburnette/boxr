@@ -12,8 +12,10 @@ Layout/LineLength:
 RSpec/SpecFilePathFormat:
   Enabled: false
 
-# Disable this rule for RSpec
 RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/MultipleExpectations:
   Enabled: false
 
 Style/Documentation:

@@ -99,7 +99,7 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 
 # You can provide another parameter called as_user. Read about what that means here: https://developer.box.com/reference#as-user-1
 
-# You can provide yet another parameter called identifier. This can be used, for example, to
+# You can provide another parameter called identifier. This can be used, for example, to
 # hold the id of the user associated with this Boxr client.  When the callback is invoked this value
 # will be provided.
 ```
@@ -115,6 +115,7 @@ initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],
             jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
             identifier: nil,
             as_user: nil,
+            proxy: nil,
             &token_refresh_listener)
 ```
 
@@ -131,6 +132,14 @@ file = client.upload_file('test.txt', folder)
 updated_file = client.create_shared_link_for_file(file, access: :open)
 puts "Shared Link: #{updated_file.shared_link.url}"
 ```
+
+### Using a proxy
+You can provide a proxy to Boxr::Client.new by passing the proxy parameter.
+```ruby
+client = Boxr::Client.new(proxy: 'http://username:password@proxy.example.com:8080')
+```
+Boxr uses HTTPClient under the hood, so you can use all the features of HTTPClient's proxy support.
+See https://www.rubydoc.info/gems/httpclient/HTTPClient#proxy=-instance_method for more details.
 
 ### NOTE: Using HTTP mocking libraries for testing
 When using HTTP mocking libraries for testing, you may need to set Boxr::BOX_CLIENT to a fresh instance of HTTPClient in your test setup after loading the HTTP mocking library. For example, when using WebMock with RSpec you might could add the following to your RSpec configuration:
@@ -319,7 +328,9 @@ delete_comment(comment)
 ```
 #### [Collaborations](https://developer.box.com/en/reference/resources/collaboration/)
 ```ruby
-folder_collaborations(folder)
+folder_collaborations(folder, fields: [], limit: DEFAULT_LIMIT, marker: nil)
+
+file_collaborations(file, fields: [], limit: DEFAULT_LIMIT, marker: nil)
 
 add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
 

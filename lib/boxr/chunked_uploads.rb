@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 module Boxr
   class Client
-
     def chunked_upload_create_session_new_file(path_to_file, parent, name: nil)
-      filename = name ? name : File.basename(path_to_file)
+      filename = name || File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
         chunked_upload_create_session_new_file_from_io(file, parent, filename)
@@ -13,14 +14,15 @@ module Boxr
       parent_id = ensure_id(parent)
 
       uri = "#{UPLOAD_URI}/files/upload_sessions"
-      body = {folder_id: parent_id, file_size: io.size, file_name: name}
-      session_info, response = post(uri, body, content_type: "application/json", success_codes: [200,201,202])
+      body = { folder_id: parent_id, file_size: io.size, file_name: name }
+      session_info, = post(uri, body, content_type: 'application/json',
+                                      success_codes: [200, 201, 202])
 
       session_info
     end
 
     def chunked_upload_create_session_new_version(path_to_file, file, name: nil)
-      filename = name ? name : File.basename(path_to_file)
+      filename = name || File.basename(path_to_file)
 
       File.open(path_to_file) do |io|
         chunked_upload_create_session_new_version_from_io(io, file, filename)
@@ -30,15 +32,16 @@ module Boxr
     def chunked_upload_create_session_new_version_from_io(io, file, name)
       file_id = ensure_id(file)
       uri = "#{UPLOAD_URI}/files/#{file_id}/upload_sessions"
-      body = {file_size: io.size, file_name: name}
-      session_info, response = post(uri, body, content_type: "application/json", success_codes: [200,201,202])
+      body = { file_size: io.size, file_name: name }
+      session_info, = post(uri, body, content_type: 'application/json',
+                                      success_codes: [200, 201, 202])
 
       session_info
     end
 
     def chunked_upload_get_session(session_id)
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
-      session_info, response = get(uri)
+      session_info, = get(uri)
 
       session_info
     end
@@ -60,7 +63,8 @@ module Boxr
 
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       body = data
-      part_info, response = put(uri, body, process_body: false, digest: digest, content_type: "application/octet-stream", content_range: range, success_codes: [200,201,202])
+      part_info, = put(uri, body, process_body: false, digest: digest,
+                                  content_type: 'application/octet-stream', content_range: range, success_codes: [200, 201, 202])
 
       part_info.part
     end
@@ -70,82 +74,100 @@ module Boxr
       query = {}
       query[:limit] = limit unless limit.nil?
       query[:offset] = offset unless offset.nil?
-      parts_info, response = get(uri, query: query)
+      parts_info, = get(uri, query: query)
 
       parts_info.entries
     end
 
-    def chunked_upload_commit(path_to_file, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+    def chunked_upload_commit(path_to_file, session_id, parts, content_created_at: nil,
+                              content_modified_at: nil, if_match: nil, if_non_match: nil)
       File.open(path_to_file) do |file|
-        chunked_upload_commit_from_io(file, session_id, parts, content_created_at: content_created_at, content_modified_at: content_modified_at, if_match: if_match, if_non_match: if_non_match)
+        chunked_upload_commit_from_io(file, session_id, parts,
+                                      content_created_at: content_created_at, content_modified_at: content_modified_at, if_match: if_match, if_non_match: if_non_match)
       end
     end
 
-    def chunked_upload_commit_from_io(io, session_id, parts, content_created_at: nil, content_modified_at: nil, if_match: nil, if_non_match: nil)
+    def chunked_upload_commit_from_io(io, session_id, parts, content_created_at: nil,
+                                      content_modified_at: nil, if_match: nil, if_non_match: nil)
       io.pos = 0
       digest = Digest::SHA1.new
-      while (buf = io.read(8 * 1024**2)) && buf.size > 0
+      while (buf = io.read(8 * 1024**2)) && buf.size.positive?
         digest.update(buf)
       end
       io.rewind
       digest = "sha=#{digest.base64digest}"
 
       attributes = {}
-      attributes[:content_created_at] = content_created_at.to_datetime.rfc3339 unless content_created_at.nil?
-      attributes[:content_modified_at] = content_modified_at.to_datetime.rfc3339 unless content_modified_at.nil?
+      unless content_created_at.nil?
+        attributes[:content_created_at] =
+          content_created_at.to_datetime.rfc3339
+      end
+      unless content_modified_at.nil?
+        attributes[:content_modified_at] =
+          content_modified_at.to_datetime.rfc3339
+      end
 
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}/commit"
       body = {
         parts: parts,
         attributes: attributes
       }
-      commit_info, response = post(uri, body, process_body: true, digest: digest, content_type: "application/json", if_match: if_match, if_non_match: if_non_match, success_codes: [200,201,202])
+      commit_info, = post(uri, body, process_body: true, digest: digest,
+                                     content_type: 'application/json', if_match: if_match, if_non_match: if_non_match, success_codes: [200, 201, 202])
 
       commit_info
     end
 
     def chunked_upload_abort_session(session_id)
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
-      abort_info, response = delete(uri)
+      abort_info, = delete(uri)
 
       abort_info
     end
 
-    def chunked_upload_file(path_to_file, parent, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
-      filename = name ? name : File.basename(path_to_file)
+    def chunked_upload_file(path_to_file, parent, name: nil, n_threads: 1, content_created_at: nil,
+                            content_modified_at: nil)
+      filename = name || File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        chunked_upload_file_from_io(file, parent, filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
+        chunked_upload_file_from_io(file, parent, filename, n_threads: n_threads,
+                                                            content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 
-    def chunked_upload_file_from_io(io, parent, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_file_from_io(io, parent, name, n_threads: 1, content_created_at: nil,
+                                    content_modified_at: nil)
       session = nil
       file_info = nil
 
       session = chunked_upload_create_session_new_file_from_io(io, parent, name)
 
-      file_info = chunked_upload_to_session_from_io(io, session, n_threads: n_threads, content_created_at: nil, content_modified_at: nil)
+      file_info = chunked_upload_to_session_from_io(io, session, n_threads: n_threads,
+                                                                 content_created_at: nil, content_modified_at: nil)
       file_info
     ensure
       chunked_upload_abort_session(session.id) if file_info.nil? && !session.nil?
     end
 
-    def chunked_upload_new_version_of_file(path_to_file, file, name: nil, n_threads: 1, content_created_at: nil, content_modified_at: nil)
-      filename = name ? name : File.basename(path_to_file)
+    def chunked_upload_new_version_of_file(path_to_file, file, name: nil, n_threads: 1,
+                                           content_created_at: nil, content_modified_at: nil)
+      filename = name || File.basename(path_to_file)
 
       File.open(path_to_file) do |io|
-        chunked_upload_new_version_of_file_from_io(io, file, filename, n_threads: n_threads, content_created_at: content_created_at, content_modified_at: content_modified_at)
+        chunked_upload_new_version_of_file_from_io(io, file, filename, n_threads: n_threads,
+                                                                       content_created_at: content_created_at, content_modified_at: content_modified_at)
       end
     end
 
-    def chunked_upload_new_version_of_file_from_io(io, file, name, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_new_version_of_file_from_io(io, file, name, n_threads: 1,
+                                                   content_created_at: nil, content_modified_at: nil)
       session = nil
       file_info = nil
 
       session = chunked_upload_create_session_new_version_from_io(io, file, name)
 
-      file_info = chunked_upload_to_session_from_io(io, session, n_threads: n_threads, content_created_at: nil, content_modified_at: nil)
+      file_info = chunked_upload_to_session_from_io(io, session, n_threads: n_threads,
+                                                                 content_created_at: nil, content_modified_at: nil)
       file_info
     ensure
       chunked_upload_abort_session(session.id) if file_info.nil? && !session.nil?
@@ -155,7 +177,8 @@ module Boxr
 
     PARALLEL_GEM_REQUIREMENT = Gem::Requirement.create('~> 1.0').freeze
 
-    def chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil, content_modified_at: nil)
+    def chunked_upload_to_session_from_io(io, session, n_threads: 1, content_created_at: nil,
+                                          content_modified_at: nil)
       content_ranges = []
       offset = 0
       loop do
@@ -168,7 +191,9 @@ module Boxr
 
       parts =
         if n_threads > 1
-          raise BoxrError.new(boxr_message: "parallel chunked uploads requires gem parallel (#{PARALLEL_GEM_REQUIREMENT}) to be loaded") unless gem_parallel_available?
+          unless gem_parallel_available?
+            raise BoxrError.new(boxr_message: "parallel chunked uploads requires gem parallel (#{PARALLEL_GEM_REQUIREMENT}) to be loaded")
+          end
 
           Parallel.map(content_ranges, in_threads: n_threads) do |content_range|
             File.open(io.path) do |io_dup|
@@ -187,11 +212,10 @@ module Boxr
     end
 
     def gem_parallel_available?
-      gem_spec  = Gem.loaded_specs['parallel']
+      gem_spec = Gem.loaded_specs['parallel']
       return false if gem_spec.nil?
 
       PARALLEL_GEM_REQUIREMENT.satisfied_by?(gem_spec.version) && defined?(Parallel)
     end
-
   end
 end

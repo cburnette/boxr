@@ -1,5 +1,6 @@
 # rake spec SPEC_OPTS="-e \"invokes webhook operations"\"
-describe "webhook operations" do
+require 'spec_helper'
+describe 'webhook operations' do
   it 'invokes webhook operations' do
     puts 'create webhook'
     resource_id = @test_folder.id

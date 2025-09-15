@@ -99,7 +99,7 @@ client = Boxr::Client.new('zX3UjFwNerOy5PSWc2WI8aJgMHtAjs8T',
 
 # You can provide another parameter called as_user. Read about what that means here: https://developer.box.com/reference#as-user-1
 
-# You can provide yet another parameter called identifier. This can be used, for example, to
+# You can provide another parameter called identifier. This can be used, for example, to
 # hold the id of the user associated with this Boxr client.  When the callback is invoked this value
 # will be provided.
 ```
@@ -115,6 +115,7 @@ initialize( access_token=ENV['BOX_DEVELOPER_TOKEN'],
             jwt_public_key_id: ENV['JWT_PUBLIC_KEY_ID'],
             identifier: nil,
             as_user: nil,
+            proxy: nil,
             &token_refresh_listener)
 ```
 
@@ -131,6 +132,14 @@ file = client.upload_file('test.txt', folder)
 updated_file = client.create_shared_link_for_file(file, access: :open)
 puts "Shared Link: #{updated_file.shared_link.url}"
 ```
+
+### Using a proxy
+You can provide a proxy to Boxr::Client.new by passing the proxy parameter.
+```ruby
+client = Boxr::Client.new(proxy: 'http://username:password@proxy.example.com:8080')
+```
+Boxr uses HTTPClient under the hood, so you can use all the features of HTTPClient's proxy support.
+See https://www.rubydoc.info/gems/httpclient/HTTPClient#proxy=-instance_method for more details.
 
 ### NOTE: Using HTTP mocking libraries for testing
 When using HTTP mocking libraries for testing, you may need to set Boxr::BOX_CLIENT to a fresh instance of HTTPClient in your test setup after loading the HTTP mocking library. For example, when using WebMock with RSpec you might could add the following to your RSpec configuration:
@@ -240,7 +249,7 @@ promote_old_version_of_file(file, file_version)
 
 delete_old_version_of_file(file, file_version, if_match: nil)
 
-copy_file(file, parent, name: nil)
+copy_file(file, parent, name: nil, version: nil)
 
 thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
 
@@ -319,7 +328,9 @@ delete_comment(comment)
 ```
 #### [Collaborations](https://developer.box.com/en/reference/resources/collaboration/)
 ```ruby
-folder_collaborations(folder)
+folder_collaborations(folder, fields: [], limit: DEFAULT_LIMIT, marker: nil)
+
+file_collaborations(file, fields: [], limit: DEFAULT_LIMIT, marker: nil)
 
 add_collaboration(folder, accessible_by, role, fields: [], notify: nil)
 
@@ -346,7 +357,7 @@ shared_item(shared_link, shared_link_password: nil)
 ```
 #### [Search](https://developer.box.com/en/reference/get-search/)
 ```ruby
-search( query=nil, scope: nil, file_extensions: [],
+search( query=nil, scope: nil, file_extensions: [], fields: [],
         created_at_range_from_date: nil, created_at_range_to_date: nil,
         updated_at_range_from_date: nil, updated_at_range_to_date: nil,
         size_range_lower_bound_bytes: nil, size_range_upper_bound_bytes: nil,
@@ -515,3 +526,16 @@ create_zip_download(items, download_file_name: nil)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Test Commands
+
+```
+rspec spec/files_spec.rb
+rspec spec/folders_spec.rb
+rspec spec/groups_spec.rb
+rspec spec/tasks_spec.rb
+rspec spec/users_spec.rb
+rspec spec/watermarking_spec.rb
+rspec spec/webhooks_spec.rb
+rspec spec/zip_downloads_spec.rb
+```

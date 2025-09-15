@@ -1,0 +1,22 @@
+AllCops:
+  TargetRubyVersion: 2.7
+
+plugins:
+  - rubocop-rspec
+  - rubocop-rake
+
+Layout/LineLength:
+  Max: 100
+
+# Due to legacy test format
+RSpec/SpecFilePathFormat:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false

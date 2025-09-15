@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'json'
 require 'httpclient'
 require 'hashie'
@@ -28,6 +30,7 @@ require 'boxr/webhooks'
 require 'boxr/webhook_validator'
 require 'boxr/zip_downloads'
 
+# Simple wrapper around Array
 class BoxrCollection < Array
   def files
     collection_for_type('file')
@@ -49,33 +52,32 @@ class BoxrCollection < Array
   end
 end
 
+# Simple wrapper around Hashie::Mash
 class BoxrMash < Hashie::Mash
-
-  self.disable_warnings
+  disable_warnings
 
   def entries
-    self["entries"]
+    self['entries']
   end
 
   def size
-    self["size"]
+    self['size']
   end
 end
 
 module Boxr
-  #The root folder in Box is always identified by 0
-  ROOT = 0
+  ROOT = 0 # The root folder in Box is always identified by 0
 
-  #HTTPClient is high-performance, thread-safe, and supports persistent HTTPS connections
-  #http://bibwild.wordpress.com/2012/04/30/ruby-http-performance-shootout-redux/
+  # HTTPClient is high-performance, thread-safe, and supports persistent HTTPS connections
+  # http://bibwild.wordpress.com/2012/04/30/ruby-http-performance-shootout-redux/
   BOX_CLIENT = HTTPClient.new
   BOX_CLIENT.cookie_manager = nil
-  BOX_CLIENT.send_timeout = 3600 #one hour; needed for lengthy uploads
+  BOX_CLIENT.send_timeout = 3600 # one hour; needed for lengthy uploads
   BOX_CLIENT.agent_name = "Boxr/#{Boxr::VERSION}"
   BOX_CLIENT.transparent_gzip_decompression = true
-  #BOX_CLIENT.ssl_config.add_trust_ca("/Users/cburnette/code/ssh-keys/dev_root_ca.pem")
+  # BOX_CLIENT.ssl_config.add_trust_ca("/Users/cburnette/code/ssh-keys/dev_root_ca.pem")
 
-  def self.turn_on_debugging(device=STDOUT)
+  def self.turn_on_debugging(device = $stdout)
     BOX_CLIENT.debug_dev = device
     BOX_CLIENT.transparent_gzip_decompression = false
     nil

@@ -1,0 +1,30 @@
+name: Ruby Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby-version: ['2.7', '3.0', '3.1', '3.2', '3.3', '3.4']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+        bundler: '2.3'
+
+    - name: Run unit tests
+      run: bundle exec rspec spec/unit/
+      env:
+        BOX_DEVELOPER_TOKEN: test_token

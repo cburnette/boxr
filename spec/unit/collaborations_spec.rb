@@ -17,26 +17,31 @@ describe Boxr::Client do
 
   describe '#folder_collaborations' do
     before do
-      allow(client).to receive(:get_all_with_pagination).and_return(mock_collaborations_response)
+      allow(client).to receive(:get).and_return(mock_collaborations_response)
     end
 
     it 'retrieves folder collaborations' do
       result = client.folder_collaborations(test_folder)
-      expect(result).to eq(mock_collaborations_response)
+      expect(result).to eq([test_collaboration, test_collaboration])
     end
 
     it 'retrieves folder collaborations with fields' do
       client.folder_collaborations(test_folder, fields: %i[role status])
-      expect(client).to have_received(:get_all_with_pagination).with(
+      expect(client).to have_received(:get).with(
         anything, hash_including(query: anything)
       )
     end
 
-    it 'retrieves folder collaborations with pagination' do
-      client.folder_collaborations(test_folder, offset: 10, limit: 25)
-      expect(client).to have_received(:get_all_with_pagination).with(
-        anything, hash_including(offset: 10, limit: 25)
-      )
+    it 'retrieves folder collaborations with limit' do
+      client.folder_collaborations(test_folder, limit: 50)
+      expect(client).to have_received(:get).with(anything,
+                                                 hash_including(query: hash_including(limit: 50)))
+    end
+
+    it 'retrieves file collaborations with marker' do
+      client.folder_collaborations(test_folder, marker: 'marker123')
+      expect(client).to have_received(:get).with(anything,
+                                                 hash_including(query: hash_including(marker: 'marker123')))
     end
   end
 

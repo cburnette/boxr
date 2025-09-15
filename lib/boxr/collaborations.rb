@@ -1,10 +1,15 @@
 module Boxr
   class Client
-    def folder_collaborations(folder, fields: [], offset: 0, limit: DEFAULT_LIMIT)
+    def folder_collaborations(folder, fields: [], limit: DEFAULT_LIMIT, marker: nil)
       folder_id = ensure_id(folder)
       query = build_fields_query(fields, COLLABORATION_FIELDS_QUERY)
+      query[:limit] = limit
+      query[:marker] = marker unless marker.nil?
+
       uri = "#{FOLDERS_URI}/#{folder_id}/collaborations"
-      get_all_with_pagination(uri, query: query, offset: offset, limit: limit)
+
+      folder_collaborations, = get(uri, query: query)
+      folder_collaborations['entries']
     end
 
     def file_collaborations(file, fields: [], limit: DEFAULT_LIMIT, marker: nil)
@@ -15,8 +20,8 @@ module Boxr
 
       uri = "#{FILES_URI}/#{file_id}/collaborations"
 
-      collaborations, = get(uri, query: query)
-      collaborations['entries']
+      file_collaborations, = get(uri, query: query)
+      file_collaborations['entries']
     end
 
     def group_collaborations(group, offset: 0, limit: DEFAULT_LIMIT)

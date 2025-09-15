@@ -13,7 +13,12 @@ The full RubyDocs for Boxr can be found [here](http://www.rubydoc.info/gems/boxr
 Boxr follows Semantic Versioning since version 1.5.0
 
 ## Requirements
-This gem requires Ruby 2.0.0 or higher.
+This gem requires a Ruby version depending on the version of the gem you are using. We aim to deprecate support for EOL Ruby versions.
+
+- For version 1.23.0 and higher, this gem requires Ruby 2.7 or higher.
+- For version 1.22.0 and lower, this gem requires Ruby 2.0.0 or higher.
+
+
 
 ## Installation
 Add this line to your application's Gemfile:

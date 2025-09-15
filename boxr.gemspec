@@ -19,18 +19,18 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.0'
+  spec.required_ruby_version = '>= 2.7'
 
   spec.add_development_dependency 'awesome_print', '~> 1.8'
-  spec.add_development_dependency 'bundler', '~> 2.3' # Keep this locked for Ruby 2.0 compatibility
+  spec.add_development_dependency 'bundler', '~> 2.4.22' # Keep this locked for Ruby 2.7 compatibility
   spec.add_development_dependency 'dotenv', '~> 2.8'
   spec.add_development_dependency "sin_lru_redux", "~> 2.5"
   spec.add_development_dependency 'parallel', '~> 1.0'
   spec.add_development_dependency 'rake', '~> 13.1'
   spec.add_development_dependency 'rspec', '~> 3.13.1'
+  spec.add_development_dependency 'rubocop', '~> 1.0'
   spec.add_development_dependency 'rubocop-rake', '~> 0.7.1'
   spec.add_development_dependency 'rubocop-rspec', '~> 3.7.0'
-  spec.add_development_dependency 'rubocop', '~> 1.0'
   spec.add_development_dependency 'rubyzip', '~> 2.3'
   spec.add_development_dependency 'simplecov', '~> 0.22'
   spec.add_development_dependency 'webmock', '~> 3.19'

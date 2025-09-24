@@ -260,6 +260,17 @@ describe Boxr::Client do
           header: { 'Authorization' => "Bearer #{access_token}", 'If-Match' => 'etag123' }
         )
       end
+
+      it 'handles empty response body (typical for 204 DELETE responses)' do
+        # Create a mock without stubbed JSON.parse to test the actual processed_response method
+        empty_delete_response = instance_double(HTTP::Message, status: 204, header: {}, body: '')
+        allow(Boxr::BOX_CLIENT).to receive(:delete).and_return(empty_delete_response)
+        
+        result = client.send(:delete, 'https://api.box.com/test')
+        expect(result).to be_a(Array)
+        expect(result[0]).to be_a(BoxrMash)
+        expect(result[0].to_h).to eq({})
+      end
     end
 
     describe '#options' do
@@ -472,6 +483,35 @@ describe Boxr::Client do
       expect(result).to be_a(Array)
       expect(result[0]).to be_a(BoxrMash)
       expect(result[1]).to eq(mock_response)
+    end
+
+    context 'with empty response bodies' do
+      it 'handles empty string body gracefully' do
+        empty_response = instance_double(HTTP::Message, body: '')
+        result = client.send(:processed_response, empty_response)
+        expect(result).to be_a(Array)
+        expect(result[0]).to be_a(BoxrMash)
+        expect(result[0].to_h).to eq({})
+        expect(result[1]).to eq(empty_response)
+      end
+
+      it 'handles whitespace-only body gracefully' do
+        whitespace_response = instance_double(HTTP::Message, body: '   ')
+        result = client.send(:processed_response, whitespace_response)
+        expect(result).to be_a(Array)
+        expect(result[0]).to be_a(BoxrMash)
+        expect(result[0].to_h).to eq({})
+        expect(result[1]).to eq(whitespace_response)
+      end
+
+      it 'handles nil body gracefully' do
+        nil_response = instance_double(HTTP::Message, body: nil)
+        result = client.send(:processed_response, nil_response)
+        expect(result).to be_a(Array)
+        expect(result[0]).to be_a(BoxrMash)
+        expect(result[0].to_h).to eq({})
+        expect(result[1]).to eq(nil_response)
+      end
     end
   end
 

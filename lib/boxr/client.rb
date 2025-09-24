@@ -265,8 +265,12 @@ module Boxr
     end
 
     def processed_response(res)
-      body_json = JSON.parse(res.body)
-      [BoxrMash.new(body_json), res]
+      if res.body.nil? || res.body.strip.empty?
+        [BoxrMash.new({}), res]
+      else
+        body_json = JSON.parse(res.body)
+        [BoxrMash.new(body_json), res]
+      end
     end
 
     def build_fields_query(fields, all_fields_query)

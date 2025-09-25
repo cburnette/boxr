@@ -138,7 +138,7 @@ module Boxr
           raise BoxrError.new(status: res.status, body: res.body, header: res.header)
         end
 
-        body_json = JSON.parse(res.body)
+        body_json = JSON.load(res.body) # rubocop:disable Security/JSONLoad
         total_count = body_json['total_count']
         offset += limit
 
@@ -265,7 +265,7 @@ module Boxr
     end
 
     def processed_response(res)
-      body_json = JSON.parse(res.body)
+      body_json = JSON.load(res.body) # rubocop:disable Security/JSONLoad
       [BoxrMash.new(body_json), res]
     end
 

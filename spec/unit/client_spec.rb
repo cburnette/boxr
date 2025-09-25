@@ -26,7 +26,6 @@ describe Boxr::Client do
       get: mock_response, post: mock_post_response, put: mock_response,
       delete: mock_delete_response, options: mock_response
     )
-    allow(JSON).to receive(:parse).and_return({ 'test' => 'data' })
   end
 
   describe '#initialize' do

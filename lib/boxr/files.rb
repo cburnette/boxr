@@ -34,8 +34,8 @@ module Boxr
     alias preview_url embed_url
     alias preview_link embed_url
 
-    def update_file(file, name: nil, description: nil, parent: nil, shared_link: nil, tags: nil,
-                    lock: nil, if_match: nil)
+    def update_file(file, name: nil, description: nil, parent: nil, # rubocop:disable Metrics
+                    shared_link: nil, tags: nil, lock: nil, if_match: nil)
       file_id = ensure_id(file)
       parent_id = ensure_id(parent)
       uri = "#{FILES_URI}/#{file_id}"
@@ -73,14 +73,18 @@ module Boxr
       update_file(file, parent: new_parent, name: name, if_match: if_match)
     end
 
-    def download_file(file, version: nil, follow_redirect: true)
+    def download_file(file, version: nil, follow_redirect: true) # rubocop:disable Metrics
       file_id = ensure_id(file)
+      uri = "#{FILES_URI}/#{file_id}/content"
+      query = {}
+      query[:version] = version unless version.nil?
 
       loop do
-        uri = "#{FILES_URI}/#{file_id}/content"
-        query = {}
-        query[:version] = version unless version.nil?
-        _, response = get(uri, query: query, success_codes: [302, 202], process_response: false, follow_redirect: false) # we don't want httpclient to automatically follow the redirect; we need to grab it
+        # Don't automatically follow the redirect
+        _, response = get(uri, query: query, success_codes: [302, 202],
+                               process_response: false, follow_redirect: false)
+
+        # By default, Box always returns a 302
         if response.status == 302
           location = response.header['Location'][0]
           return location unless follow_redirect
@@ -88,13 +92,9 @@ module Boxr
           file_content, = get(location, process_response: false)
           return file_content
 
-        # simply return the url
-
         elsif response.status == 202
-          retry_after_seconds = response.header['Retry-After'][0]
-          sleep retry_after_seconds.to_i
+          sleep response.header['Retry-After'][0].to_i
         end
-        break if file_content
       end
     end
 
@@ -102,18 +102,21 @@ module Boxr
       download_file(file, version: version, follow_redirect: false)
     end
 
-    def upload_file(path_to_file, parent, name: nil, content_created_at: nil, content_modified_at: nil,
-                    preflight_check: true, send_content_md5: true)
+    def upload_file(path_to_file, parent, name: nil, content_created_at: nil, # rubocop:disable Metrics
+                    content_modified_at: nil, preflight_check: true, send_content_md5: true)
       filename = name || File.basename(path_to_file)
 
       File.open(path_to_file) do |file|
-        upload_file_from_io(file, parent, name: filename, content_created_at: content_created_at,
-                                          content_modified_at: content_modified_at, preflight_check: preflight_check, send_content_md5: send_content_md5)
+        upload_file_from_io(
+          file, parent, name: filename, content_created_at: content_created_at,
+                        content_modified_at: content_modified_at, preflight_check: preflight_check,
+                        send_content_md5: send_content_md5
+        )
       end
     end
 
-    def upload_file_from_io(io, parent, name:, content_created_at: nil, content_modified_at: nil,
-                            preflight_check: true, send_content_md5: true)
+    def upload_file_from_io(io, parent, name:, content_created_at: nil, # rubocop:disable Metrics
+                            content_modified_at: nil, preflight_check: true, send_content_md5: true)
       parent_id = ensure_id(parent)
 
       preflight_check(io, name, parent_id) if preflight_check
@@ -141,18 +144,25 @@ module Boxr
       file_info.entries[0]
     end
 
-    def upload_new_version_of_file(path_to_file, file, content_modified_at: nil, send_content_md5: true,
-                                   preflight_check: true, if_match: nil, name: nil)
+    def upload_new_version_of_file( # rubocop:disable Metrics
+      path_to_file, file, content_modified_at: nil,
+      send_content_md5: true, preflight_check: true, if_match: nil, name: nil
+    )
       filename = name || File.basename(path_to_file)
 
       File.open(path_to_file) do |io|
-        upload_new_version_of_file_from_io(io, file, name: filename,
-                                                     content_modified_at: content_modified_at, preflight_check: preflight_check, send_content_md5: send_content_md5, if_match: if_match)
+        upload_new_version_of_file_from_io(
+          io, file,
+          name: filename, content_modified_at: content_modified_at,
+          preflight_check: preflight_check, send_content_md5: send_content_md5, if_match: if_match
+        )
       end
     end
 
-    def upload_new_version_of_file_from_io(io, file, name: nil, content_modified_at: nil, send_content_md5: true,
-                                           preflight_check: true, if_match: nil)
+    def upload_new_version_of_file_from_io( # rubocop:disable Metrics
+      io, file, name: nil, content_modified_at: nil,
+      send_content_md5: true, preflight_check: true, if_match: nil
+    )
       name || file.name
 
       file_id = ensure_id(file)
@@ -173,8 +183,9 @@ module Boxr
 
       body = { attributes: JSON.dump(attributes), file: io }
 
-      file_info, = post(uri, body, process_body: false, content_md5: content_md5,
-                                   if_match: if_match)
+      file_info, = post(
+        uri, body, process_body: false, content_md5: content_md5, if_match: if_match
+      )
 
       file_info.entries[0]
     end
@@ -225,7 +236,7 @@ module Boxr
       new_file
     end
 
-    def thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil)
+    def thumbnail(file, min_height: nil, min_width: nil, max_height: nil, max_width: nil) # rubocop:disable Metrics
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}/thumbnail.png"
       query = {}
@@ -246,8 +257,8 @@ module Boxr
       thumbnail
     end
 
-    def create_shared_link_for_file(file, access: nil, unshared_at: nil, can_download: nil,
-                                    can_preview: nil, password: nil)
+    def create_shared_link_for_file(file, access: nil, unshared_at: nil, # rubocop:disable Metrics
+                                    can_download: nil, can_preview: nil, password: nil)
       file_id = ensure_id(file)
       uri = "#{FILES_URI}/#{file_id}"
       create_shared_link(uri, file_id, access, unshared_at, can_download, can_preview, password)

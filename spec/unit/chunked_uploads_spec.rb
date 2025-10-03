@@ -34,12 +34,7 @@ describe Boxr::Client do
       ).and_return(mock_session_info)
     end
 
-    it 'creates session for new file' do
-      result = client.chunked_upload_create_session_new_file(file_path, test_folder)
-      expect(result).to eq(mock_session_info)
-    end
-
-    it 'creates session with custom name' do
+    it 'creates session for new file (with optional name)' do
       result = client.chunked_upload_create_session_new_file(file_path, test_folder,
                                                              name: 'custom.txt')
       expect(result).to eq(mock_session_info)
@@ -81,12 +76,7 @@ describe Boxr::Client do
       allow(client).to receive(:chunked_upload_create_session_new_version_from_io).and_return(mock_session_info)
     end
 
-    it 'creates session for new version' do
-      result = client.chunked_upload_create_session_new_version(file_path, test_file)
-      expect(result).to eq(mock_session_info)
-    end
-
-    it 'creates session with custom name' do
+    it 'creates session for new version (with optional name)' do
       result = client.chunked_upload_create_session_new_version(file_path, test_file,
                                                                 name: 'custom.txt')
       expect(result).to eq(mock_session_info)
@@ -143,22 +133,7 @@ describe Boxr::Client do
       allow(client).to receive(:get).and_return([mock_parts_response, mock_response])
     end
 
-    it 'lists parts without parameters' do
-      result = client.chunked_upload_list_parts('session_123')
-      expect(result).to eq([])
-    end
-
-    it 'lists parts with limit' do
-      result = client.chunked_upload_list_parts('session_123', limit: 10)
-      expect(result).to eq([])
-    end
-
-    it 'lists parts with offset' do
-      result = client.chunked_upload_list_parts('session_123', offset: 5)
-      expect(result).to eq([])
-    end
-
-    it 'lists parts with both limit and offset' do
+    it 'lists parts with optional pagination params' do
       result = client.chunked_upload_list_parts('session_123', limit: 10, offset: 5)
       expect(result).to eq([])
     end
@@ -245,20 +220,15 @@ describe Boxr::Client do
       allow(client).to receive(:chunked_upload_commit_from_io).and_return(mock_file_info)
     end
 
-    it 'commits upload from file path' do
-      result = client.chunked_upload_commit(file_path, 'session_123', [])
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'commits with content timestamps' do
-      result = client.chunked_upload_commit(file_path, 'session_123', [],
-                                            content_created_at: Time.now,
-                                            content_modified_at: Time.now)
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'commits with if_match' do
-      result = client.chunked_upload_commit(file_path, 'session_123', [], if_match: 'etag')
+    it 'commits upload with optional timestamps and if_match' do
+      created_at = Time.now
+      modified_at = Time.now
+      result = client.chunked_upload_commit(
+        file_path, 'session_123', [],
+        content_created_at: created_at,
+        content_modified_at: modified_at,
+        if_match: 'etag'
+      )
       expect(result).to eq(mock_file_info)
     end
 
@@ -286,20 +256,13 @@ describe Boxr::Client do
       allow(mock_commit_info).to receive(:entries).and_return([test_file])
     end
 
-    it 'commits upload from IO' do
-      result = client.chunked_upload_commit_from_io(file_io, 'session_123', parts)
-      expect(result).to eq(mock_commit_info)
-    end
-
-    it 'commits with content timestamps' do
-      result = client.chunked_upload_commit_from_io(file_io, 'session_123', parts,
-                                                    content_created_at: created_at,
-                                                    content_modified_at: modified_at)
-      expect(result).to eq(mock_commit_info)
-    end
-
-    it 'commits with if_match' do
-      result = client.chunked_upload_commit_from_io(file_io, 'session_123', parts, if_match: 'etag')
+    it 'commits upload from IO with optional timestamps and if_match' do
+      result = client.chunked_upload_commit_from_io(
+        file_io, 'session_123', parts,
+        content_created_at: created_at,
+        content_modified_at: modified_at,
+        if_match: 'etag'
+      )
       expect(result).to eq(mock_commit_info)
     end
 
@@ -316,6 +279,23 @@ describe Boxr::Client do
         success_codes: [200, 201, 202]
       )
     end
+
+    context 'when upload fails' do
+      let(:retry_response) { instance_double(HTTP::Message, status: 202, header: { 'Retry-After' => ['2'] }) }
+      let(:success_response) { instance_double(HTTP::Message, status: 200) }
+
+      before do
+        allow(client).to receive(:post).and_return([mock_commit_info, retry_response],
+                                                   [mock_commit_info, success_response])
+        allow(client).to receive(:sleep).and_return(nil)
+      end
+
+      it 'retries on 202 with Retry-After header and then succeeds' do
+        result = client.chunked_upload_commit_from_io(file_io, 'session_123', parts)
+        expect(client).to have_received(:sleep).with(2)
+        expect(result).to eq(mock_commit_info)
+      end
+    end
   end
 
   describe '#chunked_upload_file' do
@@ -324,27 +304,16 @@ describe Boxr::Client do
       allow(client).to receive(:chunked_upload_file_from_io).and_return(mock_file_info)
     end
 
-    it 'uploads file in chunks' do
-      result = client.chunked_upload_file(file_path, test_folder)
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads file with custom name' do
-      result = client.chunked_upload_file(file_path, test_folder, name: 'custom.txt')
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads file with content timestamps' do
+    it 'uploads file with optional overrides (name, timestamps, threads)' do
       created_at = Time.now
       modified_at = Time.now
-      result = client.chunked_upload_file(file_path, test_folder,
-                                          content_created_at: created_at,
-                                          content_modified_at: modified_at)
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads file with custom thread count' do
-      result = client.chunked_upload_file(file_path, test_folder, n_threads: 4)
+      result = client.chunked_upload_file(
+        file_path, test_folder,
+        name: 'custom.txt',
+        n_threads: 4,
+        content_created_at: created_at,
+        content_modified_at: modified_at
+      )
       expect(result).to eq(mock_file_info)
     end
 
@@ -364,12 +333,7 @@ describe Boxr::Client do
       allow(client).to receive(:chunked_upload_abort_session)
     end
 
-    it 'uploads file from IO' do
-      result = client.chunked_upload_file_from_io(file_io, test_folder, 'test.txt')
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads file with custom thread count' do
+    it 'uploads file from IO with optional thread count' do
       result = client.chunked_upload_file_from_io(file_io, test_folder, 'test.txt', n_threads: 4)
       expect(result).to eq(mock_file_info)
     end
@@ -395,27 +359,16 @@ describe Boxr::Client do
       allow(client).to receive(:chunked_upload_new_version_of_file_from_io).and_return(mock_file_info)
     end
 
-    it 'uploads new version in chunks' do
-      result = client.chunked_upload_new_version_of_file(file_path, test_file)
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads new version with custom name' do
-      result = client.chunked_upload_new_version_of_file(file_path, test_file, name: 'custom.txt')
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads new version with content timestamps' do
+    it 'uploads new version with optional overrides (name, timestamps, threads)' do
       created_at = Time.now
       modified_at = Time.now
-      result = client.chunked_upload_new_version_of_file(file_path, test_file,
-                                                         content_created_at: created_at,
-                                                         content_modified_at: modified_at)
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads new version with custom thread count' do
-      result = client.chunked_upload_new_version_of_file(file_path, test_file, n_threads: 4)
+      result = client.chunked_upload_new_version_of_file(
+        file_path, test_file,
+        name: 'custom.txt',
+        n_threads: 4,
+        content_created_at: created_at,
+        content_modified_at: modified_at
+      )
       expect(result).to eq(mock_file_info)
     end
 
@@ -435,12 +388,7 @@ describe Boxr::Client do
       allow(client).to receive(:chunked_upload_abort_session)
     end
 
-    it 'uploads new version from IO' do
-      result = client.chunked_upload_new_version_of_file_from_io(file_io, test_file, 'test.txt')
-      expect(result).to eq(mock_file_info)
-    end
-
-    it 'uploads new version with custom thread count' do
+    it 'uploads new version from IO with optional thread count' do
       result = client.chunked_upload_new_version_of_file_from_io(file_io, test_file, 'test.txt',
                                                                  n_threads: 4)
       expect(result).to eq(mock_file_info)
@@ -470,18 +418,22 @@ describe Boxr::Client do
         allow(client).to receive(:chunked_upload_commit_from_io).and_return(mock_commit_info)
       end
 
-      it 'uploads file in single thread' do
-        allow(client).to receive(:chunked_upload_part_from_io).and_return('part1', 'part2')
-        result = client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info)
-        expect(result).to eq(test_file)
-      end
+      context 'single-thread' do
+        before do
+          allow(client).to receive(:chunked_upload_part_from_io).and_return('part1', 'part2')
+        end
 
-      it 'calls chunked_upload_commit_from_io with correct parameters' do
-        allow(client).to receive(:chunked_upload_part_from_io).and_return('part1', 'part2')
-        client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info)
-        expect(client).to have_received(:chunked_upload_commit_from_io).with(
-          file_io, 'session_123', parts, content_created_at: nil, content_modified_at: nil
-        )
+        it 'uploads file in single thread' do
+          result = client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info)
+          expect(result).to eq(test_file)
+        end
+
+        it 'calls chunked_upload_commit_from_io with correct parameters' do
+          client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info)
+          expect(client).to have_received(:chunked_upload_commit_from_io).with(
+            file_io, 'session_123', parts, content_created_at: nil, content_modified_at: nil
+          )
+        end
       end
 
       context 'when upload fails' do
@@ -512,27 +464,42 @@ describe Boxr::Client do
           expect(result).to eq(test_file)
         end
 
-        it 'raises error when parallel gem is not available' do
-          allow(client).to receive(:gem_parallel_available?).and_return(false)
-          expect do
-            client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info,
-                        n_threads: 2)
-          end.to raise_error(Boxr::BoxrError, /parallel chunked uploads requires gem 'parallel'/)
+        context 'when parallel gem is not available' do
+          before do
+            allow(client).to receive(:gem_parallel_available?).and_return(false)
+          end
+
+          it 'raises error when parallel gem is not available' do
+            expect do
+              client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info,
+                          n_threads: 2)
+            end.to raise_error(Boxr::BoxrError, /parallel chunked uploads requires gem 'parallel'/)
+          end
         end
       end
     end
 
     describe '#gem_parallel_available?' do
-      it 'returns false when parallel gem is not loaded' do
-        allow(Gem).to receive(:loaded_specs).and_return({})
-        result = client.send(:gem_parallel_available?)
-        expect(result).to be false
+      context 'when parallel gem is not loaded' do
+        before do
+          allow(Gem).to receive(:loaded_specs).and_return({})
+        end
+
+        it 'returns false when parallel gem is not loaded' do
+          result = client.send(:gem_parallel_available?)
+          expect(result).to be false
+        end
       end
 
-      it 'returns false when parallel gem version is incompatible' do
-        allow(Gem).to receive(:loaded_specs).and_return({ 'parallel' => double(version: Gem::Version.new('0.9.0')) })
-        result = client.send(:gem_parallel_available?)
-        expect(result).to be false
+      context 'when parallel gem version is incompatible' do
+        before do
+          allow(Gem).to receive(:loaded_specs).and_return({ 'parallel' => double(version: Gem::Version.new('0.9.0')) })
+        end
+
+        it 'returns false when parallel gem version is incompatible' do
+          result = client.send(:gem_parallel_available?)
+          expect(result).to be false
+        end
       end
     end
   end

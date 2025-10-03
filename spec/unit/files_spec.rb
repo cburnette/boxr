@@ -270,17 +270,18 @@ describe Boxr::Client do
 
     context 'when 202 status with retry' do
       let(:retry_response) do
-        instance_double(HTTP::Message, status: 202, header: { 'Retry-After' => ['1'] })
+        instance_double(HTTP::Message, status: 202, header: { 'Retry-After' => ['3'] })
       end
 
       before do
         allow(client).to receive(:get).and_return([nil, retry_response], [nil, redirect_response],
                                                   [file_content, file_content_response])
-        allow(client).to receive(:sleep) # avoid sleeping in the test
+        allow(client).to receive(:sleep).and_return(nil)
       end
 
       it 'handles 202 status with retry' do
         expect(client.download_file(test_file)).to eq(file_content)
+        expect(client).to have_received(:sleep).with(3)
       end
     end
   end

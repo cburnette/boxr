@@ -387,17 +387,6 @@ describe Boxr::Client do
         file_io, mock_session_info, n_threads: 1, content_created_at: nil, content_modified_at: nil
       )
     end
-
-    context 'when upload fails' do
-      before do
-        allow(client).to receive(:chunked_upload_to_session_from_io).and_return(nil)
-      end
-
-      it 'aborts session on failure' do
-        client.chunked_upload_file_from_io(file_io, test_folder, 'test.txt')
-        expect(client).to have_received(:chunked_upload_abort_session).with('session_123')
-      end
-    end
   end
 
   describe '#chunked_upload_new_version_of_file' do
@@ -470,17 +459,6 @@ describe Boxr::Client do
         file_io, mock_session_info, n_threads: 1, content_created_at: nil, content_modified_at: nil
       )
     end
-
-    context 'when upload fails' do
-      before do
-        allow(client).to receive(:chunked_upload_to_session_from_io).and_return(nil)
-      end
-
-      it 'aborts session on failure' do
-        client.chunked_upload_new_version_of_file_from_io(file_io, test_file, 'test.txt')
-        expect(client).to have_received(:chunked_upload_abort_session).with('session_123')
-      end
-    end
   end
 
   describe 'private methods' do
@@ -506,6 +484,21 @@ describe Boxr::Client do
         )
       end
 
+      context 'when upload fails' do
+        before do
+          allow(client).to receive(:chunked_upload_part_from_io).and_return('part1', 'part2')
+          allow(client).to receive(:chunked_upload_commit_from_io).and_raise(Boxr::BoxrError)
+          allow(client).to receive(:chunked_upload_abort_session)
+        end
+
+        it 'aborts session on failure' do
+          expect do
+            client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info)
+          end.to raise_error(Boxr::BoxrError)
+          expect(client).to have_received(:chunked_upload_abort_session).with('session_123')
+        end
+      end
+
       context 'with multiple threads' do
         before do
           allow(client).to receive(:gem_parallel_available?).and_return(true)
@@ -524,7 +517,7 @@ describe Boxr::Client do
           expect do
             client.send(:chunked_upload_to_session_from_io, file_io, mock_session_info,
                         n_threads: 2)
-          end.to raise_error(Boxr::BoxrError, /parallel chunked uploads requires gem parallel/)
+          end.to raise_error(Boxr::BoxrError, /parallel chunked uploads requires gem 'parallel'/)
         end
       end
     end

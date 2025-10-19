@@ -2,6 +2,15 @@
 
 module Boxr
   class Client
+    def collection_from_id(collection_id)
+      collection_id = ensure_id(collection_id)
+      uri = "#{COLLECTIONS_URI}/#{collection_id}"
+
+      collection, = get(uri)
+      collection
+    end
+    alias collection collection_from_id
+
     def collections
       get_all_with_pagination(COLLECTIONS_URI, offset: 0, limit: DEFAULT_LIMIT)
     end

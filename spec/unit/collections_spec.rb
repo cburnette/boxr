@@ -88,4 +88,36 @@ describe Boxr::Client do
       expect(result.entries).to include(test_file, test_folder)
     end
   end
+
+  describe '#collection_from_id' do
+    before do
+      allow(client).to receive_messages(
+        build_fields_query: {},
+        get: [test_collection, mock_response]
+      )
+    end
+
+    it 'retrieves collection by ID' do
+      result = client.collection_from_id('12345')
+      expect(result).to eq(test_collection)
+    end
+
+    it 'retrieves collection with collection object' do
+      result = client.collection_from_id(test_collection)
+      expect(result).to eq(test_collection)
+    end
+
+    it 'calls get with correct URI' do
+      client.collection_from_id('12345')
+      expect(client).to have_received(:get).with(
+        "#{Boxr::Client::COLLECTIONS_URI}/12345"
+      )
+    end
+  end
+
+  describe '#collection' do
+    it 'is aliased to collection_from_id' do
+      expect(client.method(:collection)).to eq(client.method(:collection_from_id))
+    end
+  end
 end

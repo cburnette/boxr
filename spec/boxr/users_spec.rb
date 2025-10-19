@@ -44,6 +44,19 @@ describe 'user operations' do
     # result = BOX_CLIENT.remove_email_alias_for_user(@test_user, new_alias.id)
     # expect(result).to eq({})
 
+    puts 'create user avatar'
+    avatar_file = File.open('spec/test_files/avatar.png', 'rb')
+    avatar = BOX_CLIENT.create_user_avatar(@test_user, avatar_file)
+    expect(avatar.pic_urls).not_to be_nil
+
+    puts 'get user avatar'
+    avatar_data = BOX_CLIENT.get_user_avatar(@test_user)
+    expect(avatar_data).not_to be_nil
+
+    puts 'delete user avatar'
+    result = BOX_CLIENT.delete_user_avatar(@test_user)
+    expect(result).to eq({})
+
     puts 'delete users'
     BOX_CLIENT.delete_user(second_test_user, force: true)
     result = BOX_CLIENT.delete_user(@test_user, force: true)

@@ -1,36 +1,37 @@
 # frozen_string_literal: true
 
 module Boxr
-  class Client
+  class Client # rubocop:disable Metrics/ClassLength
     attr_reader :access_token, :refresh_token, :client_id, :client_secret, :identifier, :as_user_id
-
-    # API_URI = "https://wcheng.inside-box.net/api/2.0"
-    # UPLOAD_URI = "https://upload.wcheng.inside-box.net/api/2.0"
 
     API_URI = 'https://api.box.com/2.0'
     AUTH_URI = 'https://api.box.com/oauth2/token'
     REVOKE_AUTH_URI = 'https://api.box.com/oauth2/revoke'
     UPLOAD_URI = 'https://upload.box.com/api/2.0'
-    FILES_URI = "#{API_URI}/files"
-    FILES_UPLOAD_URI = "#{UPLOAD_URI}/files/content"
-    FOLDERS_URI = "#{API_URI}/folders"
-    USERS_URI = "#{API_URI}/users"
-    GROUPS_URI = "#{API_URI}/groups"
-    GROUP_MEMBERSHIPS_URI = "#{API_URI}/group_memberships"
+
+    ARCHIVES_URI = "#{API_URI}/archives"
     COLLABORATIONS_URI = "#{API_URI}/collaborations"
     COLLECTIONS_URI = "#{API_URI}/collections"
     COMMENTS_URI = "#{API_URI}/comments"
-    SEARCH_URI = "#{API_URI}/search"
-    TASKS_URI = "#{API_URI}/tasks"
-    TASK_ASSIGNMENTS_URI = "#{API_URI}/task_assignments"
-    SHARED_ITEMS_URI = "#{API_URI}/shared_items"
-    FILE_METADATA_URI = "#{API_URI}/files"
-    FOLDER_METADATA_URI = "#{API_URI}/folders"
-    METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
     EVENTS_URI = "#{API_URI}/events"
+    FILE_METADATA_URI = "#{API_URI}/files"
+    FILES_UPLOAD_URI = "#{UPLOAD_URI}/files/content"
+    FILES_URI = "#{API_URI}/files"
+    FOLDER_METADATA_URI = "#{API_URI}/folders"
+    FOLDERS_URI = "#{API_URI}/folders"
+    GROUP_MEMBERSHIPS_URI = "#{API_URI}/group_memberships"
+    GROUPS_URI = "#{API_URI}/groups"
+    METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
+    SEARCH_URI = "#{API_URI}/search"
+    SHARED_ITEMS_URI = "#{API_URI}/shared_items"
+    TASK_ASSIGNMENTS_URI = "#{API_URI}/task_assignments"
+    TASKS_URI = "#{API_URI}/tasks"
+    USERS_URI = "#{API_URI}/users"
     WEB_LINKS_URI = "#{API_URI}/web_links"
     WEBHOOKS_URI = "#{API_URI}/webhooks"
     ZIP_DOWNLOADS_URI = "#{API_URI}/zip_downloads"
+
+    BOX_VERSION_HEADER_2025 = { 'box-version' => '2025.0' }.freeze
 
     DEFAULT_LIMIT = 100
     FOLDER_ITEMS_LIMIT = 1000
@@ -101,13 +102,14 @@ module Boxr
     private
 
     def get(uri, query: nil, success_codes: [200], process_response: true, if_match: nil,
-            box_api_header: nil, follow_redirect: true)
+            box_api_header: nil, follow_redirect: true, extra_headers: nil)
       uri = Addressable::URI.encode(uri)
 
       res = with_auto_token_refresh do
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
         headers['BoxApi'] = box_api_header unless box_api_header.nil?
+        headers.merge!(extra_headers) unless extra_headers.nil?
 
         BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
       end
@@ -151,7 +153,7 @@ module Boxr
     end
 
     def post(uri, body, query: nil, success_codes: [201], process_body: true, digest: nil,
-             content_md5: nil, content_type: nil, if_match: nil, if_non_match: nil)
+             content_md5: nil, content_type: nil, if_match: nil, if_non_match: nil, extra_headers: nil)
       uri = Addressable::URI.encode(uri)
       body = JSON.dump(body) if process_body
 
@@ -162,6 +164,7 @@ module Boxr
         headers['Content-MD5'] = content_md5 unless content_md5.nil?
         headers['Content-Type'] = content_type unless content_type.nil?
         headers['Digest'] = digest unless digest.nil?
+        headers.merge!(extra_headers) unless extra_headers.nil?
 
         BOX_CLIENT.post(uri, body: body, query: query, header: headers)
       end
@@ -172,7 +175,7 @@ module Boxr
     end
 
     def put(uri, body, query: nil, success_codes: [200, 201], process_body: true,
-            content_type: nil, content_range: nil, digest: nil, if_match: nil)
+            content_type: nil, content_range: nil, digest: nil, if_match: nil, extra_headers: nil)
       uri = Addressable::URI.encode(uri)
       body = JSON.dump(body) if process_body
 
@@ -182,6 +185,7 @@ module Boxr
         headers['Content-Type'] = content_type unless content_type.nil?
         headers['Content-Range'] = content_range unless content_range.nil?
         headers['Digest'] = digest unless digest.nil?
+        headers.merge!(extra_headers) unless extra_headers.nil?
 
         BOX_CLIENT.put(uri, body: body, query: query, header: headers)
       end
@@ -191,12 +195,13 @@ module Boxr
       processed_response(res)
     end
 
-    def delete(uri, query: nil, success_codes: [204], if_match: nil)
+    def delete(uri, query: nil, success_codes: [204], if_match: nil, extra_headers: nil)
       uri = Addressable::URI.encode(uri)
 
       res = with_auto_token_refresh do
         headers = standard_headers
         headers['If-Match'] = if_match unless if_match.nil?
+        headers.merge!(extra_headers) unless extra_headers.nil?
 
         BOX_CLIENT.delete(uri, query: query, header: headers)
       end

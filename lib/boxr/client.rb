@@ -140,7 +140,7 @@ module Boxr
           raise BoxrError.new(status: res.status, body: res.body, header: res.header)
         end
 
-        body_json = JSON.load(res.body) # rubocop:disable Security/JSONLoad
+        body_json = parse_response_body(res.body)
         total_count = body_json['total_count']
         offset += limit
 
@@ -270,8 +270,17 @@ module Boxr
     end
 
     def processed_response(res)
-      body_json = JSON.load(res.body) # rubocop:disable Security/JSONLoad
+      body_json = parse_response_body(res.body)
       [BoxrMash.new(body_json), res]
+    end
+
+    # Parses a JSON response body. Returns nil for a blank body (the Box API
+    # returns empty bodies for some responses), matching the prior leniency of
+    # JSON.load while avoiding its unsafe object deserialization (create_additions).
+    def parse_response_body(body)
+      return nil if body.to_s.empty?
+
+      JSON.parse(body)
     end
 
     def build_fields_query(fields, all_fields_query)

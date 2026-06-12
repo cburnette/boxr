@@ -308,6 +308,34 @@ describe Boxr::Client do
         client.send(:get_all_with_pagination, 'https://api.box.com/test')
       end.to raise_error(Boxr::BoxrError)
     end
+
+    it 'returns an empty collection for an empty (zero-entry) response' do
+      # Exercise parse_response_body on the pagination path with a real (non-stubbed)
+      # JSON.parse of an empty result set, the form the Box API returns for no results.
+      empty_response = instance_double(HTTP::Message, status: 200,
+                                                      body: '{"entries": [], "total_count": 0}')
+      allow(Boxr::BOX_CLIENT).to receive(:get).and_return(empty_response)
+      allow(JSON).to receive(:parse).and_call_original
+
+      result = nil
+      expect { result = client.send(:get_all_with_pagination, 'https://api.box.com/test') }
+        .not_to raise_error
+      expect(result).to be_a(BoxrCollection)
+      expect(result).to be_empty
+    end
+
+    it 'returns an empty collection for a blank response body' do
+      # parse_response_body returns nil for a blank body; pagination must not dereference nil.
+      blank_response = instance_double(HTTP::Message, status: 200, body: '')
+      allow(Boxr::BOX_CLIENT).to receive(:get).and_return(blank_response)
+      allow(JSON).to receive(:parse).and_call_original
+
+      result = nil
+      expect { result = client.send(:get_all_with_pagination, 'https://api.box.com/test') }
+        .not_to raise_error
+      expect(result).to be_a(BoxrCollection)
+      expect(result).to be_empty
+    end
   end
 
   describe '#standard_headers' do
@@ -471,6 +499,28 @@ describe Boxr::Client do
       expect(result).to be_a(Array)
       expect(result[0]).to be_a(BoxrMash)
       expect(result[1]).to eq(mock_response)
+    end
+
+    it 'tolerates a blank response body without raising' do
+      blank_response = instance_double(HTTP::Message, status: 200, header: {}, body: '')
+      result = nil
+      expect { result = client.send(:processed_response, blank_response) }.not_to raise_error
+      expect(result[0]).to be_a(BoxrMash)
+      expect(result[1]).to eq(blank_response)
+    end
+
+    it 'does not instantiate arbitrary Ruby objects from a json_class payload' do
+      # Loading the JSON core additions makes JSON.load (create_additions) able to
+      # build real Ruby objects (e.g. Symbol) from a "json_class" key. A safe parser
+      # must treat such input as inert data, never deserialize it into objects.
+      require 'json/add/core'
+      body = '{"id":"123","json_class":"Symbol","s":"pwned"}'
+      response = instance_double(HTTP::Message, status: 200, header: {}, body: body)
+
+      result = client.send(:processed_response, response)
+
+      expect(result[0]['json_class']).to eq('Symbol')
+      expect(result[0]['id']).to eq('123')
     end
   end
 

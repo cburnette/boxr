@@ -4,7 +4,9 @@ require 'spec_helper'
 
 describe Boxr::Client do
   let(:client) { described_class.new('fake_token') }
-  let(:mock_response) { instance_double(HTTP::Message, status: 200, header: {}, body: '') }
+  # Non-empty body so parse_response_body reaches the stubbed JSON.parse below;
+  # a blank body short-circuits to nil before parsing (see Boxr::Client#parse_response_body).
+  let(:mock_response) { instance_double(HTTP::Message, status: 200, header: {}, body: '{}') }
   let(:events_data) do
     BoxrMash.new(
       entries: [

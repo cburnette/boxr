@@ -141,6 +141,9 @@ module Boxr
         end
 
         body_json = parse_response_body(res.body)
+        # A blank body parses to nil; treat it as an empty page rather than dereferencing nil.
+        break if body_json.nil?
+
         total_count = body_json['total_count']
         offset += limit
 

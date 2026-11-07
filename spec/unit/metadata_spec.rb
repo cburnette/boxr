@@ -323,6 +323,13 @@ describe Boxr::Client do
 
       expect(result).to be true
     end
+
+    it 'rejects path delimiters in scope or template without sending a request' do
+      expect { client.delete_metadata(test_file, template: 'properties#') }
+        .to raise_error(Boxr::BoxrError, /Invalid ID or path segment/)
+      expect { client.delete_metadata(test_file, scope: '..') }.to raise_error(Boxr::BoxrError)
+      expect(client).not_to have_received(:delete)
+    end
   end
 
   describe '#delete_folder_metadata' do

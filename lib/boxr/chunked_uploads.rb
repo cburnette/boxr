@@ -38,6 +38,7 @@ module Boxr
     end
 
     def chunked_upload_get_session(session_id)
+      session_id = ensure_path_segment(session_id)
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       session_info, = get(uri)
       session_info
@@ -50,6 +51,7 @@ module Boxr
     end
 
     def chunked_upload_part_from_io(io, session_id, content_range) # rubocop:disable Metrics
+      session_id = ensure_path_segment(session_id)
       io.pos = content_range.min
       part_size = content_range.max - content_range.min + 1
       body = io.read(part_size)
@@ -67,6 +69,7 @@ module Boxr
     end
 
     def chunked_upload_list_parts(session_id, limit: nil, offset: nil)
+      session_id = ensure_path_segment(session_id)
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}/parts"
       query = {}
       query[:limit] = limit unless limit.nil?
@@ -88,6 +91,7 @@ module Boxr
 
     def chunked_upload_commit_from_io(io, session_id, parts, content_created_at: nil, # rubocop:disable Metrics
                                       content_modified_at: nil, if_match: nil, if_non_match: nil)
+      session_id = ensure_path_segment(session_id)
       io.pos = 0
       cca = content_created_at
       cma = content_modified_at
@@ -113,6 +117,7 @@ module Boxr
     end
 
     def chunked_upload_abort_session(session_id)
+      session_id = ensure_path_segment(session_id)
       uri = "#{UPLOAD_URI}/files/upload_sessions/#{session_id}"
       abort_info, = delete(uri)
       abort_info

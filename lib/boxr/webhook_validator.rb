@@ -31,7 +31,8 @@ module Boxr
     end
 
     def verify_signature
-      generate_signature(primary_signature_key) == primary_signature || generate_signature(secondary_signature_key) == secondary_signature
+      signature_valid?(primary_signature_key, primary_signature) ||
+        signature_valid?(secondary_signature_key, secondary_signature)
     end
 
     def generate_signature(key)
@@ -53,6 +54,18 @@ module Boxr
 
     def message_age
       current_time - delivery_time
+    end
+
+    def secure_compare(expected, actual)
+      return false unless expected.bytesize == actual.bytesize
+
+      expected.bytes.zip(actual.bytes).reduce(0) { |result, (x, y)| result | (x ^ y) }.zero?
+    end
+
+    def signature_valid?(key, signature)
+      return false if key.empty? || !signature.is_a?(String)
+
+      secure_compare(generate_signature(key), signature)
     end
   end
 end

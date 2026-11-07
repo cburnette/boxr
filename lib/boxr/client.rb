@@ -94,7 +94,7 @@ module Boxr
       @jwt_private_key_password = jwt_private_key_password
       @jwt_public_key_id = jwt_public_key_id
       @identifier = identifier
-      @as_user_id = ensure_id(as_user)
+      @as_user_id = ensure_id(as_user.is_a?(String) ? as_user.strip : as_user)
       @token_refresh_listener = token_refresh_listener
       BOX_CLIENT.proxy = proxy unless proxy.nil?
     end

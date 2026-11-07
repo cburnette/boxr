@@ -105,6 +105,11 @@ describe Boxr::Client do
         expect(client.as_user_id).to eq(123)
       end
 
+      it 'trims surrounding whitespace from a string user ID' do
+        client = described_class.new(access_token, as_user: " 123\t")
+        expect(client.as_user_id).to eq('123')
+      end
+
       it 'raises error for invalid user ID' do
         expect do
           described_class.new(access_token, as_user: Object.new)

@@ -63,7 +63,7 @@ module Boxr
     end
 
     def signature_valid?(key, signature)
-      return false if key.empty? || signature.nil?
+      return false if key.empty? || !signature.is_a?(String)
 
       secure_compare(generate_signature(key), signature)
     end

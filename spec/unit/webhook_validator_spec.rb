@@ -124,6 +124,16 @@ describe Boxr::WebhookValidator, :skip_reset do
       end
     end
 
+    context 'with a non-string primary signature and a valid secondary signature' do
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => [],
+          'BOX-SIGNATURE-SECONDARY' => signature_secondary }
+      end
+
+      it { is_expected.to be(true) }
+    end
+
     context 'with only a primary key and a valid primary signature' do
       let(:secondary_key) { nil }
       let(:headers) do

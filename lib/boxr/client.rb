@@ -9,27 +9,27 @@ module Boxr
     REVOKE_AUTH_URI = 'https://api.box.com/oauth2/revoke'
     UPLOAD_URI = 'https://upload.box.com/api/2.0'
 
-    ARCHIVES_URI = "#{API_URI}/archives"
-    COLLABORATIONS_URI = "#{API_URI}/collaborations"
-    COLLECTIONS_URI = "#{API_URI}/collections"
-    COMMENTS_URI = "#{API_URI}/comments"
-    EVENTS_URI = "#{API_URI}/events"
-    FILE_METADATA_URI = "#{API_URI}/files"
-    FILES_UPLOAD_URI = "#{UPLOAD_URI}/files/content"
-    FILES_URI = "#{API_URI}/files"
-    FOLDER_METADATA_URI = "#{API_URI}/folders"
-    FOLDERS_URI = "#{API_URI}/folders"
-    GROUP_MEMBERSHIPS_URI = "#{API_URI}/group_memberships"
-    GROUPS_URI = "#{API_URI}/groups"
-    METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates"
-    SEARCH_URI = "#{API_URI}/search"
-    SHARED_ITEMS_URI = "#{API_URI}/shared_items"
-    TASK_ASSIGNMENTS_URI = "#{API_URI}/task_assignments"
-    TASKS_URI = "#{API_URI}/tasks"
-    USERS_URI = "#{API_URI}/users"
-    WEB_LINKS_URI = "#{API_URI}/web_links"
-    WEBHOOKS_URI = "#{API_URI}/webhooks"
-    ZIP_DOWNLOADS_URI = "#{API_URI}/zip_downloads"
+    ARCHIVES_URI = "#{API_URI}/archives".freeze
+    COLLABORATIONS_URI = "#{API_URI}/collaborations".freeze
+    COLLECTIONS_URI = "#{API_URI}/collections".freeze
+    COMMENTS_URI = "#{API_URI}/comments".freeze
+    EVENTS_URI = "#{API_URI}/events".freeze
+    FILE_METADATA_URI = "#{API_URI}/files".freeze
+    FILES_UPLOAD_URI = "#{UPLOAD_URI}/files/content".freeze
+    FILES_URI = "#{API_URI}/files".freeze
+    FOLDER_METADATA_URI = "#{API_URI}/folders".freeze
+    FOLDERS_URI = "#{API_URI}/folders".freeze
+    GROUP_MEMBERSHIPS_URI = "#{API_URI}/group_memberships".freeze
+    GROUPS_URI = "#{API_URI}/groups".freeze
+    METADATA_TEMPLATES_URI = "#{API_URI}/metadata_templates".freeze
+    SEARCH_URI = "#{API_URI}/search".freeze
+    SHARED_ITEMS_URI = "#{API_URI}/shared_items".freeze
+    TASK_ASSIGNMENTS_URI = "#{API_URI}/task_assignments".freeze
+    TASKS_URI = "#{API_URI}/tasks".freeze
+    USERS_URI = "#{API_URI}/users".freeze
+    WEB_LINKS_URI = "#{API_URI}/web_links".freeze
+    WEBHOOKS_URI = "#{API_URI}/webhooks".freeze
+    ZIP_DOWNLOADS_URI = "#{API_URI}/zip_downloads".freeze
 
     BOX_VERSION_HEADER_2025 = { 'box-version' => '2025.0' }.freeze
 
@@ -324,19 +324,13 @@ module Boxr
     end
 
     def ensure_id(item)
-      # Ruby 2.4 unified Fixnum and Bignum into Integer.  This tests for Ruby 2.4
-      if 1.instance_of?(Integer)
-        return ensure_path_segment(item) if item.instance_of?(String) ||
-                                            item.instance_of?(Integer) || item.nil?
-      elsif item.instance_of?(String) || item.instance_of?(Integer) || item.instance_of?(Integer) || item.nil?
-        if item.instance_of?(String) || item.instance_of?(Integer) || item.instance_of?(Integer) || item.nil?
-          return ensure_path_segment(item)
-        end
+      if item.instance_of?(String) || item.instance_of?(Integer) || item.nil?
+        return ensure_path_segment(item)
       end
 
       return ensure_path_segment(item.id) if item.respond_to?(:id)
 
-      raise BoxrError.new(boxr_message: 'Expecting an id of class String or Fixnum, or object that responds to :id')
+      raise BoxrError.new(boxr_message: 'Expecting an id of class String or Integer, or object that responds to :id')
     end
 
     def ensure_path_segment(value)

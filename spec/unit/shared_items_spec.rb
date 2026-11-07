@@ -107,5 +107,26 @@ describe Boxr::Client do
         )
       end
     end
+
+    context 'with CR/LF characters in shared link or password' do
+      before do
+        allow(client).to receive(:get).and_call_original
+        allow(Boxr::BOX_CLIENT).to receive(:get)
+      end
+
+      it 'rejects a shared link containing CRLF without making a request' do
+        expect do
+          client.shared_item("#{shared_link}\r\nAs-User: 12345")
+        end.to raise_error(Boxr::BoxrError, /Invalid characters in BoxApi header/)
+        expect(Boxr::BOX_CLIENT).not_to have_received(:get)
+      end
+
+      it 'rejects a password containing CRLF without making a request' do
+        expect do
+          client.shared_item(shared_link, shared_link_password: "pass\r\nAs-User: 12345")
+        end.to raise_error(Boxr::BoxrError, /Invalid characters in BoxApi header/)
+        expect(Boxr::BOX_CLIENT).not_to have_received(:get)
+      end
+    end
   end
 end

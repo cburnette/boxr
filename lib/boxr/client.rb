@@ -111,7 +111,8 @@ module Boxr
         headers['BoxApi'] = box_api_header unless box_api_header.nil?
         headers.merge!(extra_headers) unless extra_headers.nil?
 
-        BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
+        BOX_CLIENT.get(uri, query: query, header: validated_headers(headers),
+                            follow_redirect: follow_redirect)
       end
 
       check_response_status(res, success_codes)
@@ -133,7 +134,8 @@ module Boxr
         query[:offset] = offset
         res = with_auto_token_refresh do
           headers = standard_headers
-          BOX_CLIENT.get(uri, query: query, header: headers, follow_redirect: follow_redirect)
+          BOX_CLIENT.get(uri, query: query, header: validated_headers(headers),
+                              follow_redirect: follow_redirect)
         end
 
         unless res.status == 200
@@ -171,7 +173,7 @@ module Boxr
         headers['Digest'] = digest unless digest.nil?
         headers.merge!(extra_headers) unless extra_headers.nil?
 
-        BOX_CLIENT.post(uri, body: body, query: query, header: headers)
+        BOX_CLIENT.post(uri, body: body, query: query, header: validated_headers(headers))
       end
 
       check_response_status(res, success_codes)
@@ -192,7 +194,7 @@ module Boxr
         headers['Digest'] = digest unless digest.nil?
         headers.merge!(extra_headers) unless extra_headers.nil?
 
-        BOX_CLIENT.put(uri, body: body, query: query, header: headers)
+        BOX_CLIENT.put(uri, body: body, query: query, header: validated_headers(headers))
       end
 
       check_response_status(res, success_codes)
@@ -208,7 +210,7 @@ module Boxr
         headers['If-Match'] = if_match unless if_match.nil?
         headers.merge!(extra_headers) unless extra_headers.nil?
 
-        BOX_CLIENT.delete(uri, query: query, header: headers)
+        BOX_CLIENT.delete(uri, query: query, header: validated_headers(headers))
       end
 
       check_response_status(res, success_codes)
@@ -221,7 +223,7 @@ module Boxr
 
       res = with_auto_token_refresh do
         headers = standard_headers
-        BOX_CLIENT.options(uri, body: JSON.dump(body), header: headers)
+        BOX_CLIENT.options(uri, body: JSON.dump(body), header: validated_headers(headers))
       end
 
       check_response_status(res, success_codes)
@@ -232,6 +234,13 @@ module Boxr
     def standard_headers
       headers = { 'Authorization' => "Bearer #{@access_token}" }
       headers['As-User'] = @as_user_id.to_s if @jwt_private_key.nil? && !@as_user_id.nil?
+      headers
+    end
+
+    def validated_headers(headers)
+      name, = headers.find { |_, value| value.to_s.match?(/[\r\n\0]/) }
+      raise BoxrError.new(boxr_message: "Invalid characters in #{name} header") unless name.nil?
+
       headers
     end
 

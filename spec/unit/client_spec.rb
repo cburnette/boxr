@@ -324,17 +324,13 @@ describe Boxr::Client do
       expect(result).to be_empty
     end
 
-    it 'returns an empty collection for a blank response body' do
-      # parse_response_body returns nil for a blank body; pagination must not dereference nil.
-      blank_response = instance_double(HTTP::Message, status: 200, body: '')
+    it 'raises BoxrError for a blank response body' do
+      blank_response = instance_double(HTTP::Message, status: 200, header: {}, body: '')
       allow(Boxr::BOX_CLIENT).to receive(:get).and_return(blank_response)
-      allow(JSON).to receive(:parse).and_call_original
 
-      result = nil
-      expect { result = client.send(:get_all_with_pagination, 'https://api.box.com/test') }
-        .not_to raise_error
-      expect(result).to be_a(BoxrCollection)
-      expect(result).to be_empty
+      expect do
+        client.send(:get_all_with_pagination, 'https://api.box.com/test')
+      end.to raise_error(Boxr::BoxrError, /Blank response body/)
     end
   end
 

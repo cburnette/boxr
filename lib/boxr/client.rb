@@ -141,8 +141,10 @@ module Boxr
         end
 
         body_json = parse_response_body(res.body)
-        # A blank body parses to nil; treat it as an empty page rather than dereferencing nil.
-        break if body_json.nil?
+        if body_json.nil?
+          raise BoxrError.new(status: res.status, body: res.body, header: res.header,
+                              boxr_message: 'Blank response body from paginated endpoint')
+        end
 
         total_count = body_json['total_count']
         offset += limit

@@ -238,7 +238,9 @@ module Boxr
     end
 
     def validated_headers(headers)
-      name, = headers.find { |_, value| value.to_s.match?(/[\r\n\0]/) }
+      name, = headers.find do |_, value|
+        Array(value).flatten.any? { |part| part.to_s.match?(/[\r\n\0]/) }
+      end
       raise BoxrError.new(boxr_message: "Invalid characters in #{name} header") unless name.nil?
 
       headers

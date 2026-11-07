@@ -126,6 +126,11 @@ describe Boxr::Client do
       client.chunked_upload_get_session('session_123')
       expect(client).to have_received(:get).with("#{Boxr::Client::UPLOAD_URI}/files/upload_sessions/session_123")
     end
+
+    it 'rejects a session ID containing a path delimiter without sending a request' do
+      expect { client.chunked_upload_get_session('session_123#') }.to raise_error(Boxr::BoxrError)
+      expect(client).not_to have_received(:get)
+    end
   end
 
   describe '#chunked_upload_list_parts' do

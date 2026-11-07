@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 module Boxr
-  class Client
+  class Client # rubocop:disable Metrics/ClassLength
     def create_metadata(file, metadata, scope: :global, template: :properties)
       file_id = ensure_id(file)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FILE_METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
       metadata, = post(uri, metadata, content_type: 'application/json')
       metadata
@@ -11,6 +13,8 @@ module Boxr
 
     def create_folder_metadata(folder, metadata, scope, template)
       folder_id = ensure_id(folder)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata/#{scope}/#{template}"
       metadata, = post(uri, metadata, content_type: 'application/json')
       metadata
@@ -18,6 +22,8 @@ module Boxr
 
     def metadata(file, scope: :global, template: :properties)
       file_id = ensure_id(file)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FILE_METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
       metadata, = get(uri)
       metadata
@@ -25,6 +31,8 @@ module Boxr
 
     def folder_metadata(folder, scope, template)
       folder_id = ensure_id(folder)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata/#{scope}/#{template}"
       metadata, = get(uri)
       metadata
@@ -46,6 +54,8 @@ module Boxr
 
     def update_metadata(file, updates, scope: :global, template: :properties)
       file_id = ensure_id(file)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FILE_METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
 
       # in the event just one update is specified ensure that it is packaged inside an array
@@ -57,6 +67,8 @@ module Boxr
 
     def update_folder_metadata(folder, updates, scope, template)
       folder_id = ensure_id(folder)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata/#{scope}/#{template}"
 
       # in the event just one update is specified ensure that it is packaged inside an array
@@ -68,6 +80,8 @@ module Boxr
 
     def delete_metadata(file, scope: :global, template: :properties)
       file_id = ensure_id(file)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FILE_METADATA_URI}/#{file_id}/metadata/#{scope}/#{template}"
       result, = delete(uri)
       result
@@ -75,6 +89,8 @@ module Boxr
 
     def delete_folder_metadata(folder, scope, template)
       folder_id = ensure_id(folder)
+      scope = ensure_path_segment(scope)
+      template = ensure_path_segment(template)
       uri = "#{FOLDER_METADATA_URI}/#{folder_id}/metadata/#{scope}/#{template}"
       result, = delete(uri)
       result
@@ -88,6 +104,8 @@ module Boxr
     alias get_enterprise_templates enterprise_metadata
 
     def metadata_schema(scope, template_key)
+      scope = ensure_path_segment(scope)
+      template_key = ensure_path_segment(template_key)
       uri = "#{METADATA_TEMPLATES_URI}/#{scope}/#{template_key}/schema"
       schema, = get(uri)
       schema
@@ -116,6 +134,8 @@ module Boxr
     end
 
     def delete_metadata_template(scope, template_key)
+      scope = ensure_path_segment(scope)
+      template_key = ensure_path_segment(template_key)
       uri = "#{METADATA_TEMPLATES_URI}/#{scope}/#{template_key}/schema"
       result, = delete(uri)
       result

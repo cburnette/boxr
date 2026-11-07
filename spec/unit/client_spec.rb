@@ -105,6 +105,11 @@ describe Boxr::Client do
         expect(client.as_user_id).to eq(123)
       end
 
+      it 'trims surrounding whitespace from a string user ID' do
+        client = described_class.new(access_token, as_user: " 123\t")
+        expect(client.as_user_id).to eq('123')
+      end
+
       it 'raises error for invalid user ID' do
         expect do
           described_class.new(access_token, as_user: Object.new)
@@ -615,6 +620,17 @@ describe Boxr::Client do
       expect do
         client.send(:ensure_id, Object.new)
       end.to raise_error(Boxr::BoxrError, /Expecting an id of class String or Fixnum/)
+    end
+
+    it 'rejects ids that are not a single path segment' do
+      ['12345#', '12345?', '../folders/0', '123/versions', ''].each do |id|
+        expect { client.send(:ensure_id, id) }.to raise_error(Boxr::BoxrError, /Invalid ID/)
+      end
+    end
+
+    it 'rejects an object whose id is not a single path segment' do
+      item = BoxrMash.new(id: '123/versions')
+      expect { client.send(:ensure_id, item) }.to raise_error(Boxr::BoxrError, /Invalid ID/)
     end
   end
 

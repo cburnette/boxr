@@ -94,7 +94,7 @@ module Boxr
       @jwt_private_key_password = jwt_private_key_password
       @jwt_public_key_id = jwt_public_key_id
       @identifier = identifier
-      @as_user_id = ensure_id(as_user)
+      @as_user_id = ensure_id(as_user.is_a?(String) ? as_user.strip : as_user)
       @token_refresh_listener = token_refresh_listener
       BOX_CLIENT.proxy = proxy unless proxy.nil?
     end
@@ -326,16 +326,28 @@ module Boxr
     def ensure_id(item)
       # Ruby 2.4 unified Fixnum and Bignum into Integer.  This tests for Ruby 2.4
       if 1.instance_of?(Integer)
-        return item if item.instance_of?(String) || item.instance_of?(Integer) || item.nil?
+        return ensure_path_segment(item) if item.instance_of?(String) ||
+                                            item.instance_of?(Integer) || item.nil?
       elsif item.instance_of?(String) || item.instance_of?(Integer) || item.instance_of?(Integer) || item.nil?
         if item.instance_of?(String) || item.instance_of?(Integer) || item.instance_of?(Integer) || item.nil?
-          return item
+          return ensure_path_segment(item)
         end
       end
 
-      return item.id if item.respond_to?(:id)
+      return ensure_path_segment(item.id) if item.respond_to?(:id)
 
       raise BoxrError.new(boxr_message: 'Expecting an id of class String or Fixnum, or object that responds to :id')
+    end
+
+    def ensure_path_segment(value)
+      case value
+      when nil, Integer
+        return value
+      when String, Symbol
+        return value if value.match?(/\A[0-9A-Za-z_-]+\z/)
+      end
+
+      raise BoxrError.new(boxr_message: "Invalid ID or path segment: #{value.inspect}")
     end
 
     def restore_trashed_item(uri, name, parent)

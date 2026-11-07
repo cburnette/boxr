@@ -113,7 +113,7 @@ describe Boxr::Client do
       it 'raises error for invalid user ID' do
         expect do
           described_class.new(access_token, as_user: Object.new)
-        end.to raise_error(Boxr::BoxrError, /Expecting an id of class String or Fixnum/)
+        end.to raise_error(Boxr::BoxrError, /Expecting an id of class String or Integer/)
       end
     end
   end
@@ -619,7 +619,7 @@ describe Boxr::Client do
     it 'raises error for invalid object' do
       expect do
         client.send(:ensure_id, Object.new)
-      end.to raise_error(Boxr::BoxrError, /Expecting an id of class String or Fixnum/)
+      end.to raise_error(Boxr::BoxrError, /Expecting an id of class String or Integer/)
     end
 
     it 'rejects ids that are not a single path segment' do

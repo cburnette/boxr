@@ -56,16 +56,12 @@ module Boxr
       current_time - delivery_time
     end
 
-    def secure_compare(expected, actual)
-      return false unless expected.bytesize == actual.bytesize
-
-      expected.bytes.zip(actual.bytes).reduce(0) { |result, (x, y)| result | (x ^ y) }.zero?
-    end
-
     def signature_valid?(key, signature)
       return false if key.empty? || !signature.is_a?(String)
 
-      secure_compare(generate_signature(key), signature)
+      expected = generate_signature(key)
+      expected.bytesize == signature.bytesize &&
+        OpenSSL.fixed_length_secure_compare(expected, signature)
     end
   end
 end

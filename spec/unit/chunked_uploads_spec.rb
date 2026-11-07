@@ -506,6 +506,20 @@ describe Boxr::Client do
           expect(result).to be false
         end
       end
+
+      it 'returns true when parallel 1.x is loaded' do
+        allow(Gem).to receive(:loaded_specs)
+          .and_return({ 'parallel' => double(version: Gem::Version.new('1.0.0')) })
+        stub_const('Parallel', Module.new)
+        expect(client.send(:gem_parallel_available?)).to be_truthy
+      end
+
+      it 'returns true when parallel 2.x is loaded' do
+        allow(Gem).to receive(:loaded_specs)
+          .and_return({ 'parallel' => double(version: Gem::Version.new('2.3.0')) })
+        stub_const('Parallel', Module.new)
+        expect(client.send(:gem_parallel_available?)).to be_truthy
+      end
     end
   end
 end

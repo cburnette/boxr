@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
+require 'base64'
+require 'date'
+require 'digest/sha1'
 require 'json'
+require 'openssl'
+require 'time'
 require 'httpclient'
 require 'hashie'
 require 'addressable/template'

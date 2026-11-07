@@ -9,6 +9,7 @@ module Boxr
     REVOKE_AUTH_URI = 'https://api.box.com/oauth2/revoke'
     UPLOAD_URI = 'https://upload.box.com/api/2.0'
 
+    # rubocop:disable Style/MutableConstant
     ARCHIVES_URI = "#{API_URI}/archives"
     COLLABORATIONS_URI = "#{API_URI}/collaborations"
     COLLECTIONS_URI = "#{API_URI}/collections"
@@ -30,6 +31,7 @@ module Boxr
     WEB_LINKS_URI = "#{API_URI}/web_links"
     WEBHOOKS_URI = "#{API_URI}/webhooks"
     ZIP_DOWNLOADS_URI = "#{API_URI}/zip_downloads"
+    # rubocop:enable Style/MutableConstant
 
     BOX_VERSION_HEADER_2025 = { 'box-version' => '2025.0' }.freeze
 
@@ -324,19 +326,13 @@ module Boxr
     end
 
     def ensure_id(item)
-      # Ruby 2.4 unified Fixnum and Bignum into Integer.  This tests for Ruby 2.4
-      if 1.instance_of?(Integer)
-        return ensure_path_segment(item) if item.instance_of?(String) ||
-                                            item.instance_of?(Integer) || item.nil?
-      elsif item.instance_of?(String) || item.instance_of?(Integer) || item.instance_of?(Integer) || item.nil?
-        if item.instance_of?(String) || item.instance_of?(Integer) || item.instance_of?(Integer) || item.nil?
-          return ensure_path_segment(item)
-        end
+      if item.instance_of?(String) || item.instance_of?(Integer) || item.nil?
+        return ensure_path_segment(item)
       end
 
       return ensure_path_segment(item.id) if item.respond_to?(:id)
 
-      raise BoxrError.new(boxr_message: 'Expecting an id of class String or Fixnum, or object that responds to :id')
+      raise BoxrError.new(boxr_message: 'Expecting an id of class String or Integer, or object that responds to :id')
     end
 
     def ensure_path_segment(value)

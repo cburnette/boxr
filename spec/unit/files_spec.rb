@@ -465,6 +465,15 @@ describe Boxr::Client do
       result = client.delete_file(test_file, if_match: 'etag')
       expect(result).to eq({})
     end
+
+    it 'rejects an if_match array element containing CRLF without making a request' do
+      allow(client).to receive(:delete).and_call_original
+      allow(Boxr::BOX_CLIENT).to receive(:delete)
+
+      expect { client.delete_file(test_file, if_match: ["etag\r\nAs-User: 98765"]) }
+        .to raise_error(Boxr::BoxrError, /Invalid characters in If-Match header/)
+      expect(Boxr::BOX_CLIENT).not_to have_received(:delete)
+    end
   end
 
   describe '#delete_old_version_of_file' do

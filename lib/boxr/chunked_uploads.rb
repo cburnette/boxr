@@ -174,7 +174,7 @@ module Boxr
 
     private
 
-    PARALLEL_GEM_REQUIREMENT = Gem::Requirement.create(['>= 1.0', '< 3']).freeze
+    PARALLEL_GEM_REQUIREMENT = Gem::Requirement.create('>= 1.0').freeze
 
     def chunked_upload_to_session_from_io(io, session, n_threads: 1, # rubocop:disable Metrics
                                           content_created_at: nil, content_modified_at: nil)

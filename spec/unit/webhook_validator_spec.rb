@@ -59,18 +59,21 @@ describe Boxr::WebhookValidator, :skip_reset do
     subject do
       described_class.new(headers,
                           payload,
-                          primary_signature_key: ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s,
-                          secondary_signature_key: ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s).verify_signature
+                          primary_signature_key: primary_key,
+                          secondary_signature_key: secondary_key).verify_signature
     end
 
     let(:payload) { 'some data' }
     let(:timestamp) { (Time.now.utc - 300).to_s } # 5 minutes ago (in seconds)
+    let(:primary_key) { 'primary key' }
+    let(:secondary_key) { 'secondary key' }
     let(:signature_primary) do
-      generate_signature(payload, timestamp, ENV['BOX_PRIMARY_SIGNATURE_KEY'].to_s)
+      generate_signature(payload, timestamp, primary_key)
     end
     let(:signature_secondary) do
-      generate_signature(payload, timestamp, ENV['BOX_SECONDARY_SIGNATURE_KEY'].to_s)
+      generate_signature(payload, timestamp, secondary_key)
     end
+    let(:forged_signature) { generate_signature(payload, timestamp, '') }
 
     context 'valid primary key' do
       let(:headers) do
@@ -119,6 +122,68 @@ describe Boxr::WebhookValidator, :skip_reset do
                                                         secondary_signature_key: nil).verify_signature
         expect(subject).to be(false)
       end
+    end
+
+    context 'with only a primary key and a valid primary signature' do
+      let(:secondary_key) { nil }
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => signature_primary }
+      end
+
+      it { is_expected.to be(true) }
+    end
+
+    context 'with only a primary key and a primary signature forged from an empty key' do
+      let(:secondary_key) { nil }
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => forged_signature }
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'with only a primary key and a secondary signature forged from an empty key' do
+      let(:secondary_key) { nil }
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-SECONDARY' => forged_signature }
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'with only a secondary key and a valid secondary signature' do
+      let(:primary_key) { nil }
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-SECONDARY' => signature_secondary }
+      end
+
+      it { is_expected.to be(true) }
+    end
+
+    context 'with only a secondary key and a primary signature forged from an empty key' do
+      let(:primary_key) { nil }
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => forged_signature }
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context 'when no keys are configured' do
+      let(:primary_key) { nil }
+      let(:secondary_key) { nil }
+      let(:headers) do
+        { 'BOX-DELIVERY-TIMESTAMP' => timestamp,
+          'BOX-SIGNATURE-PRIMARY' => forged_signature,
+          'BOX-SIGNATURE-SECONDARY' => forged_signature }
+      end
+
+      it { is_expected.to be(false) }
     end
   end
 
